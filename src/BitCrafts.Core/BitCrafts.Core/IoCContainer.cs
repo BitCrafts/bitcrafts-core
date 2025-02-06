@@ -7,6 +7,7 @@ public class IoCContainer : IIoCContainer
 {
     private readonly ServiceCollection _services; // Collection interne des services
     private IServiceProvider _serviceProvider; // Fournisseur pour résoudre les services
+    private bool _isReBuilt; // Indique si le conteneur est construit
 
     public IoCContainer()
     {
@@ -74,11 +75,14 @@ public class IoCContainer : IIoCContainer
     /// </summary>
     public void Rebuild()
     {
+        if (!_isReBuilt)
+            return;
         // Reconstruit le ServiceProvider après des modifications dans les services
         _serviceProvider = _services.BuildServiceProvider(new ServiceProviderOptions
         {
             ValidateScopes = true, // Valider les scopes pour détecter les erreurs
             ValidateOnBuild = true // Valider lors de la construction
         });
+        _isReBuilt = true;
     }
 }

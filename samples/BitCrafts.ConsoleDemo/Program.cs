@@ -3,26 +3,22 @@ using BitCrafts.Core;
 using BitCrafts.Core.ConsoleApplication;
 using BitCrafts.Core.Contracts;
 using BitCrafts.Core.Contracts.Applications;
+using BitCrafts.Core.GtkApplication;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace BitCrafts.ConsoleDemo;
 
-class Program
+internal class Program
 {
-    static void Main(string[] args)
+    private static void Main(string[] args)
     {
-        var container = new IoCContainer();
-
-        // Register the container itself for dependency resolution
-        container.RegisterInstance<IIoCContainer>(container);
-
-        // Check the argument to decide which application to register
+        IApplication app = null;
         if (args.Length > 0)
         {
             switch (args[0].ToLower())
             {
                 case "console":
-                    container.Register<IApplication, ConsoleApplication>(ServiceLifetime.Singleton);
+                    app = new ConsoleApplication();
                     break;
 
                 case "web":
@@ -31,30 +27,17 @@ class Program
                     break;
 
                 case "gui":
-                    throw new NotImplementedException();
-
-                    //container.Register<IApplication, GuiApplication>(ServiceLifetime.Singleton);
+                    app = new GtkApplication();
                     break;
 
                 default:
                     Console.WriteLine(
                         $"Unknown application type '{args[0]}'. Falling back to default application (Console).");
-                    container.Register<IApplication, ConsoleApplication>(ServiceLifetime.Singleton);
+                    app = new ConsoleApplication();
                     break;
             }
         }
-        else
-        {
-            // Default application if no arguments are provided
-            Console.WriteLine("No arguments provided. Falling back to default application (Console).");
-            container.Register<IApplication, ConsoleApplication>(ServiceLifetime.Singleton);
-        }
 
-        // Build the IoC container
-        container.Build();
-
-        // Resolve the registered application and run it
-        var app = container.Resolve<IApplication>();
-        app.Run(args);
+        if (app != null) app.Run(args);
     }
 }

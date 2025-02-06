@@ -1,101 +1,67 @@
 using BitCrafts.Core.Contracts;
 using BitCrafts.Core.Contracts.Applications;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Serilog;
+using Serilog.Enrichers;
+using Serilog.Enrichers.Sensitive;
 
 namespace BitCrafts.Core.Applications;
 
 public abstract class BaseApplication : IApplication
 {
-    protected readonly IIoCContainer IoCContainer;
+    protected static IIoCContainer IoCContainer { get; private set; }
     protected readonly IConfiguration Configuration;
     protected readonly ILogger Logger;
 
-    protected BaseApplication(IIoCContainer container)
+    protected BaseApplication()
     {
-        IoCContainer = container ?? throw new ArgumentNullException(nameof(container));
+        IoCContainer = new IoCContainer();
 
-        // Étape 1 : Charger les configurations depuis appsettings.json
         Configuration = new ConfigurationBuilder()
-            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-            .AddEnvironmentVariables() // Support des variables d'environnement
+            .AddJsonFile("appsettings.json", true, true)
+            .AddEnvironmentVariables()
             .Build();
 
-        // Étape 2 : Configurer Serilog selon les données de appsettings.json
         Logger = new LoggerConfiguration()
             .ReadFrom.Configuration(Configuration)
+            .Enrich.WithProcessId()
+            .Enrich.WithProcessName()
+            .Enrich.WithThreadId()
+            .Enrich.WithEnvironmentUserName() // Ajoute le nom de l'utilisateur de l'environnement
+            .Enrich.FromLogContext() // Permet d'enrichir le contexte de journalisation
             .CreateLogger();
+        Log.Logger = Logger;
 
-        // Étape 3 : Injecter le logger dans IoCContainer pour qu'il soit accessible globalement
         IoCContainer.RegisterInstance<ILogger>(Logger);
         IoCContainer.RegisterInstance<IConfiguration>(Configuration);
-        IoCContainer.Rebuild();
+        IoCContainer.Register<IApplicationStartup, ApplicationStartup>(ServiceLifetime.Singleton);
+        IoCContainer.Build();
     }
 
-    /// <summary>
-    /// Méthode d'entrée principale pour l'application.
-    /// </summary>
     public void Run(string[] args)
     {
         try
         {
-            Logger.Information("Starting Application: {ApplicationName}", GetApplicationName());
+            IoCContainer.Resolve<IApplicationStartup>().Initialize();
 
-            // Étape 1 : Initialiser l'Application
-            InitializeApplication();
-
-            // Étape 2 : Exécuter l'Application
-            ExecuteApplication();
-
-            Logger.Information("Application {ApplicationName} executed successfully.", GetApplicationName());
+            IoCContainer.Resolve<IApplicationStartup>().Start();
         }
         catch (Exception ex)
         {
-            Logger.Error(ex, "An error occurred in Application: {ApplicationName}", GetApplicationName());
-            OnError(ex);
+            Log.Logger.Error(ex, "An error occurred in Application");
         }
         finally
         {
-            // Étape 3 : Libérer les Ressources
+            Log.Logger.Information("Releasing resources and shutting down...");
             ShutdownApplication();
-            Logger.Information("Application {ApplicationName} is shutting down.", GetApplicationName());
+            Log.Logger.Information("Application is shutting down.");
         }
     }
 
-    /// <summary>
-    /// Nom de l'application (peut être redéfini par des classes dérivées).
-    /// </summary>
-    protected virtual string GetApplicationName()
-    {
-        return "Generic Application";
-    }
+    protected abstract void InitializeApplication(string[] args);
 
-    /// <summary>
-    /// Méthode pour initialiser les services ou configurations (à redéfinir si nécessaire).
-    /// </summary>
-    protected virtual void InitializeApplication()
-    {
-        Logger.Information("Initializing Application...");
-    }
-
-    /// <summary>
-    /// Méthode principale pour exécuter la logique spécifique (obligatoire à surcharger).
-    /// </summary>
     protected abstract void ExecuteApplication();
 
-    /// <summary>
-    /// Méthode à appeler lorsqu'une erreur est non gérée (peut être redéfinie).
-    /// </summary>
-    protected virtual void OnError(Exception exception)
-    {
-        Console.WriteLine("An error has occurred: " + exception.Message);
-    }
-
-    /// <summary>
-    /// Méthode appelée lors de l'arrêt de l'application (à redéfinir si nécessaire).
-    /// </summary>
-    protected virtual void ShutdownApplication()
-    {
-        Logger.Information("Releasing resources and shutting down...");
-    }
+    protected abstract void ShutdownApplication();
 }

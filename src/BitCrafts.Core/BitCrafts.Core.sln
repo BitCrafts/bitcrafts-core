@@ -16,6 +16,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Applications", "Application
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitCrafts.Core.ConsoleApplication", "BitCrafts.Core.ConsoleApplication\BitCrafts.Core.ConsoleApplication.csproj", "{3BB1B746-9D30-47AD-A4A8-BC495FB9ADBD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitCrafts.Core.GtkApplication", "BitCrafts.Core.GtkApplication\BitCrafts.Core.GtkApplication.csproj", "{622B0466-144A-4893-976A-B4A3C4F970E3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,11 +40,16 @@ Global
 		{3BB1B746-9D30-47AD-A4A8-BC495FB9ADBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3BB1B746-9D30-47AD-A4A8-BC495FB9ADBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3BB1B746-9D30-47AD-A4A8-BC495FB9ADBD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{622B0466-144A-4893-976A-B4A3C4F970E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{622B0466-144A-4893-976A-B4A3C4F970E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{622B0466-144A-4893-976A-B4A3C4F970E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{622B0466-144A-4893-976A-B4A3C4F970E3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{5370A6AD-C674-4701-A54E-B9C925D54846} = {7460943E-592A-4FFD-86C2-BE9609D97B62}
 		{B39966D8-6C62-4791-B0F8-9FFD0EA07EB5} = {7460943E-592A-4FFD-86C2-BE9609D97B62}
 		{BA821D4E-C6A9-48B8-8E9A-722C477F148D} = {40AF31BD-6995-4FD2-BA81-C3BA36838C76}
 		{3BB1B746-9D30-47AD-A4A8-BC495FB9ADBD} = {D086868F-0593-4CFB-BEC7-F69B1B16B1BA}
+		{622B0466-144A-4893-976A-B4A3C4F970E3} = {D086868F-0593-4CFB-BEC7-F69B1B16B1BA}
 	EndGlobalSection
 EndGlobal
