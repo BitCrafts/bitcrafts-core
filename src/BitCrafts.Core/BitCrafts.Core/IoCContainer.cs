@@ -37,6 +37,25 @@ public class IoCContainer : IIoCContainer
                 throw new ArgumentOutOfRangeException(nameof(lifetime), lifetime, null);
         }
     }
+    
+    public void Register(Type typeInterface,Type typeImplementation, ServiceLifetime lifetime)
+    {
+        // Ajout du service avec sa durée de vie
+        switch (lifetime)
+        {
+            case ServiceLifetime.Singleton:
+                _services.AddSingleton(typeInterface,typeImplementation);
+                break;
+            case ServiceLifetime.Scoped:
+                _services.AddScoped(typeInterface,typeImplementation);
+                break;
+            case ServiceLifetime.Transient:
+                _services.AddTransient(typeInterface,typeImplementation);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(lifetime), lifetime, null);
+        }
+    }
 
     /// <summary>
     /// Enregistre une instance spécifique dans le conteneur.
@@ -75,7 +94,7 @@ public class IoCContainer : IIoCContainer
     /// </summary>
     public void Rebuild()
     {
-        if (!_isReBuilt)
+        if (_isReBuilt)
             return;
         // Reconstruit le ServiceProvider après des modifications dans les services
         _serviceProvider = _services.BuildServiceProvider(new ServiceProviderOptions

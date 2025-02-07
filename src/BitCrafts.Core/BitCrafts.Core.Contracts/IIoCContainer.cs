@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 
 namespace BitCrafts.Core.Contracts;
 
@@ -14,6 +13,8 @@ public interface IIoCContainer
     void Register<TService, TImplementation>(ServiceLifetime lifetime)
         where TService : class
         where TImplementation : class, TService;
+
+    void Register(Type typeInterface, Type typeImplementation, ServiceLifetime lifetime);
 
     /// <summary>
     /// Ajoute une instance spécifique au conteneur.

@@ -1,26 +1,16 @@
 using BitCrafts.Core.Applications;
-using BitCrafts.Core.Contracts;
 using BitCrafts.Core.Contracts.Applications;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 
 namespace BitCrafts.Core.ConsoleApplication;
 
-public class ConsoleApplication : BaseApplication
+public class ConsoleApplication : BaseApplication, IConsoleApplication
 {
-    protected override void InitializeApplication(string[] args)
+    public ConsoleApplication()
     {
-        IoCContainer.Rebuild();
-        Logger.Information("Console initialization...");
     }
 
-    protected override void ExecuteApplication()
+    public override Task RunAsync()
     {
-        Logger.Information("Running Console Application Logic...");
-    }
-
-    protected override void ShutdownApplication()
-    {
-        Logger.Information("Cleaning up console-specific resources...");
+        throw new NotImplementedException();
     }
 }
