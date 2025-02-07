@@ -8,6 +8,7 @@ namespace BitCrafts.Core.Applications;
 
 public class ApplicationStartup : IApplicationStartup
 {
+    private IApplication _application;
     public static IIoCContainer IoCContainer { get; private set; }
     private string[] _args;
 
@@ -37,34 +38,30 @@ public class ApplicationStartup : IApplicationStartup
         IoCContainer.Build();
     }
 
-    public void Initialize()
+    public async Task InitializeAsync()
     {
         Log.Logger.Information("Initializing Application...");
         IoCContainer.Resolve<IModuleManager>().LoadModules();
         var args = Environment.GetCommandLineArgs();
         IoCContainer.Rebuild();
-        if (args.Any(arg => arg.ToLowerInvariant().Contains("gui-gtk")))
+        if (args.Any(arg => arg.ToLowerInvariant().Equals("console")))
         {
-            // Instanciation de l'application GTK via l'IoC container
-            var gtkApp = IoCContainer.Resolve<IGtkApplication>();
-            gtkApp.InitializeAsync(CancellationToken.None).Wait();
-            gtkApp.RunAsync().Wait();
-            // Vous pouvez stocker gtkApp ou effectuer des traitements spécifiques ici.
+            _application = IoCContainer.Resolve<IConsoleApplication>();
         }
-        else if (args.Any(arg => arg.ToLowerInvariant().Contains("console")))
+        else
         {
-            // Instanciation de l'application Console via l'IoC container
-            var consoleApp = IoCContainer.Resolve<IConsoleApplication>();
-            consoleApp.InitializeAsync(CancellationToken.None).Wait();
-            consoleApp.RunAsync().Wait();
+            _application = IoCContainer.Resolve<IGtkApplication>();
         }
 
+        await _application.InitializeAsync(CancellationToken.None);
         Log.Logger.Information("Application Initialization Complete.");
     }
 
-    public void Start()
+    public async Task StartAsync()
     {
+        
         Log.Logger.Information("Starting Application...");
+        await _application.RunAsync();
         Log.Logger.Information("Application Starting complete.");
     }
 }

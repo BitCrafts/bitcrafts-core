@@ -11,6 +11,6 @@ public class ConsoleApplication : BaseApplication, IConsoleApplication
 
     public override Task RunAsync()
     {
-        throw new NotImplementedException();
+         return Task.CompletedTask;
     }
 }

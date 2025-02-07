@@ -14,19 +14,20 @@ public class GtkApplication : BaseApplication, IGtkApplication
 
     public override Task RunAsync()
     {
-        var app = Gtk.Application.New("com.bitcrafts.gtkapp", ApplicationFlags.DefaultFlags);
-        app.OnActivate += (o, e) =>
+        return Task.Run(() =>
         {
-            Window window = new Window();
-            window.SetDefaultSize(400, 300);
-            window.OnDestroy += (oe, ee) => app.Quit();
-            app.AddWindow(window);
-            window.Show();
-        };
+            var app = Gtk.Application.New("com.bitcrafts.gtkapp", ApplicationFlags.DefaultFlags);
+            app.OnActivate += (o, e) =>
+            {
+                Window window = new Window();
+                window.SetDefaultSize(400, 300);
+                window.OnDestroy += (oe, ee) => app.Quit();
+                app.AddWindow(window);
+                window.Show();
+            };
 
-        // Ajoutez ici vos widgets et logiques
-
-        app.Run(0, null);
+            app.Run(0, null);
+        });
         return Task.CompletedTask;
     }
 }

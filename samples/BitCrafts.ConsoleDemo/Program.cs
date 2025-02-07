@@ -5,10 +5,10 @@ namespace BitCrafts.ConsoleDemo;
 
 internal class Program
 {
-    private static void Main(string[] args)
+    private static async Task Main(string[] args)
     {
         IApplicationStartup apptStartup = new ApplicationStartup(args);
-        apptStartup.Initialize();
-        apptStartup.Start();
+        await apptStartup.InitializeAsync();
+        await apptStartup.StartAsync();
     }
 }
