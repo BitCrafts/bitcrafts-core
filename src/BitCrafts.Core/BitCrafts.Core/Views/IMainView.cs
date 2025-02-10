@@ -1,6 +1,6 @@
 using BitCrafts.Core.Contracts.Applications.Views;
 
-namespace BitCrafts.Core.GtkApplication.Views;
+namespace BitCrafts.Core.Views;
 
 public interface IMainView : IView
 {

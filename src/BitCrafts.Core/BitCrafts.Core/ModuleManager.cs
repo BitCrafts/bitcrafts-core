@@ -11,20 +11,32 @@ namespace BitCrafts.Core;
 
 public class ModuleManager : IModuleManager
 {
-    private readonly IIoCContainer _ioCContainer;
+    private readonly IIoCRegister _ioCContainer;
     private readonly IConfiguration _configuration;
     private readonly ILogger _logger;
     private readonly List<Assembly> _loadedAssemblies;
-    private readonly Dictionary<Type, List<Type>> _interfaceImplementations;
-    private readonly Type[] _applicationInterfaces = { typeof(IGtkApplication), typeof(IConsoleApplication) };
 
-    public ModuleManager(IIoCContainer ioCContainer, IConfiguration configuration, ILogger logger)
+    private readonly Dictionary<string,
+        (Type ViewContract, Type ViewImplementation,
+        Type PresenterContract, Type PresenterImplementation,
+        Type ModelType)> _moduleTypeRegistry
+        = new();
+
+
+    public ModuleManager(IIoCRegister ioCContainer, IConfiguration configuration, ILogger logger)
     {
         _ioCContainer = ioCContainer;
         _configuration = configuration;
         _logger = logger;
         _loadedAssemblies = new List<Assembly>();
-        _interfaceImplementations = new Dictionary<Type, List<Type>>();
+    }
+
+    public IReadOnlyDictionary<string,
+        (Type ViewContract, Type ViewImplementation,
+        Type PresenterContract, Type PresenterImplementation,
+        Type ModelType)> GetModuleViewTypes()
+    {
+        return _moduleTypeRegistry;
     }
 
     public void LoadModules()
@@ -35,14 +47,7 @@ public class ModuleManager : IModuleManager
         foreach (var dll in Directory.GetFiles(modulesPath, "*.dll"))
         {
             LoadAssembly(dll);
-        }
-    }
-
-    public IEnumerable<Type> GetImplementationsOf<T>() where T : class
-    {
-        return _interfaceImplementations.TryGetValue(typeof(T), out var implementations)
-            ? implementations
-            : Enumerable.Empty<Type>();
+        } 
     }
 
     private string GetModulesPath()
@@ -70,11 +75,7 @@ public class ModuleManager : IModuleManager
         {
             var assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(dll);
             _loadedAssemblies.Add(assembly);
-
             RegisterModules(assembly);
-            RegisterApplicationInterfaces(assembly);
-            IndexInterfaces(assembly);
-
             _logger.Information($"Successfully loaded assembly: {assembly.FullName}");
         }
         catch (Exception ex)
@@ -85,50 +86,40 @@ public class ModuleManager : IModuleManager
 
     private void RegisterModules(Assembly assembly)
     {
-        foreach (var type in assembly.GetTypes().Where(IsValidModule))
+        var moduleTypes = assembly.GetTypes().Where(IsValidModule);
+        foreach (var type in moduleTypes)
         {
             _logger.Information($"Found module: {type.FullName}");
             if (Activator.CreateInstance(type) is IModule moduleInstance)
             {
                 moduleInstance.RegisterServices(_ioCContainer);
-                _logger.Information($"Module {moduleInstance.Name} of type {type.FullName} configured successfully.");
-            }
-        }
-    }
+                var (viewContract, viewImplementation) = moduleInstance.GetViewType();
+                var (presenterContract, presenterImplementation) = moduleInstance.GetPresenterType();
+                var modelType = moduleInstance.GetModelType();
 
-    private void RegisterApplicationInterfaces(Assembly assembly)
-    {
-        foreach (var type in assembly.GetTypes().Where(t => IsValidClass(t) && ImplementsAnyApplicationInterface(t)))
-        {
-            foreach (var appInterface in _applicationInterfaces.Where(appInterface =>
-                         appInterface.IsAssignableFrom(type)))
-            {
-                _logger.Information($"Found implementation of {appInterface.Name}: {type.FullName}");
-                _ioCContainer.Register(appInterface, type, ServiceLifetime.Singleton);
-                _logger.Information($"Service {type.FullName} injected into IoC for {appInterface.Name}");
-            }
-        }
-    }
-
-    private void IndexInterfaces(Assembly assembly)
-    {
-        foreach (var type in assembly.GetTypes().Where(IsValidClass))
-        {
-            foreach (var implementedInterface in type.GetInterfaces())
-            {
-                if (!_interfaceImplementations.ContainsKey(implementedInterface))
+                if (!_moduleTypeRegistry.TryAdd(moduleInstance.Name,
+                        (viewContract, viewImplementation,
+                            presenterContract, presenterImplementation,
+                            modelType)))
                 {
-                    _interfaceImplementations[implementedInterface] = new List<Type>();
+                    _logger.Warning(
+                        $"Impossible d’enregistrer le module '{moduleInstance.Name}', " +
+                        $"car il est déjà présent. " +
+                        $"Types détectés : " +
+                        $"ViewContract = {viewContract?.FullName}, " +
+                        $"ViewImplementation = {viewImplementation?.FullName}, " +
+                        $"PresenterContract = {presenterContract?.FullName}, " +
+                        $"PresenterImplementation = {presenterImplementation?.FullName}, " +
+                        $"ModelType = {modelType?.FullName}"
+                    );
                 }
 
-                _interfaceImplementations[implementedInterface].Add(type);
+
+                _logger.Information($"Module {moduleInstance.Name} of type {type.FullName} configured successfully.");
             }
         }
     }
 
     private bool IsValidClass(Type type) => type.IsClass && !type.IsAbstract;
     private bool IsValidModule(Type type) => IsValidClass(type) && typeof(IModule).IsAssignableFrom(type);
-
-    private bool ImplementsAnyApplicationInterface(Type type) =>
-        _applicationInterfaces.Any(i => i.IsAssignableFrom(type));
 }

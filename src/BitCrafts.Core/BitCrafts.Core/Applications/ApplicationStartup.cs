@@ -9,57 +9,49 @@ namespace BitCrafts.Core.Applications;
 public class ApplicationStartup : IApplicationStartup
 {
     private IApplication _application;
-    public static IIoCContainer IoCContainer { get; private set; }
+    public static IoCContainer IoCContainer { get; private set; }
+    public static IModuleManager ModuleManager { get; private set; }
+    public static IConfiguration Configuration { get; private set; }
+    public static ILogger Logger { get; private set; }
+
     private string[] _args;
 
     public ApplicationStartup(string[] args)
     {
         _args = args ?? Array.Empty<string>();
         IoCContainer = new IoCContainer();
-        var configuration = new ConfigurationBuilder()
+        Configuration = new ConfigurationBuilder()
             .AddJsonFile("appsettings.json", true, true)
             .AddEnvironmentVariables()
             .Build();
-
         var logger = new LoggerConfiguration()
-            .ReadFrom.Configuration(configuration)
+            .ReadFrom.Configuration(Configuration)
             .Enrich.WithProcessId()
             .Enrich.WithProcessName()
             .Enrich.WithThreadId()
             .Enrich.WithEnvironmentUserName()
             .Enrich.FromLogContext()
             .CreateLogger();
-        Log.Logger = logger;
-
-        IoCContainer.RegisterInstance<ILogger>(logger);
-        IoCContainer.RegisterInstance<IIoCContainer>(IoCContainer);
-        IoCContainer.RegisterInstance<IConfiguration>(configuration);
-        IoCContainer.Register<IModuleManager, ModuleManager>(ServiceLifetime.Singleton);
-        IoCContainer.Build();
+        Log.Logger = Logger = logger;
+        ModuleManager = new ModuleManager(IoCContainer, Configuration, Logger);
     }
 
     public async Task InitializeAsync()
     {
         Log.Logger.Information("Initializing Application...");
-        IoCContainer.Resolve<IModuleManager>().LoadModules();
-        var args = Environment.GetCommandLineArgs();
-        IoCContainer.Build();
-        if (args.Any(arg => arg.ToLowerInvariant().Equals("console")))
-        {
-            _application = IoCContainer.Resolve<IConsoleApplication>();
-        }
-        else
-        {
-            _application = IoCContainer.Resolve<IGtkApplication>();
-        }
-
+        ApplicationStartup.ModuleManager.LoadModules();
+        _application = new GtkApplication();
         await _application.InitializeAsync(CancellationToken.None);
         Log.Logger.Information("Application Initialization Complete.");
+        IoCContainer.RegisterInstance(ModuleManager);
+        IoCContainer.RegisterInstance(Logger);
+        var resolver = IoCContainer as IIoCResolver;
+        IoCContainer.RegisterInstance(resolver);
+        ApplicationStartup.IoCContainer.Build();
     }
 
     public async Task StartAsync()
     {
-        
         Log.Logger.Information("Starting Application...");
         await _application.RunAsync();
         Log.Logger.Information("Application Starting complete.");

@@ -3,20 +3,16 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace BitCrafts.Core;
 
-public class IoCContainer : IIoCContainer
+public class IoCContainer : IIoCRegister, IIoCResolver
 {
-    private readonly ServiceCollection _services; // Collection interne des services
-    private IServiceProvider _serviceProvider; // Fournisseur pour résoudre les services
-    private bool _isReBuilt; // Indique si le conteneur est construit
+    private readonly ServiceCollection _services;
+    private IServiceProvider _serviceProvider;
 
     public IoCContainer()
     {
         _services = new ServiceCollection();
     }
 
-    /// <summary>
-    /// Ajoute un service au conteneur.
-    /// </summary>
     public void Register<TService, TImplementation>(ServiceLifetime lifetime)
         where TService : class
         where TImplementation : class, TService
@@ -57,17 +53,11 @@ public class IoCContainer : IIoCContainer
         }
     }
 
-    /// <summary>
-    /// Enregistre une instance spécifique dans le conteneur.
-    /// </summary>
     public void RegisterInstance<TService>(TService service) where TService : class
     {
         _services.AddSingleton(service);
     }
 
-    /// <summary>
-    /// Résout un service enregistré.
-    /// </summary>
     public TService Resolve<TService>()
     {
         if (_serviceProvider == null)
@@ -81,27 +71,26 @@ public class IoCContainer : IIoCContainer
         return service;
     }
 
-    /// <summary>
-    /// Configure et construit le conteneur complet.
-    /// </summary>
+    public object Resolve(Type type)
+    {
+        var instance = _serviceProvider.GetService(type);
+        if (instance == null)
+            throw new Exception($"Le service {type.Name} n'existe pas dans le conteneur.");
+
+        return instance;
+    }
+
+    public TService Resolve<TService>(Type type)
+    {
+        var instance = _serviceProvider.GetService(type);
+        if (instance == null)
+            throw new Exception($"Le service {type.Name} n'existe pas dans le conteneur.");
+
+        return (TService)instance;
+    }
+
     public void Build()
     {
         _serviceProvider = _services.BuildServiceProvider();
-    }
-
-    /// <summary>
-    /// Reconstruit le conteneur après le chargement des services des modules.
-    /// </summary>
-    public void Rebuild()
-    {
-        //  if (_isReBuilt)
-        //     return;
-        // Reconstruit le ServiceProvider après des modifications dans les services
-        _serviceProvider = _services.BuildServiceProvider(new ServiceProviderOptions
-        {
-            ValidateScopes = true, // Valider les scopes pour détecter les erreurs
-            ValidateOnBuild = true // Valider lors de la construction
-        });
-        _isReBuilt = true;
     }
 }

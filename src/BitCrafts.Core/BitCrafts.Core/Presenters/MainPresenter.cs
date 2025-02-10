@@ -1,6 +1,6 @@
 using BitCrafts.Core.Contracts.Applications.Presenters;
 
-namespace BitCrafts.Core.GtkApplication.Presenters;
+namespace BitCrafts.Core.Presenters;
 
 public class MainPresenter : IMainPresenter
 {
