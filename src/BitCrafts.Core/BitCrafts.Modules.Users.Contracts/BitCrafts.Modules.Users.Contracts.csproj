@@ -6,4 +6,8 @@
         <Nullable>disable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\BitCrafts.Core.Contracts\BitCrafts.Core.Contracts.csproj" />
+    </ItemGroup>
+
 </Project>

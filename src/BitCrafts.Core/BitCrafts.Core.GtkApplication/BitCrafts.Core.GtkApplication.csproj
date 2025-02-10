@@ -14,4 +14,8 @@
         <PackageReference Include="GirCore.Gtk-4.0" Version="0.5.0"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Models\" />
+    </ItemGroup>
+
 </Project>

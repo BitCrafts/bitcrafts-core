@@ -62,9 +62,6 @@ public class ModuleManager : IModuleManager
         }
 
         return Path.IsPathRooted(modulesPath) ? modulesPath : Path.GetFullPath(modulesPath);
-
-        _logger.Information($"Loading modules from path: {modulesPath}");
-        return modulesPath;
     }
 
     private void LoadAssembly(string dll)
@@ -94,7 +91,7 @@ public class ModuleManager : IModuleManager
             if (Activator.CreateInstance(type) is IModule moduleInstance)
             {
                 moduleInstance.RegisterServices(_ioCContainer);
-                _logger.Information($"Module {type.FullName} configured successfully.");
+                _logger.Information($"Module {moduleInstance.Name} of type {type.FullName} configured successfully.");
             }
         }
     }

@@ -6,4 +6,13 @@
         <Nullable>disable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\BitCrafts.Core.Contracts\BitCrafts.Core.Contracts.csproj" />
+      <ProjectReference Include="..\BitCrafts.Modules.Users.Contracts\BitCrafts.Modules.Users.Contracts.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="GirCore.Gtk-4.0" Version="0.6.2" />
+    </ItemGroup>
+
 </Project>

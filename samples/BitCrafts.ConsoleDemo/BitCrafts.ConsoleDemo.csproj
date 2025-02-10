@@ -12,6 +12,7 @@
         <ProjectReference Include="..\..\src\BitCrafts.Core\BitCrafts.Core.Contracts\BitCrafts.Core.Contracts.csproj"/>
         <ProjectReference Include="..\..\src\BitCrafts.Core\BitCrafts.Core.GtkApplication\BitCrafts.Core.GtkApplication.csproj"/>
         <ProjectReference Include="..\..\src\BitCrafts.Core\BitCrafts.Core\BitCrafts.Core.csproj"/>
+        <ProjectReference Include="..\..\src\BitCrafts.Core\BitCrafts.Modules.Users.Contracts\BitCrafts.Modules.Users.Contracts.csproj" />
     </ItemGroup>
 
     <ItemGroup>

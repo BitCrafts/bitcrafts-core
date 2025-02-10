@@ -43,7 +43,7 @@ public class ApplicationStartup : IApplicationStartup
         Log.Logger.Information("Initializing Application...");
         IoCContainer.Resolve<IModuleManager>().LoadModules();
         var args = Environment.GetCommandLineArgs();
-        IoCContainer.Rebuild();
+        IoCContainer.Build();
         if (args.Any(arg => arg.ToLowerInvariant().Equals("console")))
         {
             _application = IoCContainer.Resolve<IConsoleApplication>();
