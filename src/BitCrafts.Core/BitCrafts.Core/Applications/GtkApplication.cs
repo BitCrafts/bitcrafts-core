@@ -10,13 +10,15 @@ namespace BitCrafts.Core.Applications;
 
 public class GtkApplication : BaseApplication, IGtkApplication
 {
+    private Gtk.Application _app;
+
     public GtkApplication()
     {
     }
 
     public override Task InitializeAsync(CancellationToken cancellationToken)
     {
-        ApplicationStartup.IoCContainer.Register<IMainView, MainView>(ServiceLifetime.Singleton);
+        ApplicationStartup.IoCContainer.Register<IMainWindowView, MainWindowView>(ServiceLifetime.Singleton);
         ApplicationStartup.IoCContainer.Register<IMainPresenter, MainPresenter>(ServiceLifetime.Singleton);
         return Task.CompletedTask;
     }
@@ -25,18 +27,30 @@ public class GtkApplication : BaseApplication, IGtkApplication
     {
         ApplicationStartup.IoCContainer.Build();
 
-        var app = Gtk.Application.New("com.bitcrafts.gtkapp", ApplicationFlags.DefaultFlags);
-        app.OnActivate += (o, e) =>
+        _app = Gtk.Application.New("com.bitcrafts.gtkapp", ApplicationFlags.DefaultFlags);
+        _app.OnActivate += (o, e) =>
         {
-            var mainView = ApplicationStartup.IoCContainer.Resolve<IMainView>() as Window;
-            if (mainView != null)
+            var window = ApplicationStartup.IoCContainer.Resolve<IMainWindowView>() as Window;
+            var view = window as IMainWindowView; 
+            if (window != null)
             {
-                mainView.OnDestroy += (oe, ee) => app.Quit();
-                app.AddWindow(mainView);
-                mainView.Show();
+                window.OnDestroy += (oe, ee) => _app.Quit();
+                _app.AddWindow(window); 
+                view.InitializeView();
+                view.ShowView();
+                
+               
             }
         };
-        app.Run(0, null);
+        _app.Run(0, null);
+
         await Task.FromResult(0);
+    }
+
+    public override Task ShutdownAsync(CancellationToken cancellationToken)
+    {
+        if (_app != null)
+            _app.Quit();
+        return Task.CompletedTask;
     }
 }

@@ -1,10 +1,8 @@
 using System.Reflection;
 using System.Runtime.Loader;
 using BitCrafts.Core.Contracts;
-using BitCrafts.Core.Contracts.Applications;
 using BitCrafts.Core.Contracts.Modules;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 
 namespace BitCrafts.Core;
@@ -57,14 +55,7 @@ public class ModuleManager : IModuleManager
         {
             _logger.Warning("ModulesPath is not configured. No modules will be loaded.");
             return null;
-        }
-
-        if (!Directory.Exists(modulesPath))
-        {
-            _logger.Warning($"Modules directory '{modulesPath}' does not exist. Creating it...");
-            Directory.CreateDirectory(modulesPath);
-            return null;
-        }
+        } 
 
         return Path.IsPathRooted(modulesPath) ? modulesPath : Path.GetFullPath(modulesPath);
     }

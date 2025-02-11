@@ -1,6 +1,6 @@
 namespace BitCrafts.Core.Contracts.Applications;
 
-public interface IApplication
+public interface IApplication : IDisposable
 {
     Task InitializeAsync(CancellationToken cancellationToken);
  

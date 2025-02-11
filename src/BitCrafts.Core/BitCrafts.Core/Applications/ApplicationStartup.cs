@@ -1,7 +1,6 @@
 using BitCrafts.Core.Contracts;
 using BitCrafts.Core.Contracts.Applications;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 
 namespace BitCrafts.Core.Applications;
@@ -26,11 +25,6 @@ public class ApplicationStartup : IApplicationStartup
             .Build();
         var logger = new LoggerConfiguration()
             .ReadFrom.Configuration(Configuration)
-            .Enrich.WithProcessId()
-            .Enrich.WithProcessName()
-            .Enrich.WithThreadId()
-            .Enrich.WithEnvironmentUserName()
-            .Enrich.FromLogContext()
             .CreateLogger();
         Log.Logger = Logger = logger;
         ModuleManager = new ModuleManager(IoCContainer, Configuration, Logger);
