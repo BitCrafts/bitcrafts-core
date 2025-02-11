@@ -1,76 +1,62 @@
 using BitCrafts.Modules.Users.Contracts.Models;
 using BitCrafts.Modules.Users.Contracts.Presenters;
 using BitCrafts.Modules.Users.Contracts.Views;
-using Gtk;
 
 namespace BitCrafts.Modules.Users.Views;
 
-public class UsersView : Box, IUsersView
+public class UsersView : Gtk.Box, IUsersView
 {
-    private IUsersPresenter _presenter;
-    private Button _addButton;
-    private ListBox _listUsers;
-    public event EventHandler OnAddUser;
-    public event EventHandler OnViewLoaded;
+    private readonly IUsersPresenter _presenter;
+    [Gtk.Connect] private readonly Gtk.ListBox usersListbox;
+    [Gtk.Connect] private readonly Gtk.Button addUserButton;
+    [Gtk.Connect] private readonly Gtk.Button deleteUserButton;
 
-    public UsersView(IUsersPresenter presenter)
+    private UsersView(Gtk.Builder builder) :
+        base(new Gtk.Internal.BoxHandle(builder.GetPointer("mainView"), false))
     {
-        _presenter = presenter; 
+        builder.Connect(this);
+        usersListbox.OnShow += (sender, args) => OnLoaded?.Invoke(this, EventArgs.Empty);
+        addUserButton.OnClicked += (sender, args) => UserAdded?.Invoke(this, EventArgs.Empty);
+    }
+
+    public UsersView(IUsersPresenter presenter) :
+        this(new Gtk.Builder("UsersView.glade"))
+    {
+        _presenter = presenter;
         _presenter.SetView(this);
     }
 
     public void DisplayUsers(IList<IUserModel> users)
     {
-        _listUsers.RemoveAll();
-
+        usersListbox.RemoveAll();
         foreach (var user in users)
         {
-            var row = new ListBoxRow();
-            var label = new Label();
+            var row = new Gtk.ListBoxRow();
+            var label = new Gtk.Label();
             label.Label_ = $"[{user.Id}] {user.FirstName} {user.LastName} - {user.Email}";
             row.Child = label;
-            _listUsers.Append(row);
+            usersListbox.Append(row);
         }
-
-        _listUsers.Show();
-        Show();
     }
-
 
     public void InitializeView()
     {
-        OnShow += OnOnShow;
-        SetOrientation(Orientation.Vertical);
-        SetSpacing(5);
-        _addButton = new Button();
-        _addButton.Label = "Ajouter Utilisateur";
-        _addButton.OnClicked += AddButtonOnOnClicked;
+        _presenter.LoadUsers();
 
-        _listUsers = new ListBox();
-        Append(_addButton);
-        Append(_listUsers);
-
-        Show();
-    }
-
-    private void OnOnShow(Widget sender, EventArgs args)
-    {
-        OnViewLoaded?.Invoke(this, args);
-    }
-
-    private void AddButtonOnOnClicked(Button sender, EventArgs args)
-    {
-        OnAddUser?.Invoke(this, args);
+        ShowView();
     }
 
     public void ShowView()
     {
         Show();
-        _presenter.LoadUsers();
     }
 
     public void CloseView()
     {
         Hide();
     }
+
+    public event EventHandler UserAdded;
+    public event EventHandler UserRemoved;
+    public event EventHandler OnLoaded;
 }

@@ -20,4 +20,18 @@
       <Folder Include="Resources\" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Remove="Resources\UsersView.glade" />
+      <EmbeddedResource Include="Resources\UsersView.glade" >
+          <LogicalName>UsersView.glade</LogicalName>
+      </EmbeddedResource>
+    </ItemGroup>
+
+    <Target Name="CopyDllAfterBuild" AfterTargets="Build">
+        <Copy SourceFiles="$(OutputPath)$(AssemblyName).dll"
+              DestinationFolder="../../../samples/BitCrafts.ConsoleDemo/bin/Debug/net9.0/Modules"
+              OverwriteReadOnlyFiles="true" />
+    </Target>
+
+
 </Project>

@@ -20,8 +20,8 @@ public class UsersPresenter : IUsersPresenter
 
     public void Initialize()
     {
-        _view.OnViewLoaded += (sender, e) => LoadUsers();
-        _view.OnAddUser += (sender, e) => AddUser();
+        _view.OnLoaded += (sender, e) => LoadUsers();
+        _view.UserAdded += (sender, e) => AddUser();
     }
 
     public void SetView(IUsersView view)

@@ -3,33 +3,39 @@ using BitCrafts.Core.Presenters;
 
 namespace BitCrafts.Core.Views;
 
-public class MainWindowView : Gtk.Window, IMainWindowView
+public class MainWindowView : Gtk.ApplicationWindow, IMainWindowView
 {
     private readonly IMainPresenter _presenter;
+    [Gtk.Connect] private readonly Gtk.Notebook mainNotebook;
 
-    public MainWindowView(IMainPresenter presenter)
+    private MainWindowView(Gtk.Builder builder)
+        : base(new Gtk.Internal.ApplicationWindowHandle(builder.GetPointer("mainApplication"), false))
     {
-        _presenter = presenter;
-        _presenter.SetView(this);
+        builder.Connect(this);
         DefaultWidth = 800;
         DefaultHeight = 640;
     }
 
+    public MainWindowView(IMainPresenter presenter) :
+        this(new Gtk.Builder("MainApplication.glade"))
+    {
+        _presenter = presenter;
+        _presenter.SetView(this);
+    }
+
     public void InitializeView()
     {
-        var notebook = new Gtk.Notebook();
         var resolvedWidgets = _presenter.GetResolvedWidgets();
         foreach (var (moduleName, widget) in resolvedWidgets)
         {
-            var viewInstance = widget as IView;
             var tabLabel = new Gtk.Label { Label_ = moduleName };
-            notebook.AppendPage(widget, tabLabel);
-            viewInstance.InitializeView();
-            viewInstance.ShowView();
-            
+            mainNotebook.AppendPage(widget, tabLabel);
+            if (widget is IView viewInstance)
+            {
+                viewInstance.InitializeView();
+                viewInstance.ShowView();
+            }
         }
-
-        SetChild(notebook); 
     }
 
     public void ShowView()

@@ -36,4 +36,15 @@
         <ProjectReference Include="..\BitCrafts.Core.Contracts\BitCrafts.Core.Contracts.csproj"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Resources\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Resources\MainApplication.glade" />
+      <EmbeddedResource Include="Resources\MainApplication.glade" >
+          <LogicalName>MainApplication.glade</LogicalName> 
+      </EmbeddedResource>
+    </ItemGroup>
+
 </Project>
