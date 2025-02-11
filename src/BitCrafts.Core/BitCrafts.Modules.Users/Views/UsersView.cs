@@ -1,6 +1,7 @@
 using BitCrafts.Modules.Users.Contracts.Models;
 using BitCrafts.Modules.Users.Contracts.Presenters;
 using BitCrafts.Modules.Users.Contracts.Views;
+using Gtk;
 
 namespace BitCrafts.Modules.Users.Views;
 
@@ -10,6 +11,7 @@ public class UsersView : Gtk.Box, IUsersView
     [Gtk.Connect] private readonly Gtk.ListBox usersListbox;
     [Gtk.Connect] private readonly Gtk.Button addUserButton;
     [Gtk.Connect] private readonly Gtk.Button deleteUserButton;
+    private int _selectedRowIndex;
 
     private UsersView(Gtk.Builder builder) :
         base(new Gtk.Internal.BoxHandle(builder.GetPointer("mainView"), false))
@@ -17,6 +19,21 @@ public class UsersView : Gtk.Box, IUsersView
         builder.Connect(this);
         usersListbox.OnShow += (sender, args) => OnLoaded?.Invoke(this, EventArgs.Empty);
         addUserButton.OnClicked += (sender, args) => UserAdded?.Invoke(this, EventArgs.Empty);
+        deleteUserButton.OnClicked += (sender, args) => UserRemoved?.Invoke(this, _selectedRowIndex);
+        usersListbox.OnSelectedRowsChanged += UsersListboxOnOnSelectedRowsChanged;
+    }
+
+    private void UsersListboxOnOnSelectedRowsChanged(ListBox sender, EventArgs args)
+    {
+        var selectedRow = sender.GetSelectedRow();
+        if (selectedRow != null)
+        {
+            _selectedRowIndex = selectedRow.GetIndex();
+            if (_selectedRowIndex >= 0)
+            {
+                UserSelected?.Invoke(this, _selectedRowIndex);
+            }
+        }
     }
 
     public UsersView(IUsersPresenter presenter) :
@@ -57,6 +74,7 @@ public class UsersView : Gtk.Box, IUsersView
     }
 
     public event EventHandler UserAdded;
-    public event EventHandler UserRemoved;
+    public event EventHandler<int> UserRemoved;
+    public event EventHandler<int> UserSelected;
     public event EventHandler OnLoaded;
 }

@@ -26,4 +26,10 @@ public class UsersService : IUsersService
         _users.Add(user);
         _logger.Information($"User added ID : {user.Id}");
     }
+
+    public void DeleteUser(int id)
+    {
+        if (id >= 0 && id < _users.Count)
+            _users.RemoveAt(id);
+    }
 }

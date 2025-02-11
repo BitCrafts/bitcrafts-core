@@ -6,4 +6,6 @@ public interface IUsersService
 {
     IList<IUserModel> GetAllUsers();
     void AddUser(IUserModel user);
+
+    void DeleteUser(int id);
 }

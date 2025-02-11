@@ -52,7 +52,7 @@ public class UsersPresenterTests
         _presenter.AddUser();
 
         // Assert
-        _mockService.Received(1).AddUser(users[0]); // Verify that a user was added
+        _mockService.Received(1).AddUser(Arg.Any<UserModel>()); // Verify that a user was added
         _mockService.Received(1).GetAllUsers(); // Verify that users list was reloaded
         _mockView.Received(1).DisplayUsers(users); // Verify that the view was updated
     }

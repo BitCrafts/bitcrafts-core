@@ -31,15 +31,17 @@ public class GtkApplication : BaseApplication, IGtkApplication
         _app.OnActivate += (o, e) =>
         {
             var window = ApplicationStartup.IoCContainer.Resolve<IMainWindowView>() as Window;
-            var view = window as IMainWindowView; 
+            
             if (window != null)
             {
                 window.OnDestroy += (oe, ee) => _app.Quit();
-                _app.AddWindow(window); 
-                view.InitializeView();
-                view.ShowView();
-                
-               
+                _app.AddWindow(window);
+                var view = window as IMainWindowView; 
+                if (view != null)
+                {
+                    view.InitializeView();
+                    view.ShowView();
+                }
             }
         };
         _app.Run(0, null);

@@ -7,6 +7,7 @@ public interface IUsersView : IView
 {
     void DisplayUsers(IList<IUserModel> users);
     event EventHandler UserAdded;
-    event EventHandler UserRemoved;
+    event EventHandler<int> UserRemoved;
     event EventHandler OnLoaded;
+    event EventHandler<int> UserSelected;
 }

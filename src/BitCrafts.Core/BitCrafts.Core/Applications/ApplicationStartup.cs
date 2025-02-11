@@ -48,6 +48,5 @@ public class ApplicationStartup : IApplicationStartup
     {
         Log.Logger.Information("Starting Application...");
         await _application.RunAsync();
-        Log.Logger.Information("Application Starting complete.");
     }
 }

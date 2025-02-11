@@ -10,6 +10,7 @@ public class UsersPresenter : IUsersPresenter
 {
     private readonly IUsersService _usersService;
     private IUsersView _view;
+    private int _selectedUserIndex;
 
     public UsersPresenter(IUsersService usersService)
     {
@@ -22,6 +23,14 @@ public class UsersPresenter : IUsersPresenter
     {
         _view.OnLoaded += (sender, e) => LoadUsers();
         _view.UserAdded += (sender, e) => AddUser();
+        _view.UserRemoved += (sender, e) => { DeleteUser(_selectedUserIndex); };
+        _view.UserSelected += (sender, e) => { _selectedUserIndex = e; };
+    }
+
+    private void DeleteUser(int selectedUserIndex)
+    {
+        _usersService.DeleteUser(selectedUserIndex);
+        LoadUsers();
     }
 
     public void SetView(IUsersView view)
