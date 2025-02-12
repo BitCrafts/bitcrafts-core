@@ -27,9 +27,9 @@ public class UsersPresenterTests
     public void LoadUsers_ShouldCallServiceAndUpdateView()
     {
         // Arrange
-        var users = new List<IUserModel>
+        var users = new List<IUserEntity>
         {
-            new UserModel { FirstName = "Jean", LastName = "Dupont", Email = "jean.dupont@example.com" }
+            new UserEntity() { FirstName = "Jean", LastName = "Dupont", Email = "jean.dupont@example.com" }
         };
         _mockService.GetAllUsers().Returns(users);
 
@@ -45,14 +45,14 @@ public class UsersPresenterTests
     public void AddUser_ShouldAddUserAndReloadUsers()
     {
         // Arrange 
-        var users = new List<IUserModel> { new UserModel { FirstName = "Jean" } };
+        var users = new List<IUserEntity> { new UserEntity() { FirstName = "Jean" } };
         _mockService.GetAllUsers().Returns(users);
 
         // Act
         _presenter.AddUser();
 
         // Assert
-        _mockService.Received(1).AddUser(Arg.Any<UserModel>()); // Verify that a user was added
+        _mockService.Received(1).AddUser(Arg.Any<UserEntity>()); // Verify that a user was added
         _mockService.Received(1).GetAllUsers(); // Verify that users list was reloaded
         _mockView.Received(1).DisplayUsers(users); // Verify that the view was updated
     }

@@ -1,8 +1,9 @@
+﻿using BitCrafts.Core.Contracts.Entities;
+
 namespace BitCrafts.Modules.Users.Contracts.Models;
 
-public interface IUserModel
+public interface IUserEntity : IEntity<int>
 {
-    int Id { get; set; }
     string FirstName { get; set; }
     string LastName { get; set; }
     string Email { get; set; }

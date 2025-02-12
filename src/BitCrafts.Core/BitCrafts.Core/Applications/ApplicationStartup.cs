@@ -1,14 +1,18 @@
+using System.Data;
 using BitCrafts.Core.Contracts;
 using BitCrafts.Core.Contracts.Applications;
+using Microsoft.Data.SqlClient;
+using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Configuration;
+using MySql.Data.MySqlClient;
+using Npgsql;
 using Serilog;
 
 namespace BitCrafts.Core.Applications;
 
 public class ApplicationStartup : IApplicationStartup
 {
-    private IApplication _application;
-
+    private IApplication _application; 
     private string[] _args;
 
     public ApplicationStartup(string[] args)

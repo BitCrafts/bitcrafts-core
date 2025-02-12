@@ -37,14 +37,14 @@ public class UsersView : Box, IUsersView
         _presenter.SetView(this);
     }
 
-    public void DisplayUsers(IList<IUserModel> users)
+    public void DisplayUsers(IEnumerable<IUserEntity> users)
     {
         usersListbox.RemoveAll();
         foreach (var user in users)
         {
             var row = new ListBoxRow();
             var label = new Label();
-            label.Label_ = $"[{user.Id}] {user.FirstName} {user.LastName} - {user.Email}";
+            label.Label_ = $"[{user.PrimaryKey}] {user.FirstName} {user.LastName} - {user.Email}";
             row.Child = label;
             usersListbox.Append(row);
         }

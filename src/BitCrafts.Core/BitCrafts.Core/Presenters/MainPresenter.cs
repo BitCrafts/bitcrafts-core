@@ -64,4 +64,9 @@ public class MainPresenter : IMainPresenter
                 _logger.Error($"Impossible d’instancier la vue du module '{moduleName}': {ex.Message}");
             }
     }
+
+    public void Dispose()
+    {
+        // TODO release managed resources here
+    }
 }

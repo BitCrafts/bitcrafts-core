@@ -5,7 +5,7 @@ namespace BitCrafts.Modules.Users.Contracts.Views;
 
 public interface IUsersView : IView
 {
-    void DisplayUsers(IList<IUserModel> users);
+    void DisplayUsers(IEnumerable<IUserEntity> users);
     event EventHandler UserAdded;
     event EventHandler<int> UserRemoved;
     event EventHandler OnLoaded;

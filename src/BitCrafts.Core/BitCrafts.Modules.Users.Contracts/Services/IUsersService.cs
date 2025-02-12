@@ -4,8 +4,8 @@ namespace BitCrafts.Modules.Users.Contracts.Services;
 
 public interface IUsersService
 {
-    IList<IUserModel> GetAllUsers();
-    void AddUser(IUserModel user);
+    List<IUserEntity> GetAllUsers();
+    void AddUser(IUserEntity user);
 
     void DeleteUser(int id);
 }

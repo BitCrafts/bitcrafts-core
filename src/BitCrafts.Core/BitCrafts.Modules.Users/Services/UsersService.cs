@@ -1,4 +1,5 @@
 using BitCrafts.Modules.Users.Contracts.Models;
+using BitCrafts.Modules.Users.Contracts.Repositories;
 using BitCrafts.Modules.Users.Contracts.Services;
 using Serilog;
 
@@ -7,29 +8,27 @@ namespace BitCrafts.Modules.Users.Services;
 public class UsersService : IUsersService
 {
     private readonly ILogger _logger;
-    private readonly IList<IUserModel> _users;
+    private readonly IUsersRepository _usersRepository;
 
-    public UsersService(ILogger logger)
+    public UsersService(ILogger logger, IUsersRepository usersRepository)
     {
         _logger = logger;
-        _users = new List<IUserModel>();
+        _usersRepository = usersRepository;
     }
 
-    public IList<IUserModel> GetAllUsers()
+    public List<IUserEntity> GetAllUsers()
     {
-        return _users;
+        return _usersRepository.GetAllUsers().ToList();
     }
 
-    public void AddUser(IUserModel user)
+    public void AddUser(IUserEntity user)
     {
-        user.Id = _users.Count + 1;
-        _users.Add(user);
-        _logger.Information($"User added ID : {user.Id}");
+        _usersRepository.AddUser(user);
+        _logger.Information($"Nouvel utilisateur ajouté avec l’ID : {user.PrimaryKey}");
     }
 
     public void DeleteUser(int id)
     {
-        if (id >= 0 && id < _users.Count)
-            _users.RemoveAt(id);
+        _usersRepository.DeleteUser(id);
     }
 }

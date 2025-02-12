@@ -4,7 +4,7 @@ namespace BitCrafts.Core.Applications;
 
 public abstract class BaseApplication : IApplication
 {
-    public BaseApplication()
+    protected BaseApplication()
     {
         TaskScheduler.UnobservedTaskException += TaskSchedulerOnUnobservedTaskException;
         AppDomain.CurrentDomain.UnhandledException += CurrentDomainOnUnhandledException;

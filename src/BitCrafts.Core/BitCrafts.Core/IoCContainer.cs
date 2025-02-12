@@ -3,6 +3,15 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace BitCrafts.Core;
 
+public class DatabaseSettings
+{
+    public string Provider { get; set; }
+    public string Server { get; set; }
+    public string Database { get; set; }
+    public string User { get; set; }
+    public string Password { get; set; }
+}
+
 public class IoCContainer : IIoCRegister, IIoCResolver
 {
     private readonly ServiceCollection _services;
@@ -11,7 +20,7 @@ public class IoCContainer : IIoCRegister, IIoCResolver
     public IoCContainer()
     {
         _services = new ServiceCollection();
-    }
+    } 
 
     public void Register<TService, TImplementation>(ServiceLifetime lifetime)
         where TService : class

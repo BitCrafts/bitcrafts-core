@@ -14,17 +14,22 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="Dapper" Version="2.1.66" />
         <PackageReference Include="GirCore.Gtk-4.0" Version="0.6.2"/>
-        <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.1"/>
-        <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.1"/>
-        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.1"/>
+        <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.2" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.2" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.2" />
         <PackageReference Include="Serilog" Version="4.2.0"/>
     </ItemGroup>
 
     <ItemGroup>
         <None Remove="appsettings.json"/>
         <Content Include="appsettings.json">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+        <None Remove="samples.db" />
+        <Content Include="samples.db">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
     </ItemGroup>
 
