@@ -41,7 +41,7 @@ public class GtkApplication : BaseApplication, IGtkApplication
         {
             if (ApplicationStartup.IoCContainer.Resolve<IMainWindowView>() is Window window)
             {
-                window.Title = ApplicationStartup.Configuration["ApplicationSettings:Title"];
+                window.Title = ApplicationStartup.Configuration["ApplicationSettings:Name"];
                 window.OnDestroy += WindowOnDestroy;
                 _app.AddWindow(window);
                 if (window is IMainWindowView view)

@@ -13,31 +13,29 @@ public sealed class UsersRepository : IUsersRepository
     public UsersRepository(IDbConnection connection)
     {
         _connection = connection;
-        if (_connection.State != ConnectionState.Open)
-            _connection.Open();
     }
 
     public IEnumerable<IUserEntity> GetAllUsers()
     {
-        if (_connection.State == ConnectionState.Open)
-        {
-            const string sql = @"SELECT PrimaryKey ,
+        if (_connection.State != ConnectionState.Open)
+            _connection.Open();
+
+        const string sql = @"SELECT PrimaryKey ,
                                     FirstName,
                                     LastName,
                                     Email,
                                     Phone
                              FROM Users;"; // À adapter
 
-            return _connection.Query<UserEntity>(sql);
-        }
-        else
-        {
-            return new List<UserEntity>();
-        }
+        var result = _connection.Query<UserEntity>(sql);
+        _connection.Close();
+        return result;
     }
 
     public void AddUser(IUserEntity user)
     {
+        if (_connection.State != ConnectionState.Open)
+            _connection.Open();
         const string insertSql = @"INSERT INTO Users
                                    (FirstName, LastName, Email, Phone)
                                    VALUES
@@ -51,11 +49,15 @@ public sealed class UsersRepository : IUsersRepository
         );
 
         user.PrimaryKey = newId;
+        _connection.Close();
     }
 
     public void DeleteUser(int id)
     {
+        if (_connection.State != ConnectionState.Open)
+            _connection.Open();
         const string deleteSql = @"DELETE FROM Users WHERE PrimaryKey = @Id";
         _connection.Execute(deleteSql, new { Id = id });
+        _connection.Close();
     }
 }
