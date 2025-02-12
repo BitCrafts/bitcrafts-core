@@ -10,11 +10,11 @@
     <ItemGroup>
         <ProjectReference Include="..\..\src\BitCrafts.Core\BitCrafts.Core.Contracts\BitCrafts.Core.Contracts.csproj"/>
         <ProjectReference Include="..\..\src\BitCrafts.Core\BitCrafts.Core\BitCrafts.Core.csproj"/>
-        <ProjectReference Include="..\..\src\BitCrafts.Core\BitCrafts.Modules.Users.Contracts\BitCrafts.Modules.Users.Contracts.csproj" />
+        <ProjectReference Include="..\..\src\BitCrafts.Core\BitCrafts.Modules.Users.Contracts\BitCrafts.Modules.Users.Contracts.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="GirCore.Gtk-4.0" Version="0.6.2" />
+        <PackageReference Include="GirCore.Gtk-4.0" Version="0.6.2"/>
         <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.1"/>
         <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.1"/>
         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.1"/>

@@ -2,7 +2,7 @@ namespace BitCrafts.Core.Contracts;
 
 public interface IModuleManager
 {
-    void LoadModules(); 
+    void LoadModules();
 
     IReadOnlyDictionary<string,
         (Type ViewContract, Type ViewImplementation,

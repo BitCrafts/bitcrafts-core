@@ -43,5 +43,4 @@ public class UsersServiceTests
         Assert.AreEqual(1, user.Id); // Verify that user ID was set
         _mockLogger.Received(1).Information(Arg.Is<string>(s => s.Contains("User added ID"))); // Verify logging
     }
-
 }

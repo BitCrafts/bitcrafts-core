@@ -7,7 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="GirCore.Gtk-4.0" Version="0.6.2" />
+        <PackageReference Include="GirCore.Gtk-4.0" Version="0.6.2"/>
         <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.1"/>
         <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="9.0.1"/>
         <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="9.0.1"/>
@@ -37,14 +37,14 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Resources\" />
+        <Folder Include="Resources\"/>
     </ItemGroup>
 
     <ItemGroup>
-      <None Remove="Resources\MainApplication.glade" />
-      <EmbeddedResource Include="Resources\MainApplication.glade" >
-          <LogicalName>MainApplication.glade</LogicalName> 
-      </EmbeddedResource>
+        <None Remove="Resources\MainApplication.glade"/>
+        <EmbeddedResource Include="Resources\MainApplication.glade">
+            <LogicalName>MainApplication.glade</LogicalName>
+        </EmbeddedResource>
     </ItemGroup>
 
 </Project>

@@ -7,5 +7,4 @@ public interface IUsersPresenter : IPresenter<IUsersView>
 {
     void LoadUsers();
     void AddUser();
-
 }

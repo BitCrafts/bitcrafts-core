@@ -4,17 +4,14 @@ using BitCrafts.Core.Views;
 using Gio;
 using Gtk;
 using Microsoft.Extensions.DependencyInjection;
+using Application = Gtk.Application;
 using Task = System.Threading.Tasks.Task;
 
 namespace BitCrafts.Core.Applications;
 
 public class GtkApplication : BaseApplication, IGtkApplication
 {
-    private Gtk.Application _app;
-
-    public GtkApplication()
-    {
-    }
+    private Application _app;
 
     public override Task InitializeAsync(CancellationToken cancellationToken)
     {
@@ -27,17 +24,14 @@ public class GtkApplication : BaseApplication, IGtkApplication
     {
         ApplicationStartup.IoCContainer.Build();
 
-        _app = Gtk.Application.New("com.bitcrafts.gtkapp", ApplicationFlags.DefaultFlags);
+        _app = Application.New("com.bitcrafts.gtkapp", ApplicationFlags.DefaultFlags);
         _app.OnActivate += (o, e) =>
         {
-            var window = ApplicationStartup.IoCContainer.Resolve<IMainWindowView>() as Window;
-            
-            if (window != null)
+            if (ApplicationStartup.IoCContainer.Resolve<IMainWindowView>() is Window window)
             {
-                window.OnDestroy += (oe, ee) => _app.Quit();
+                window.OnDestroy += WindowOnOnDestroy;
                 _app.AddWindow(window);
-                var view = window as IMainWindowView; 
-                if (view != null)
+                if (window is IMainWindowView view)
                 {
                     view.InitializeView();
                     view.ShowView();
@@ -54,5 +48,10 @@ public class GtkApplication : BaseApplication, IGtkApplication
         if (_app != null)
             _app.Quit();
         return Task.CompletedTask;
+    }
+
+    private void WindowOnOnDestroy(Widget sender, EventArgs args)
+    {
+        ShutdownAsync(CancellationToken.None).Wait();
     }
 }

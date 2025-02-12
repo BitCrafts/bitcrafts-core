@@ -8,10 +8,6 @@ namespace BitCrafts.Core.Applications;
 public class ApplicationStartup : IApplicationStartup
 {
     private IApplication _application;
-    public static IoCContainer IoCContainer { get; private set; }
-    public static IModuleManager ModuleManager { get; private set; }
-    public static IConfiguration Configuration { get; private set; }
-    public static ILogger Logger { get; private set; }
 
     private string[] _args;
 
@@ -30,10 +26,15 @@ public class ApplicationStartup : IApplicationStartup
         ModuleManager = new ModuleManager(IoCContainer, Configuration, Logger);
     }
 
+    public static IoCContainer IoCContainer { get; private set; }
+    public static IModuleManager ModuleManager { get; private set; }
+    public static IConfiguration Configuration { get; private set; }
+    public static ILogger Logger { get; private set; }
+
     public async Task InitializeAsync()
     {
         Log.Logger.Information("Initializing Application...");
-        ApplicationStartup.ModuleManager.LoadModules();
+        ModuleManager.LoadModules();
         _application = new GtkApplication();
         await _application.InitializeAsync(CancellationToken.None);
         Log.Logger.Information("Application Initialization Complete.");
@@ -41,7 +42,7 @@ public class ApplicationStartup : IApplicationStartup
         IoCContainer.RegisterInstance(Logger);
         var resolver = IoCContainer as IIoCResolver;
         IoCContainer.RegisterInstance(resolver);
-        ApplicationStartup.IoCContainer.Build();
+        IoCContainer.Build();
     }
 
     public async Task StartAsync()

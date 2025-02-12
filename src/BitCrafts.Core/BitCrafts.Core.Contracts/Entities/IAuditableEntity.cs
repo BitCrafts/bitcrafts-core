@@ -6,5 +6,4 @@ public interface IAuditableEntity
     DateTime UpdatedAt { get; set; }
     string CreatedBy { get; set; }
     string UpdatedBy { get; set; }
-
 }

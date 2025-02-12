@@ -9,10 +9,10 @@ namespace BitCrafts.Core;
 
 public class ModuleManager : IModuleManager
 {
-    private readonly IIoCRegister _ioCContainer;
     private readonly IConfiguration _configuration;
-    private readonly ILogger _logger;
+    private readonly IIoCRegister _ioCContainer;
     private readonly List<Assembly> _loadedAssemblies;
+    private readonly ILogger _logger;
 
     private readonly Dictionary<string,
         (Type ViewContract, Type ViewImplementation,
@@ -39,13 +39,10 @@ public class ModuleManager : IModuleManager
 
     public void LoadModules()
     {
-        string modulesPath = GetModulesPath();
+        var modulesPath = GetModulesPath();
         if (string.IsNullOrEmpty(modulesPath)) return;
 
-        foreach (var dll in Directory.GetFiles(modulesPath, "*.dll"))
-        {
-            LoadAssembly(dll);
-        } 
+        foreach (var dll in Directory.GetFiles(modulesPath, "*.dll")) LoadAssembly(dll);
     }
 
     private string GetModulesPath()
@@ -55,7 +52,7 @@ public class ModuleManager : IModuleManager
         {
             _logger.Warning("ModulesPath is not configured. No modules will be loaded.");
             return null;
-        } 
+        }
 
         return Path.IsPathRooted(modulesPath) ? modulesPath : Path.GetFullPath(modulesPath);
     }
@@ -92,7 +89,6 @@ public class ModuleManager : IModuleManager
                         (viewContract, viewImplementation,
                             presenterContract, presenterImplementation,
                             modelType)))
-                {
                     _logger.Warning(
                         $"Impossible d’enregistrer le module '{moduleInstance.Name}', " +
                         $"car il est déjà présent. " +
@@ -103,7 +99,6 @@ public class ModuleManager : IModuleManager
                         $"PresenterImplementation = {presenterImplementation?.FullName}, " +
                         $"ModelType = {modelType?.FullName}"
                     );
-                }
 
 
                 _logger.Information($"Module {moduleInstance.Name} of type {type.FullName} configured successfully.");
@@ -111,6 +106,13 @@ public class ModuleManager : IModuleManager
         }
     }
 
-    private bool IsValidClass(Type type) => type.IsClass && !type.IsAbstract;
-    private bool IsValidModule(Type type) => IsValidClass(type) && typeof(IModule).IsAssignableFrom(type);
+    private bool IsValidClass(Type type)
+    {
+        return type.IsClass && !type.IsAbstract;
+    }
+
+    private bool IsValidModule(Type type)
+    {
+        return IsValidClass(type) && typeof(IModule).IsAssignableFrom(type);
+    }
 }

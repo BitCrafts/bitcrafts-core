@@ -6,5 +6,4 @@ public interface ISoftDeletableEntity
     DateTime? DeletedAt { get; set; }
     string DeletedBy { get; set; }
     string DeletedReason { get; set; }
-
 }

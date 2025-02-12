@@ -58,6 +58,11 @@ public class IoCContainer : IIoCRegister, IIoCResolver
         _services.AddSingleton(service);
     }
 
+    public void Build()
+    {
+        _serviceProvider = _services.BuildServiceProvider();
+    }
+
     public TService Resolve<TService>()
     {
         if (_serviceProvider == null)
@@ -87,10 +92,5 @@ public class IoCContainer : IIoCRegister, IIoCResolver
             throw new Exception($"Le service {type.Name} n'existe pas dans le conteneur.");
 
         return (TService)instance;
-    }
-
-    public void Build()
-    {
-        _serviceProvider = _services.BuildServiceProvider();
     }
 }

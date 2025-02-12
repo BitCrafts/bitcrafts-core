@@ -1,4 +1,3 @@
-using BitCrafts.Core.Contracts.Applications.Views;
 using BitCrafts.Modules.Users.Contracts.Presenters;
 using BitCrafts.Modules.Users.Contracts.Services;
 using BitCrafts.Modules.Users.Contracts.Views;
@@ -9,7 +8,6 @@ namespace BitCrafts.Modules.Users.Presenters;
 public class UsersPresenter : IUsersPresenter
 {
     private readonly IUsersService _usersService;
-    private IUsersView _view;
     private int _selectedUserIndex;
 
     public UsersPresenter(IUsersService usersService)
@@ -17,32 +15,26 @@ public class UsersPresenter : IUsersPresenter
         _usersService = usersService;
     }
 
-    public IUsersView View => _view;
+    public IUsersView View { get; private set; }
 
     public void Initialize()
     {
-        _view.OnLoaded += (sender, e) => LoadUsers();
-        _view.UserAdded += (sender, e) => AddUser();
-        _view.UserRemoved += (sender, e) => { DeleteUser(_selectedUserIndex); };
-        _view.UserSelected += (sender, e) => { _selectedUserIndex = e; };
-    }
-
-    private void DeleteUser(int selectedUserIndex)
-    {
-        _usersService.DeleteUser(selectedUserIndex);
-        LoadUsers();
+        View.OnLoaded += (sender, e) => LoadUsers();
+        View.UserAdded += (sender, e) => AddUser();
+        View.UserRemoved += (sender, e) => { DeleteUser(_selectedUserIndex); };
+        View.UserSelected += (sender, e) => { _selectedUserIndex = e; };
     }
 
     public void SetView(IUsersView view)
     {
-        _view = view;
+        View = view;
         Initialize();
     }
 
     public void LoadUsers()
     {
         var users = _usersService.GetAllUsers();
-        _view.DisplayUsers(users);
+        View.DisplayUsers(users);
     }
 
 
@@ -57,6 +49,12 @@ public class UsersPresenter : IUsersPresenter
         };
 
         _usersService.AddUser(newUser);
+        LoadUsers();
+    }
+
+    private void DeleteUser(int selectedUserIndex)
+    {
+        _usersService.DeleteUser(selectedUserIndex);
         LoadUsers();
     }
 }

@@ -10,19 +10,33 @@ public abstract class BaseApplication : IApplication
         AppDomain.CurrentDomain.UnhandledException += CurrentDomainOnUnhandledException;
     }
 
+    public virtual async Task InitializeAsync(CancellationToken cancellationToken)
+    {
+        await Task.CompletedTask;
+    }
+
+    public abstract Task RunAsync();
+
+    public virtual async Task ShutdownAsync(CancellationToken cancellationToken)
+    {
+        await Task.CompletedTask;
+    }
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
     private void CurrentDomainOnUnhandledException(object sender, UnhandledExceptionEventArgs e)
     {
         try
         {
             if (e.ExceptionObject is Exception exception)
-            {
                 ApplicationStartup.Logger.Fatal(exception, "Une exception non gérée a été levée.");
-            }
             else
-            {
                 ApplicationStartup.Logger.Fatal(
                     "Une exception non gérée a été levée, mais l'objet d'exception n'est pas disponible.");
-            }
         }
         catch (Exception ex)
         {
@@ -49,18 +63,6 @@ public abstract class BaseApplication : IApplication
         }
     }
 
-    public virtual async Task InitializeAsync(CancellationToken cancellationToken)
-    {
-        await Task.CompletedTask;
-    }
-
-    public abstract Task RunAsync();
-
-    public virtual async Task ShutdownAsync(CancellationToken cancellationToken)
-    {
-        await Task.CompletedTask;
-    }
-
     protected virtual void Dispose(bool disposing)
     {
         if (disposing)
@@ -68,11 +70,5 @@ public abstract class BaseApplication : IApplication
             TaskScheduler.UnobservedTaskException -= TaskSchedulerOnUnobservedTaskException;
             AppDomain.CurrentDomain.UnhandledException -= CurrentDomainOnUnhandledException;
         }
-    }
-
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
     }
 }

@@ -1,15 +1,21 @@
 using BitCrafts.Core.Contracts.Applications.Views;
 using BitCrafts.Core.Presenters;
+using Gtk;
+using Gtk.Internal;
+using ApplicationWindow = Gtk.ApplicationWindow;
+using Builder = Gtk.Builder;
+using Label = Gtk.Label;
+using Notebook = Gtk.Notebook;
 
 namespace BitCrafts.Core.Views;
 
-public class MainWindowView : Gtk.ApplicationWindow, IMainWindowView
+public class MainWindowView : ApplicationWindow, IMainWindowView
 {
     private readonly IMainPresenter _presenter;
-    [Gtk.Connect] private readonly Gtk.Notebook mainNotebook;
+    [Connect] private readonly Notebook mainNotebook;
 
-    private MainWindowView(Gtk.Builder builder)
-        : base(new Gtk.Internal.ApplicationWindowHandle(builder.GetPointer("mainApplication"), false))
+    private MainWindowView(Builder builder)
+        : base(new ApplicationWindowHandle(builder.GetPointer("mainApplication"), false))
     {
         builder.Connect(this);
         DefaultWidth = 800;
@@ -17,7 +23,7 @@ public class MainWindowView : Gtk.ApplicationWindow, IMainWindowView
     }
 
     public MainWindowView(IMainPresenter presenter) :
-        this(new Gtk.Builder("MainApplication.glade"))
+        this(new Builder("MainApplication.glade"))
     {
         _presenter = presenter;
         _presenter.SetView(this);
@@ -28,7 +34,7 @@ public class MainWindowView : Gtk.ApplicationWindow, IMainWindowView
         var resolvedWidgets = _presenter.GetResolvedWidgets();
         foreach (var (moduleName, widget) in resolvedWidgets)
         {
-            var tabLabel = new Gtk.Label { Label_ = moduleName };
+            var tabLabel = new Label { Label_ = moduleName };
             mainNotebook.AppendPage(widget, tabLabel);
             if (widget is IView viewInstance)
             {
