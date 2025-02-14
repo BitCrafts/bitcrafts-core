@@ -1,57 +1,53 @@
-using System.Data;
 using BitCrafts.Core.Contracts;
 using BitCrafts.Core.Contracts.Applications;
-using Microsoft.Data.SqlClient;
-using Microsoft.Data.Sqlite;
-using Microsoft.Extensions.Configuration;
-using MySql.Data.MySqlClient;
-using Npgsql;
+using BitCrafts.Core.Extensions;
+using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 
 namespace BitCrafts.Core.Applications;
 
 public class ApplicationStartup : IApplicationStartup
 {
-    private IApplication _application; 
-    private string[] _args;
-
-    public ApplicationStartup(string[] args)
-    {
-        _args = args ?? Array.Empty<string>();
-        IoCContainer = new IoCContainer();
-        Configuration = new ConfigurationBuilder()
-            .AddJsonFile("appsettings.json", true, true)
-            .AddEnvironmentVariables()
-            .Build();
-        var logger = new LoggerConfiguration()
-            .ReadFrom.Configuration(Configuration)
-            .CreateLogger();
-        Log.Logger = Logger = logger;
-        ModuleManager = new ModuleManager(IoCContainer, Configuration, Logger);
-    }
-
-    public static IoCContainer IoCContainer { get; private set; }
+    public static IServiceProvider ServiceProvider { get; private set; }
+    public static IServiceCollection Services { get; private set; }
     public static IModuleManager ModuleManager { get; private set; }
-    public static IConfiguration Configuration { get; private set; }
-    public static ILogger Logger { get; private set; }
+    public static IApplication Application { get; private set; }
 
-    public async Task InitializeAsync()
+
+    public ApplicationStartup()
     {
-        Log.Logger.Information("Initializing Application...");
-        ModuleManager.LoadModules();
-        _application = new GtkApplication();
-        await _application.InitializeAsync(CancellationToken.None);
-        Log.Logger.Information("Application Initialization Complete.");
-        IoCContainer.RegisterInstance(ModuleManager);
-        IoCContainer.RegisterInstance(Logger);
-        var resolver = IoCContainer as IIoCResolver;
-        IoCContainer.RegisterInstance(resolver);
-        IoCContainer.Build();
+        ServiceProvider = null;
+        Services = new ServiceCollection();
+        ModuleManager = new ModuleManager();
+        Application = new GtkApplication();
+        Services.AddSingleton<IModuleManager>(ModuleManager);
+        Services.AddSingleton<IApplication>(Application);
+        Services.AddBitCraftsCore();
+        CreateModulesDirectory();
+    } 
+
+    private void CreateModulesDirectory()
+    {
+        var modulesPath = Path.Combine(Directory.GetCurrentDirectory(), "Modules");
+        if (!Directory.Exists(modulesPath))
+            Directory.CreateDirectory(Path.GetFullPath(modulesPath));
     }
 
-    public async Task StartAsync()
+    internal static void BuildServiceProvider()
     {
-        Log.Logger.Information("Starting Application...");
-        await _application.RunAsync();
+        ServiceProvider = Services.BuildServiceProvider();
+    }
+
+    public void Start()
+    {
+        Log.Logger.Information("Starting Application..."); 
+        ModuleManager.LoadModules(Services);
+        Application.Run();
+    }
+
+    public void Dispose()
+    {
+        Log.Logger.Information("Disposing Application...");
+        Application?.Dispose();
     }
 }

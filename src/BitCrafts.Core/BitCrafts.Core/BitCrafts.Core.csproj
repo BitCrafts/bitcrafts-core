@@ -30,6 +30,7 @@
         <PackageReference Include="Serilog.Enrichers.Process" Version="3.0.0"/>
         <PackageReference Include="Serilog.Enrichers.Sensitive" Version="1.7.3"/>
         <PackageReference Include="Serilog.Enrichers.Thread" Version="4.0.0"/>
+        <PackageReference Include="Serilog.Extensions.Logging" Version="9.0.0" />
         <PackageReference Include="Serilog.Settings.Configuration" Version="9.0.0"/>
         <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0"/>
         <PackageReference Include="Serilog.Sinks.Debug" Version="3.0.0"/>
@@ -41,6 +42,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <Folder Include="Entities\" />
         <Folder Include="Resources\"/>
     </ItemGroup>
 

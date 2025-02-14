@@ -2,17 +2,13 @@ using System.Reflection;
 using System.Runtime.Loader;
 using BitCrafts.Core.Contracts;
 using BitCrafts.Core.Contracts.Modules;
-using Microsoft.Extensions.Configuration;
-using Serilog;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace BitCrafts.Core;
 
-public class ModuleManager : IModuleManager
+public sealed class ModuleManager : IModuleManager
 {
-    private readonly IConfiguration _configuration;
-    private readonly IIoCRegister _ioCContainer;
-    private readonly List<Assembly> _loadedAssemblies;
-    private readonly ILogger _logger;
+    private List<Assembly> _loadedAssemblies;
 
     private readonly Dictionary<string,
         (Type ViewContract, Type ViewImplementation,
@@ -21,11 +17,8 @@ public class ModuleManager : IModuleManager
         = new();
 
 
-    public ModuleManager(IIoCRegister ioCContainer, IConfiguration configuration, ILogger logger)
+    public ModuleManager()
     {
-        _ioCContainer = ioCContainer;
-        _configuration = configuration;
-        _logger = logger;
         _loadedAssemblies = new List<Assembly>();
     }
 
@@ -37,50 +30,41 @@ public class ModuleManager : IModuleManager
         return _moduleTypeRegistry;
     }
 
-    public void LoadModules()
+    public void LoadModules(IServiceCollection services)
     {
         var modulesPath = GetModulesPath();
         if (string.IsNullOrEmpty(modulesPath)) return;
 
-        foreach (var dll in Directory.GetFiles(modulesPath, "*.dll")) LoadAssembly(dll);
+        foreach (var dll in Directory.GetFiles(modulesPath, "*.dll"))
+            LoadAssembly(dll, services);
     }
 
     private string GetModulesPath()
     {
-        var modulesPath = _configuration["ModulesPath"];
+        var modulesPath = Path.Combine(Directory.GetCurrentDirectory(), "Modules");
         if (string.IsNullOrEmpty(modulesPath))
         {
-            _logger.Warning("ModulesPath is not configured. No modules will be loaded.");
             return null;
         }
 
         return Path.IsPathRooted(modulesPath) ? modulesPath : Path.GetFullPath(modulesPath);
     }
 
-    private void LoadAssembly(string dll)
+    private void LoadAssembly(string dll, IServiceCollection services)
     {
-        try
-        {
-            var assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(dll);
-            _loadedAssemblies.Add(assembly);
-            RegisterModules(assembly);
-            _logger.Information($"Successfully loaded assembly: {assembly.FullName}");
-        }
-        catch (Exception ex)
-        {
-            _logger.Warning($"Failed to load assembly {dll}: {ex.Message}");
-        }
+        var assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(dll);
+        _loadedAssemblies.Add(assembly);
+        RegisterModules(assembly, services);
     }
 
-    private void RegisterModules(Assembly assembly)
+    private void RegisterModules(Assembly assembly, IServiceCollection services)
     {
         var moduleTypes = assembly.GetTypes().Where(IsValidModule);
         foreach (var type in moduleTypes)
         {
-            _logger.Information($"Found module: {type.FullName}");
             if (Activator.CreateInstance(type) is IModule moduleInstance)
             {
-                moduleInstance.RegisterServices(_ioCContainer);
+                moduleInstance.RegisterServices(services);
                 var (viewContract, viewImplementation) = moduleInstance.GetViewType();
                 var (presenterContract, presenterImplementation) = moduleInstance.GetPresenterType();
                 var modelType = moduleInstance.GetModelType();
@@ -89,19 +73,10 @@ public class ModuleManager : IModuleManager
                         (viewContract, viewImplementation,
                             presenterContract, presenterImplementation,
                             modelType)))
-                    _logger.Warning(
-                        $"Impossible d’enregistrer le module '{moduleInstance.Name}', " +
-                        $"car il est déjà présent. " +
-                        $"Types détectés : " +
-                        $"ViewContract = {viewContract?.FullName}, " +
-                        $"ViewImplementation = {viewImplementation?.FullName}, " +
-                        $"PresenterContract = {presenterContract?.FullName}, " +
-                        $"PresenterImplementation = {presenterImplementation?.FullName}, " +
-                        $"ModelType = {modelType?.FullName}"
-                    );
-
-
-                _logger.Information($"Module {moduleInstance.Name} of type {type.FullName} configured successfully.");
+                {
+                    throw new InvalidOperationException(
+                        $"Module {moduleInstance.Name} of type {type.FullName} already registered.");
+                }
             }
         }
     }
@@ -114,5 +89,11 @@ public class ModuleManager : IModuleManager
     private bool IsValidModule(Type type)
     {
         return IsValidClass(type) && typeof(IModule).IsAssignableFrom(type);
+    }
+
+    public void Dispose()
+    {
+        _loadedAssemblies.Clear();
+        _loadedAssemblies = null;
     }
 }

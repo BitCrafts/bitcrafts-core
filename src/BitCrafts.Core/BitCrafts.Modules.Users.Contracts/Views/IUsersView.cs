@@ -1,4 +1,4 @@
-using BitCrafts.Core.Contracts.Applications.Views;
+using BitCrafts.Core.Contracts.Views;
 using BitCrafts.Modules.Users.Contracts.Models;
 
 namespace BitCrafts.Modules.Users.Contracts.Views;

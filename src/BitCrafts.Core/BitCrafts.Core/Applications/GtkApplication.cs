@@ -1,119 +1,93 @@
-using System.Data;
 using BitCrafts.Core.Contracts.Applications;
 using BitCrafts.Core.Presenters;
 using BitCrafts.Core.Views;
 using Gio;
 using Gtk;
-using Microsoft.Data.SqlClient;
-using Microsoft.Data.Sqlite;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using MySql.Data.MySqlClient;
-using Npgsql;
-using Application = Gtk.Application;
-using Task = System.Threading.Tasks.Task;
+using Serilog;
 
 namespace BitCrafts.Core.Applications;
 
-public class GtkApplication : BaseApplication, IGtkApplication
+public class GtkApplication : IApplication
 {
-    private Application _app;
+    private Gtk.Application _app;
 
-    public override Task InitializeAsync(CancellationToken cancellationToken)
+    public GtkApplication()
     {
-        ApplicationStartup.IoCContainer.Register<IMainWindowView, MainWindowView>(ServiceLifetime.Singleton);
-        ApplicationStartup.IoCContainer.Register<IMainPresenter, MainPresenter>(ServiceLifetime.Singleton);
-        return Task.CompletedTask;
+        TaskScheduler.UnobservedTaskException += TaskSchedulerOnUnobservedTaskException;
+        AppDomain.CurrentDomain.UnhandledException += CurrentDomainOnUnhandledException;
     }
 
-    public override async Task RunAsync()
+    public void Run()
     {
-        SetupDatabase();
-        ApplicationStartup.IoCContainer.Build();
+        ApplicationStartup.BuildServiceProvider();
         RunApp();
-        await Task.FromResult(0);
     }
 
     private void RunApp()
     {
-        var appId = ApplicationStartup.Configuration["ApplicationSettings:Id"];
-        _app = Application.New(appId, ApplicationFlags.DefaultFlags);
+        var config = ApplicationStartup.ServiceProvider.GetRequiredService<IConfiguration>();
+        var appId = config["ApplicationSettings:Id"];
+        _app = Gtk.Application.New(appId, ApplicationFlags.DefaultFlags);
         _app.OnActivate += (o, e) =>
         {
-            if (ApplicationStartup.IoCContainer.Resolve<IMainWindowView>() is Window window)
+            var mainPresenter = ApplicationStartup.ServiceProvider.GetRequiredService<IMainPresenter>();
+            mainPresenter.Initialize();
+            if (mainPresenter.View is IMainView mainView)
             {
-                window.Title = ApplicationStartup.Configuration["ApplicationSettings:Name"];
-                window.OnDestroy += WindowOnDestroy;
-                _app.AddWindow(window);
-                if (window is IMainWindowView view)
+                var window = mainView as Gtk.ApplicationWindow;
+                if (window != null)
                 {
-                    view.InitializeView();
-                    view.ShowView();
+                    window.Title = config["ApplicationSettings:Name"];
+                    window.OnDestroy += (o1, e1) => Dispose();
+                    _app.AddWindow(window);
+                    window.Show();
                 }
             }
         };
         _app.Run(0, null);
     }
 
-    private void SetupDatabase()
+    public void Dispose()
     {
-        var databaseProvider = ApplicationStartup.Configuration["DatabaseSettings:Provider"];
-        var server = ApplicationStartup.Configuration["DatabaseSettings:Server"];
-        var database = ApplicationStartup.Configuration["DatabaseSettings:Database"];
-        var user = ApplicationStartup.Configuration["DatabaseSettings:User"];
-        var password = ApplicationStartup.Configuration["DatabaseSettings:Password"];
-
-        var connection = GetConnection(databaseProvider, server, database, user, password);
-        ApplicationStartup.IoCContainer.RegisterInstance<IDbConnection>(connection);
+        TaskScheduler.UnobservedTaskException -= TaskSchedulerOnUnobservedTaskException;
+        AppDomain.CurrentDomain.UnhandledException -= CurrentDomainOnUnhandledException;
+        GC.SuppressFinalize(this);
     }
 
-    private IDbConnection GetConnection(string databaseProvider, string server, string database, string user,
-        string password)
+    private void CurrentDomainOnUnhandledException(object sender, UnhandledExceptionEventArgs e)
     {
-        switch (databaseProvider?.ToLowerInvariant())
+        try
         {
-            case "sqlite":
-                ApplicationStartup.Logger.Information("Using Sqlite database.");
-                return new SqliteConnection($"Data Source={database}");
-
-            case "sqlserver":
-                ApplicationStartup.Logger.Information("Using SqlServer database.");
-                return new SqlConnection(
-                    $"Server={server};" +
-                    $"Database={database};" +
-                    $"User Id={user};" +
-                    $"Password={password};"
-                );
-            case "postgresql":
-                ApplicationStartup.Logger.Information("Using PostgreSql database.");
-                return new NpgsqlConnection(
-                    $"Host={server};" +
-                    $"Database={database};" +
-                    $"Username={user};" +
-                    $"Password={password};"
-                );
-            case "mariadb":
-            case "mysql":
-                ApplicationStartup.Logger.Information("Using MariaDB/MySQL database.");
-                return new MySqlConnection(
-                    $"Server={server};" +
-                    $"Database={database};" +
-                    $"User={user};" +
-                    $"Password={password};"
-                );
-            default:
-                throw new NotSupportedException($"Provider non géré : {databaseProvider}");
+            if (e.ExceptionObject is Exception exception)
+                Log.Logger.Fatal(exception, "Une exception non gérée a été levée.");
+            else
+                Log.Logger.Fatal(
+                    "Une exception non gérée a été levée, mais l'objet d'exception n'est pas disponible.");
+        }
+        catch (Exception ex)
+        {
+            Log.Logger.Fatal(ex, "Erreur lors du traitement d'une exception non gérée.");
+        }
+        finally
+        {
+            if (e.IsTerminating)
+            {
+                //TODO: add code to properly terminate the application.
+            }
         }
     }
 
-    public override Task ShutdownAsync(CancellationToken cancellationToken)
+    private void TaskSchedulerOnUnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
     {
-        if (_app != null)
-            _app.Quit();
-        return Task.CompletedTask;
-    }
-
-    private void WindowOnDestroy(Widget sender, EventArgs args)
-    {
-        ShutdownAsync(CancellationToken.None).Wait();
+        try
+        {
+            Log.Logger.Fatal(e.Exception, "Une exception non observée a été levée.");
+        }
+        finally
+        {
+            e.SetObserved();
+        }
     }
 }

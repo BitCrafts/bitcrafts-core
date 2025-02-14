@@ -1,8 +1,10 @@
+using Microsoft.Extensions.DependencyInjection;
+
 namespace BitCrafts.Core.Contracts;
 
-public interface IModuleManager
+public interface IModuleManager : IDisposable
 {
-    void LoadModules();
+    void LoadModules(IServiceCollection services);
 
     IReadOnlyDictionary<string,
         (Type ViewContract, Type ViewImplementation,

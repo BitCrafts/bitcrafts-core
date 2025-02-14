@@ -1,5 +1,4 @@
-﻿using BitCrafts.Core.Contracts;
-using BitCrafts.Core.Contracts.Modules;
+﻿using BitCrafts.Core.Contracts.Modules;
 using BitCrafts.Modules.Users.Contracts.Models;
 using BitCrafts.Modules.Users.Contracts.Presenters;
 using BitCrafts.Modules.Users.Contracts.Repositories;
@@ -18,13 +17,13 @@ public class UsersModule : IModule
 {
     public string Name => "Users";
 
-    public void RegisterServices(IIoCRegister ioCContainer)
+    public void RegisterServices(IServiceCollection services)
     {
-        ioCContainer.Register<IUsersView, UsersView>(ServiceLifetime.Transient);
-        ioCContainer.Register<IUsersPresenter, UsersPresenter>(ServiceLifetime.Transient);
-        ioCContainer.Register<IUsersPresenterModel, UsersPresenterModel>(ServiceLifetime.Transient);
-        ioCContainer.Register<IUsersService, UsersService>(ServiceLifetime.Transient);
-        ioCContainer.Register<IUsersRepository, UsersRepository>(ServiceLifetime.Transient);
+        services.AddTransient<IUsersView, UsersView>();
+        services.AddTransient<IUsersPresenter, UsersPresenter>();
+        services.AddTransient<IUsersPresenterModel, UsersPresenterModel>();
+        services.AddTransient<IUsersService, UsersService>();
+        services.AddTransient<IUsersRepository, UsersRepository>();
     }
 
     public (Type viewContract, Type viewImplementation) GetViewType()

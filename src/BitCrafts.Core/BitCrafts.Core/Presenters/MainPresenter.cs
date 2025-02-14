@@ -1,44 +1,36 @@
 using BitCrafts.Core.Applications;
 using BitCrafts.Core.Contracts;
-using BitCrafts.Core.Contracts.Applications.Views;
+using BitCrafts.Core.Contracts.Views;
 using BitCrafts.Core.Views;
 using Gtk;
-using Serilog;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace BitCrafts.Core.Presenters;
 
 public class MainPresenter : IMainPresenter
 {
-    private readonly ILogger _logger;
+    private readonly ILogger<MainPresenter> _logger;
     private readonly IModuleManager _moduleManager;
     private readonly List<(string moduleName, Widget widget)> _moduleWidgets;
-    private readonly IIoCResolver _resolver;
+    public IMainView View { get; private set; }
 
-    public MainPresenter()
+    public MainPresenter(IMainView mainView, ILogger<MainPresenter> logger, IModuleManager moduleManager)
     {
-        _moduleManager = ApplicationStartup.ModuleManager;
-        _logger = ApplicationStartup.Logger;
-        _resolver = ApplicationStartup.IoCContainer;
+        View = mainView;
+        _logger = logger;
+        _moduleManager = moduleManager;
         _moduleWidgets = new List<(string moduleName, Widget widget)>();
     }
-
-    public IMainWindowView View { get; private set; }
 
     public List<(string moduleName, Widget widget)> GetResolvedWidgets()
     {
         return _moduleWidgets;
     }
 
-
     public void Initialize()
     {
         LoadModules();
-    }
-
-    public void SetView(IMainWindowView view)
-    {
-        View = view;
-        Initialize();
     }
 
     private void LoadModules()
@@ -48,7 +40,7 @@ public class MainPresenter : IMainPresenter
                      modelType)) in modules)
             try
             {
-                var widgetInstance = _resolver.Resolve(viewContract) as Widget;
+                var widgetInstance = ApplicationStartup.ServiceProvider.GetRequiredService(viewContract) as Widget;
                 if (widgetInstance != null)
                 {
                     var viewInstance = widgetInstance as IView;
@@ -56,17 +48,17 @@ public class MainPresenter : IMainPresenter
                 }
                 else
                 {
-                    _logger.Warning($"La vue du module '{moduleName}' n’hérite pas de Widget.");
+                    _logger.LogWarning($"La vue du module '{moduleName}' n’hérite pas de Widget.");
                 }
             }
             catch (Exception ex)
             {
-                _logger.Error($"Impossible d’instancier la vue du module '{moduleName}': {ex.Message}");
+                _logger.LogError($"Impossible d’instancier la vue du module '{moduleName}': {ex.Message}");
             }
     }
 
     public void Dispose()
     {
-        // TODO release managed resources here
+        View?.Dispose();
     }
 }

@@ -1,7 +1,6 @@
 namespace BitCrafts.Core.Contracts.Applications;
 
-public interface IApplicationStartup
+public interface IApplicationStartup : IDisposable
 {
-    Task InitializeAsync();
-    Task StartAsync();
+    void Start();
 }

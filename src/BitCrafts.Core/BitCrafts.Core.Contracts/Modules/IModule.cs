@@ -1,9 +1,11 @@
+using Microsoft.Extensions.DependencyInjection;
+
 namespace BitCrafts.Core.Contracts.Modules;
 
 public interface IModule
 {
     string Name { get; }
-    void RegisterServices(IIoCRegister ioCContainer);
+    void RegisterServices(IServiceCollection services);
 
     (Type viewContract, Type viewImplementation) GetViewType();
 
