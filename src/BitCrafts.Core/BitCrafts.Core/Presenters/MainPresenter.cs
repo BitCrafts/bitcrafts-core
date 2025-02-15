@@ -1,36 +1,43 @@
+using Avalonia.Controls;
 using BitCrafts.Core.Applications;
 using BitCrafts.Core.Contracts;
-using BitCrafts.Core.Contracts.Views;
+using BitCrafts.Core.Contracts.Presenters;
 using BitCrafts.Core.Views;
-using Gtk;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace BitCrafts.Core.Presenters;
 
-public class MainPresenter : IMainPresenter
+public sealed class MainPresenter : BasePresenter<IMainView, IMainPresenterModel>, IMainPresenter
 {
     private readonly ILogger<MainPresenter> _logger;
     private readonly IModuleManager _moduleManager;
-    private readonly List<(string moduleName, Widget widget)> _moduleWidgets;
-    public IMainView View { get; private set; }
 
-    public MainPresenter(IMainView mainView, ILogger<MainPresenter> logger, IModuleManager moduleManager)
+    public MainPresenter(IMainView mainView, IMainPresenterModel model, ILogger<MainPresenter> logger,
+        IModuleManager moduleManager)
+        : base(mainView, model)
     {
-        View = mainView;
         _logger = logger;
         _moduleManager = moduleManager;
-        _moduleWidgets = new List<(string moduleName, Widget widget)>();
     }
 
-    public List<(string moduleName, Widget widget)> GetResolvedWidgets()
-    {
-        return _moduleWidgets;
-    }
-
-    public void Initialize()
+    public void InitializeModules()
     {
         LoadModules();
+        View.InitializeModules();
+        _logger.LogInformation("Modules initialized.");
+    }
+
+    public override void OnViewLoaded()
+    {
+        _logger.LogInformation("MainPresenter.OnViewLoaded");
+        InitializeModules();
+    }
+
+    public override void OnViewUnloaded()
+    {
+        _logger.LogInformation("MainPresenter.OnViewUnloaded");
     }
 
     private void LoadModules()
@@ -40,16 +47,12 @@ public class MainPresenter : IMainPresenter
                      modelType)) in modules)
             try
             {
-                var widgetInstance = ApplicationStartup.ServiceProvider.GetRequiredService(viewContract) as Widget;
+                var widgetInstance =
+                    ApplicationStartup.ServiceProvider.GetRequiredService(viewContract) as ContentControl;
                 if (widgetInstance != null)
-                {
-                    var viewInstance = widgetInstance as IView;
-                    _moduleWidgets.Add((moduleName, widgetInstance));
-                }
+                    View.Model.Widgets.Add((moduleName, widgetInstance));
                 else
-                {
                     _logger.LogWarning($"La vue du module '{moduleName}' n’hérite pas de Widget.");
-                }
             }
             catch (Exception ex)
             {
@@ -57,8 +60,9 @@ public class MainPresenter : IMainPresenter
             }
     }
 
-    public void Dispose()
+    protected override void Dispose(bool disposing)
     {
-        View?.Dispose();
+        base.Dispose(disposing);
+        Log.Logger.Information("MainPresenter disposed.");
     }
 }

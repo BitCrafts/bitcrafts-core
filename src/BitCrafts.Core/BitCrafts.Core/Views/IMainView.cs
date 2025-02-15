@@ -1,9 +1,9 @@
 using BitCrafts.Core.Contracts.Views;
-using Gtk;
+using BitCrafts.Core.Presenters;
 
 namespace BitCrafts.Core.Views;
 
-public interface IMainView : IView
+public interface IMainView : IView<IMainPresenterModel>
 {
-    void InitializeModules(List<(string moduleName, Widget widget)> modulesWidgets);
+    void InitializeModules();
 }

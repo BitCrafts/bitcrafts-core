@@ -1,8 +1,9 @@
+using BitCrafts.Core.Contracts.Entities;
+
 namespace BitCrafts.GestionCommerciale.Modules.Clients.Contracts.Entities;
 
-public interface IClient
+public interface IClient : IEntity<int>
 {
-    int Id { get; set; }
     string Nom { get; set; }
     string Adresse { get; set; }
     string Telephone { get; set; }

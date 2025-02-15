@@ -7,5 +7,5 @@ public class Produit
     public string Description { get; set; }
     public double Prix { get; set; }
     public int QuantiteEnStock { get; set; }
-    public int CategorieId { get; set; } 
+    public int CategorieId { get; set; }
 }

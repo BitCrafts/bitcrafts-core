@@ -1,53 +1,70 @@
-using BitCrafts.Core.Contracts.Views; 
-using Builder = Gtk.Builder;
-using Label = Gtk.Label;
-using Notebook = Gtk.Notebook;
-using Widget = Gtk.Widget;
+using Avalonia.Controls;
+using Avalonia.Interactivity;
+using BitCrafts.Core.Presenters;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+
+// ReSharper disable InconsistentNaming
+#pragma warning disable CS0649 // Field is never assigned to, and will always have its default value
 
 namespace BitCrafts.Core.Views;
 
-public sealed class MainView : Gtk.ApplicationWindow, IMainView
+public partial class MainView : Window, IMainView
 {
-    [Gtk.Connect] private readonly Notebook mainNotebook;
+    private readonly IConfiguration _config;
+    private readonly ILogger<MainView> _logger;
 
-    private MainView(Builder builder)
-        : base(new Gtk.Internal.ApplicationWindowHandle(builder.GetPointer("mainApplication"), false))
+    public MainView(IConfiguration config, ILogger<MainView> logger)
     {
-        builder.Connect(this);
-        DefaultWidth = 800;
-        DefaultHeight = 640;
-        base.OnShow += OnOnShow;
-        base.OnDestroy += OnOnDestroy;
+        _config = config;
+        _logger = logger;
+        InitializeComponent();
     }
 
-    private void OnOnDestroy(Widget sender, EventArgs args)
+    public void InitializeModules()
     {
-        Unloaded?.Invoke(this, EventArgs.Empty);
-    }
-
-    private void OnOnShow(Widget sender, EventArgs args)
-    {
-        Loaded?.Invoke(this, EventArgs.Empty);
-    }
-
-    public MainView() :
-        this(new Builder("MainApplication.glade"))
-    {
-    }
-
-    public void InitializeModules(List<(string moduleName, Widget widget)> modulesWidgets)
-    {
-        foreach (var (moduleName, widget) in modulesWidgets)
+        foreach (var (moduleName, widget) in Model.Widgets)
         {
-            var tabLabel = new Label { Label_ = moduleName };
-            mainNotebook.AppendPage(widget, tabLabel);
-            if (widget is IView viewInstance)
+            // Créer un nouvel onglet
+            var tabItem = new TabItem
             {
-                viewInstance.Show();
-            }
-        }
-    } 
+                Header = moduleName,
+                Content = widget
+            };
 
-    public event EventHandler<EventArgs> Loaded;
-    public event EventHandler<EventArgs> Unloaded;
+            var items = new List<TabItem>();
+            items.Add(tabItem);
+            ModulesTabControl.ItemsSource = items;
+        }
+    }
+
+    public IMainPresenterModel Model { get; set; }
+    public event EventHandler OnViewLoaded;
+    public event EventHandler OnViewClosing;
+
+    public void ShowView()
+    {
+        Show();
+    }
+
+    public void HideView()
+    {
+        Hide();
+    }
+
+    public void Dispose()
+    {
+    }
+
+    protected override void OnLoaded(RoutedEventArgs e)
+    {
+        OnViewLoaded?.Invoke(this, EventArgs.Empty);
+        base.OnLoaded(e);
+    }
+
+    protected override void OnUnloaded(RoutedEventArgs e)
+    {
+        OnViewClosing?.Invoke(this, EventArgs.Empty);
+        base.OnUnloaded(e);
+    }
 }

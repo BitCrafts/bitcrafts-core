@@ -26,6 +26,12 @@ public class DbConnectionFactory : IDbConnectionFactory
         return connection;
     }
 
+    public bool IsSqliteProvider { get; private set; }
+    public bool IsSqlServerProvider { get; private set; }
+    public bool IsMySqlProvider { get; private set; }
+    public bool IsPostgreSqlProvider { get; private set; }
+
+
     private IDbConnection GetConnection()
     {
         var databaseProvider = _configuration["DatabaseSettings:Provider"];
@@ -37,10 +43,12 @@ public class DbConnectionFactory : IDbConnectionFactory
         switch (databaseProvider?.ToLowerInvariant())
         {
             case "sqlite":
+                IsSqliteProvider = true;
                 _logger.LogInformation("Using Sqlite database.");
                 return new SqliteConnection($"Data Source={database}");
 
             case "sqlserver":
+                IsSqlServerProvider = true;
                 _logger.LogInformation("Using SqlServer database.");
                 return new SqlConnection(
                     $"Server={server};" +
@@ -49,6 +57,7 @@ public class DbConnectionFactory : IDbConnectionFactory
                     $"Password={password};"
                 );
             case "postgresql":
+                IsPostgreSqlProvider = true;
                 _logger.LogInformation("Using PostgreSql database.");
                 return new NpgsqlConnection(
                     $"Host={server};" +
@@ -58,6 +67,7 @@ public class DbConnectionFactory : IDbConnectionFactory
                 );
             case "mariadb":
             case "mysql":
+                IsMySqlProvider = true;
                 _logger.LogInformation("Using MariaDB/MySQL database.");
                 return new MySqlConnection(
                     $"Server={server};" +
@@ -68,11 +78,5 @@ public class DbConnectionFactory : IDbConnectionFactory
             default:
                 throw new NotSupportedException($"Provider non géré : {databaseProvider}");
         }
-    }
-
-    private void SetupDatabase()
-    {
-        /*var connection =
-        ApplicationStartup.IoCContainer.RegisterInstance<IDbConnection>(connection);*/
     }
 }

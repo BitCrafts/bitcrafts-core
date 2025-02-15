@@ -11,19 +11,19 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
-        <PackageReference Include="MSTest.TestAdapter" Version="3.8.0" />
-        <PackageReference Include="MSTest.TestFramework" Version="3.8.0" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0"/>
+        <PackageReference Include="MSTest.TestAdapter" Version="3.8.0"/>
+        <PackageReference Include="MSTest.TestFramework" Version="3.8.0"/>
         <PackageReference Include="coverlet.collector" Version="6.0.4">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\..\..\src\BitCrafts.Core\BitCrafts.Core.Contracts\BitCrafts.Core.Contracts.csproj" />
-      <ProjectReference Include="..\..\BitCrafts.GestionCommerciale.Modules.Commandes.Contracts\BitCrafts.GestionCommerciale.Modules.Commandes.Contracts.csproj" />
-      <ProjectReference Include="..\..\BitCrafts.GestionCommerciale.Modules.Commandes\BitCrafts.GestionCommerciale.Modules.Commandes.csproj" />
+        <ProjectReference Include="..\..\..\..\src\BitCrafts.Core\BitCrafts.Core.Contracts\BitCrafts.Core.Contracts.csproj"/>
+        <ProjectReference Include="..\..\BitCrafts.GestionCommerciale.Modules.Commandes.Contracts\BitCrafts.GestionCommerciale.Modules.Commandes.Contracts.csproj"/>
+        <ProjectReference Include="..\..\BitCrafts.GestionCommerciale.Modules.Commandes\BitCrafts.GestionCommerciale.Modules.Commandes.csproj"/>
     </ItemGroup>
 
 </Project>

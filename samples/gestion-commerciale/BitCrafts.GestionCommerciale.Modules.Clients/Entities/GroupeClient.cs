@@ -1,7 +1,9 @@
+using BitCrafts.Core.Contracts.Entities;
+using BitCrafts.GestionCommerciale.Modules.Clients.Contracts.Entities;
+
 namespace BitCrafts.GestionCommerciale.Modules.Clients.Entities;
 
-public class GroupeClient
+public class GroupeClient : BaseEntity<int>, IGroupeClient
 {
-    public int Id { get; set; }
     public string Nom { get; set; }
 }

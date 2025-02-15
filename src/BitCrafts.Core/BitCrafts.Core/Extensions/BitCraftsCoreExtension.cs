@@ -31,6 +31,7 @@ public static class BitCraftsCoreExtension
 
         services.AddSingleton<IMainView, MainView>();
         services.AddSingleton<IMainPresenter, MainPresenter>();
+        services.AddSingleton<IMainPresenterModel, MainPresenterModel>();
         services.AddSingleton<IDbConnectionFactory, DbConnectionFactory>();
     }
 }

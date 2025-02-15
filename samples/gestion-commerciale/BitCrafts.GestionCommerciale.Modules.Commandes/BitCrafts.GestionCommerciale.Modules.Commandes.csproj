@@ -3,16 +3,15 @@
     <PropertyGroup>
         <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
+        <Nullable>disable</Nullable>
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Dapper" Version="2.1.66" />
-      <PackageReference Include="GirCore.Gtk-4.0" Version="0.6.2" />
+        <PackageReference Include="Dapper" Version="2.1.66"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\..\src\BitCrafts.Core\BitCrafts.Core.Contracts\BitCrafts.Core.Contracts.csproj" />
+        <ProjectReference Include="..\..\..\src\BitCrafts.Core\BitCrafts.Core.Contracts\BitCrafts.Core.Contracts.csproj"/>
     </ItemGroup>
 
 </Project>

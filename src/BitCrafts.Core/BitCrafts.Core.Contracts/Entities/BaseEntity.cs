@@ -1,8 +1,8 @@
-using System.ComponentModel.DataAnnotations;
+using BitCrafts.Core.Contracts.Attributes;
 
 namespace BitCrafts.Core.Contracts.Entities;
 
 public abstract class BaseEntity<T> : IEntity<T>
 {
-    [Key] public T Id { get; set; }
+    [PrimaryKey(true)] public T Id { get; set; }
 }

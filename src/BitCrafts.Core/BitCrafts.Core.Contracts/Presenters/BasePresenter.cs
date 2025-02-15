@@ -2,45 +2,56 @@ using BitCrafts.Core.Contracts.Views;
 
 namespace BitCrafts.Core.Contracts.Presenters;
 
-public abstract class BasePresenter<TView> : IPresenter<TView>
-    where TView : IView
+public abstract class BasePresenter<TView, TModel> : IPresenter<TView>
+    where TView : class, IView<TModel>
 {
-    public TView View { get; private set; }
-
-    protected BasePresenter(TView view)
+    protected BasePresenter(TView view, TModel model)
     {
-        View = view ?? throw new ArgumentNullException(nameof(view));
+        View = view;
+        View.Model = model;
+        View.OnViewLoaded += ViewOnLoaded;
+        View.OnViewClosing += ViewOnUnloaded;
     }
 
-    public virtual void Initialize()
+    public TView View { get; protected set; }
+
+    public T GetNativeWidget<T>() where T : class
     {
-        // Logique de base d'initialisation (peut-être écrasée dans les implémentations concrètes)
+        return View as T;
     }
 
-    public virtual void OnViewLoaded()
+    public void ShowView()
     {
-        // Logique à exécuter quand la Vue est chargée
-    }
-
-    public virtual void OnViewUnloaded()
-    {
-        // Logique à exécuter quand la Vue est déchargée
-    }
-
-    protected virtual void Dispose(bool disposing)
-    {
-        if (disposing)
-        {
-            if (View is IDisposable disposableView)
-            {
-                disposableView.Dispose();
-            }
-        }
+        View.ShowView();
     }
 
     public void Dispose()
     {
         Dispose(true);
         GC.SuppressFinalize(this);
+    }
+
+    private void ViewOnUnloaded(object sender, EventArgs e)
+    {
+        OnViewUnloaded();
+    }
+
+    private void ViewOnLoaded(object sender, EventArgs e)
+    {
+        OnViewLoaded();
+        View.ShowView();
+    }
+
+    public abstract void OnViewLoaded();
+    public abstract void OnViewUnloaded();
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            View.OnViewLoaded -= ViewOnLoaded;
+            View.OnViewClosing -= ViewOnUnloaded;
+            View.Dispose();
+        }
     }
 }

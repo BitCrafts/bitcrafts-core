@@ -1,8 +1,10 @@
 namespace BitCrafts.Core.Contracts.Views;
 
-public interface IView : IDisposable
+public interface IView<T> : IDisposable
 {
-    void Show();
-    event EventHandler<EventArgs> Loaded;
-    event EventHandler<EventArgs> Unloaded;
+    T Model { get; set; }
+    public event EventHandler OnViewLoaded;
+    public event EventHandler OnViewClosing;
+    void ShowView();
+    void HideView();
 }

@@ -8,13 +8,13 @@ namespace BitCrafts.Core;
 
 public sealed class ModuleManager : IModuleManager
 {
-    private List<Assembly> _loadedAssemblies;
-
     private readonly Dictionary<string,
         (Type ViewContract, Type ViewImplementation,
         Type PresenterContract, Type PresenterImplementation,
         Type ModelType)> _moduleTypeRegistry
         = new();
+
+    private List<Assembly> _loadedAssemblies;
 
 
     public ModuleManager()
@@ -39,13 +39,16 @@ public sealed class ModuleManager : IModuleManager
             LoadAssembly(dll, services);
     }
 
+    public void Dispose()
+    {
+        _loadedAssemblies.Clear();
+        _loadedAssemblies = null;
+    }
+
     private string GetModulesPath()
     {
         var modulesPath = Path.Combine(Directory.GetCurrentDirectory(), "Modules");
-        if (string.IsNullOrEmpty(modulesPath))
-        {
-            return null;
-        }
+        if (string.IsNullOrEmpty(modulesPath)) return null;
 
         return Path.IsPathRooted(modulesPath) ? modulesPath : Path.GetFullPath(modulesPath);
     }
@@ -61,7 +64,6 @@ public sealed class ModuleManager : IModuleManager
     {
         var moduleTypes = assembly.GetTypes().Where(IsValidModule);
         foreach (var type in moduleTypes)
-        {
             if (Activator.CreateInstance(type) is IModule moduleInstance)
             {
                 moduleInstance.RegisterServices(services);
@@ -73,12 +75,9 @@ public sealed class ModuleManager : IModuleManager
                         (viewContract, viewImplementation,
                             presenterContract, presenterImplementation,
                             modelType)))
-                {
                     throw new InvalidOperationException(
                         $"Module {moduleInstance.Name} of type {type.FullName} already registered.");
-                }
             }
-        }
     }
 
     private bool IsValidClass(Type type)
@@ -89,11 +88,5 @@ public sealed class ModuleManager : IModuleManager
     private bool IsValidModule(Type type)
     {
         return IsValidClass(type) && typeof(IModule).IsAssignableFrom(type);
-    }
-
-    public void Dispose()
-    {
-        _loadedAssemblies.Clear();
-        _loadedAssemblies = null;
     }
 }

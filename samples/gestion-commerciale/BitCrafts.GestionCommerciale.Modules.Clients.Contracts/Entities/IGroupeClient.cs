@@ -1,8 +1,8 @@
+using BitCrafts.Core.Contracts.Entities;
+
 namespace BitCrafts.GestionCommerciale.Modules.Clients.Contracts.Entities;
 
-public interface IGroupeClient
+public interface IGroupeClient : IEntity<int>
 {
-    int Id { get; set; }
     string Nom { get; set; }
 }
-    
