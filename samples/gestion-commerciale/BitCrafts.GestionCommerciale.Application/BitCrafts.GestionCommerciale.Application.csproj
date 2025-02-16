@@ -4,16 +4,12 @@
         <OutputType>Exe</OutputType>
         <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
+        <Nullable>disable</Nullable>
     </PropertyGroup>
 
-    <ItemGroup>
-        <None Remove="samples.db"/>
-        <Content Update="appsettings.json">
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </Content>
-        <None Remove="samples.db"/>
-        <Content Update="samples.db">
+    <ItemGroup> 
+        <None Remove="gestion-commerciale.sqlite.db"/>
+        <Content Update="gestion-commerciale.sqlite.db">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
         <None Remove="appsettings.json"/>
@@ -30,11 +26,10 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\..\src\BitCrafts.Core\BitCrafts.Core.Contracts\BitCrafts.Core.Contracts.csproj"/>
-        <ProjectReference Include="..\..\..\src\BitCrafts.Core\BitCrafts.Core\BitCrafts.Core.csproj"/>
-        <ProjectReference Include="..\BitCrafts.GestionCommerciale.Modules.Clients.Contracts\BitCrafts.GestionCommerciale.Modules.Clients.Contracts.csproj"/>
-        <ProjectReference Include="..\BitCrafts.GestionCommerciale.Modules.Commandes.Contracts\BitCrafts.GestionCommerciale.Modules.Commandes.Contracts.csproj"/>
-        <ProjectReference Include="..\BitCrafts.GestionCommerciale.Modules.Produits.Contracts\BitCrafts.GestionCommerciale.Modules.Produits.Contracts.csproj"/>
+      <ProjectReference Include="..\..\..\src\BitCrafts.Core\BitCrafts.Core.Contracts\BitCrafts.Core.Contracts.csproj" />
+      <ProjectReference Include="..\..\..\src\BitCrafts.Core\BitCrafts.Core\BitCrafts.Core.csproj" />
+      <ProjectReference Include="..\BitCrafts.GestionCommerciale.Modules.Clients.Contracts\BitCrafts.GestionCommerciale.Modules.Clients.Contracts.csproj" />
     </ItemGroup>
 
+    
 </Project>

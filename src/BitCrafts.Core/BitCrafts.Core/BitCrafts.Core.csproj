@@ -7,14 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Avalonia" Version="11.2.3"/>
-        <PackageReference Include="Avalonia.Desktop" Version="11.2.3"/>
-        <PackageReference Include="Avalonia.Fonts.Inter" Version="11.2.3"/>
-        <PackageReference Include="Avalonia.Svg.Skia" Version="11.2.0.2"/>
-        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.2.3"/>
-        <PackageReference Include="Avalonia.Themes.Simple" Version="11.2.3"/>
-        <PackageReference Include="Avalonia.Xaml.Behaviors" Version="11.2.0.8"/>
-        <PackageReference Include="Avalonia.Xaml.Interactions" Version="11.2.0.8"/>
         <PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.1"/>
         <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.2"/>
         <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.2"/>
@@ -44,29 +36,14 @@
         <PackageReference Include="Serilog.Sinks.File" Version="6.0.0"/>
     </ItemGroup>
 
-    <ItemGroup>
-        <ProjectReference Include="..\BitCrafts.Core.Contracts\BitCrafts.Core.Contracts.csproj"/>
-    </ItemGroup>
-
+   
     <ItemGroup>
         <Folder Include="Resources\"/>
     </ItemGroup>
-
+ 
     <ItemGroup>
-        <None Remove="Resources\MainApplication.glade"/>
-        <EmbeddedResource Include="Resources\MainApplication.glade">
-            <LogicalName>MainApplication.glade</LogicalName>
-        </EmbeddedResource>
-    </ItemGroup>
-
-    <ItemGroup>
-        <Compile Update="App.axaml.cs">
-            <DependentUpon>App.axaml</DependentUpon>
-            <SubType>Code</SubType>
-        </Compile>
-        <Compile Update="Views\MainView.cs">
-            <DependentUpon>MainView.axaml</DependentUpon>
-        </Compile>
+      <ProjectReference Include="..\BitCrafts.Core.ConsoleApplication\BitCrafts.Core.ConsoleApplication.csproj" />
+      <ProjectReference Include="..\BitCrafts.Core.Contracts\BitCrafts.Core.Contracts.csproj" />
     </ItemGroup>
 
 </Project>

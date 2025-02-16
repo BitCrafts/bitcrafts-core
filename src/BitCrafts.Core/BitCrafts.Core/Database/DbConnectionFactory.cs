@@ -34,11 +34,12 @@ public class DbConnectionFactory : IDbConnectionFactory
 
     private IDbConnection GetConnection()
     {
-        var databaseProvider = _configuration["DatabaseSettings:Provider"];
-        var server = _configuration["DatabaseSettings:Server"];
-        var database = _configuration["DatabaseSettings:Database"];
-        var user = _configuration["DatabaseSettings:User"];
-        var password = _configuration["DatabaseSettings:Password"];
+        var configSection = _configuration.GetSection("DatabaseSettings");
+        var databaseProvider = configSection.GetValue<string>("Provider");
+        var server = configSection.GetValue<string>("Server");
+        var database = configSection.GetValue<string>("Database");
+        var user = configSection.GetValue<string>("User");
+        var password = configSection.GetValue<string>("Password");
 
         switch (databaseProvider?.ToLowerInvariant())
         {

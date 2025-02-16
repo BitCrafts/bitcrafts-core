@@ -1,6 +1,7 @@
-using BitCrafts.Core.Contracts;
+using BitCrafts.Core.ConsoleApplication.Extensions;
 using BitCrafts.Core.Contracts.Applications;
 using BitCrafts.Core.Extensions;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 
@@ -8,28 +9,59 @@ namespace BitCrafts.Core.Applications;
 
 public class ApplicationStartup : IApplicationStartup
 {
+    public IServiceProvider ServiceProvider { get; private set; }
+    public IServiceCollection Services { get; private set; }
+    public IApplication Application { get; private set; }
+
     public ApplicationStartup()
     {
-        ServiceProvider = null;
+        CreateDirectoryDirectory("Modules");
+        CreateDirectoryDirectory("Settings");
+        CreateDirectoryDirectory("Databases");
+        CreateDirectoryDirectory("Files");
+        CreateDirectoryDirectory("Temporary");
         Services = new ServiceCollection();
-        ModuleManager = new ModuleManager();
-        Application = new AvaloniaApplication();
-        Services.AddSingleton(ModuleManager);
+        var configuration = new ConfigurationBuilder()
+            .AddJsonFile("appsettings.json", true, true)
+            .AddEnvironmentVariables()
+            .Build();
+
+        var logger = new LoggerConfiguration()
+            .ReadFrom.Configuration(configuration)
+            .CreateLogger();
+
+        Log.Logger = logger;
+
+        Services.AddSingleton<IConfiguration>(configuration);
+
+        Services.AddLogging(loggingBuilder =>
+            loggingBuilder.AddSerilog(dispose: true)
+        );
+        var appType = configuration.GetSection("ApplicationSettings").GetValue<string>("Type")?.ToLower();
+
+        switch (appType)
+        {
+            case "console":
+            default:
+                Services.AddConsoleApplication();
+                break;
+        }
+
         Services.AddBitCraftsCore();
-        CreateModulesDirectory();
     }
 
-    internal static IServiceProvider ServiceProvider { get; private set; }
-    internal static IServiceCollection Services { get; private set; }
-    internal static IModuleManager ModuleManager { get; private set; }
-    internal static IApplication Application { get; private set; }
-
-    public void Start()
+    public async Task StartAsync()
     {
-        Log.Logger.Information("Starting Application...");
-        ModuleManager.LoadModules(Services);
-        BuildServiceProvider();
-        Application.Run();
+        using (var moduleManager = new ModuleManager())
+        {
+            moduleManager.LoadModules(Services);
+            ServiceProvider = Services.BuildServiceProvider();
+            Log.Logger.Information("Modules loaded.");
+            Application = ServiceProvider.GetService<IApplication>();
+            Application.Run();
+        }
+
+        await Task.CompletedTask;
     }
 
     public void Dispose()
@@ -38,15 +70,10 @@ public class ApplicationStartup : IApplicationStartup
         Application?.Dispose();
     }
 
-    private void CreateModulesDirectory()
+    private void CreateDirectoryDirectory(string directory)
     {
-        var modulesPath = Path.Combine(Directory.GetCurrentDirectory(), "Modules");
-        if (!Directory.Exists(modulesPath))
-            Directory.CreateDirectory(Path.GetFullPath(modulesPath));
-    }
-
-    internal static void BuildServiceProvider()
-    {
-        ServiceProvider = Services.BuildServiceProvider();
+        var directoryPath = Path.Combine(Directory.GetCurrentDirectory(), directory);
+        if (!Directory.Exists(directoryPath))
+            Directory.CreateDirectory(Path.GetFullPath(directoryPath));
     }
 }

@@ -4,10 +4,5 @@ namespace BitCrafts.Core.Contracts;
 
 public interface IModuleManager : IDisposable
 {
-    void LoadModules(IServiceCollection services);
-
-    IReadOnlyDictionary<string,
-        (Type ViewContract, Type ViewImplementation,
-        Type PresenterContract, Type PresenterImplementation,
-        Type ModelType)> GetModuleViewTypes();
+    void LoadModules(IServiceCollection services); 
 }

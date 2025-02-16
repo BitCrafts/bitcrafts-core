@@ -6,10 +6,4 @@ public interface IModule
 {
     string Name { get; }
     void RegisterServices(IServiceCollection services);
-
-    (Type viewContract, Type viewImplementation) GetViewType();
-
-    (Type presenterContract, Type presenterImplementation) GetPresenterType();
-
-    Type GetModelType();
 }

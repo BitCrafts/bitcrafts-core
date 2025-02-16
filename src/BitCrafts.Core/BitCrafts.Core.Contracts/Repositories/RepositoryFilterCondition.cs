@@ -2,7 +2,7 @@ namespace BitCrafts.Core.Contracts.Repositories;
 
 public class RepositoryFilterCondition
 {
-    public RepositoryFilterCondition(string columnName, string @operator, object? value = null)
+    public RepositoryFilterCondition(string columnName, string @operator, object value = null)
     {
         ColumnName = columnName ?? throw new ArgumentNullException(nameof(columnName));
         Operator = @operator ?? throw new ArgumentNullException(nameof(@operator));

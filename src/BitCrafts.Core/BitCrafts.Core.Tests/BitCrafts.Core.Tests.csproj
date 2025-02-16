@@ -28,6 +28,6 @@
     <ItemGroup>
       <ProjectReference Include="..\BitCrafts.Core.Contracts\BitCrafts.Core.Contracts.csproj" />
       <ProjectReference Include="..\BitCrafts.Core\BitCrafts.Core.csproj" />
-    </ItemGroup>
+    </ItemGroup> 
 
 </Project>

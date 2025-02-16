@@ -66,8 +66,6 @@ public abstract class BaseRepository<TEntity, TKey> : IRepository<TEntity, TKey>
             transaction.Rollback();
             throw;
         }
-
-        return entity;
     }
 
     public async Task<bool> UpdateAsync(TEntity entity)

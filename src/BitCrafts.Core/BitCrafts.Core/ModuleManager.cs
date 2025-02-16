@@ -3,31 +3,17 @@ using System.Runtime.Loader;
 using BitCrafts.Core.Contracts;
 using BitCrafts.Core.Contracts.Modules;
 using Microsoft.Extensions.DependencyInjection;
+using Serilog;
 
 namespace BitCrafts.Core;
 
 public sealed class ModuleManager : IModuleManager
 {
-    private readonly Dictionary<string,
-        (Type ViewContract, Type ViewImplementation,
-        Type PresenterContract, Type PresenterImplementation,
-        Type ModelType)> _moduleTypeRegistry
-        = new();
-
     private List<Assembly> _loadedAssemblies;
-
 
     public ModuleManager()
     {
         _loadedAssemblies = new List<Assembly>();
-    }
-
-    public IReadOnlyDictionary<string,
-        (Type ViewContract, Type ViewImplementation,
-        Type PresenterContract, Type PresenterImplementation,
-        Type ModelType)> GetModuleViewTypes()
-    {
-        return _moduleTypeRegistry;
     }
 
     public void LoadModules(IServiceCollection services)
@@ -62,22 +48,19 @@ public sealed class ModuleManager : IModuleManager
 
     private void RegisterModules(Assembly assembly, IServiceCollection services)
     {
-        var moduleTypes = assembly.GetTypes().Where(IsValidModule);
-        foreach (var type in moduleTypes)
-            if (Activator.CreateInstance(type) is IModule moduleInstance)
-            {
-                moduleInstance.RegisterServices(services);
-                var (viewContract, viewImplementation) = moduleInstance.GetViewType();
-                var (presenterContract, presenterImplementation) = moduleInstance.GetPresenterType();
-                var modelType = moduleInstance.GetModelType();
-
-                if (!_moduleTypeRegistry.TryAdd(moduleInstance.Name,
-                        (viewContract, viewImplementation,
-                            presenterContract, presenterImplementation,
-                            modelType)))
-                    throw new InvalidOperationException(
-                        $"Module {moduleInstance.Name} of type {type.FullName} already registered.");
-            }
+        try
+        {
+            var moduleTypes = assembly.GetTypes().Where(IsValidModule);
+            foreach (var type in moduleTypes)
+                if (Activator.CreateInstance(type) is IModule moduleInstance)
+                {
+                    moduleInstance.RegisterServices(services);
+                }
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, $"Erreur lors de l’enregistrement des modules dans l’assembly {assembly.FullName}");
+        }
     }
 
     private bool IsValidClass(Type type)

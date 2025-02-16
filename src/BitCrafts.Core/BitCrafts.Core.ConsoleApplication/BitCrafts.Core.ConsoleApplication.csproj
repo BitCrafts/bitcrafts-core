@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>disable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Presentation\BitCrafts.Core.Presentation.Abstraction\BitCrafts.Core.Presentation.Abstraction.csproj" />
+      <ProjectReference Include="..\BitCrafts.Core.Contracts\BitCrafts.Core.Contracts.csproj" />
+    </ItemGroup>
+
+</Project>
