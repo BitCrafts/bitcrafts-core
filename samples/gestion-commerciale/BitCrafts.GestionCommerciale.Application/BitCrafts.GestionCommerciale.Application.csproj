@@ -20,15 +20,17 @@
 
     <ItemGroup>
         <PackageReference Include="Dapper" Version="2.1.66"/>
+        <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.2" />
         <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.2"/>
         <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.2"/>
         <PackageReference Include="Serilog" Version="4.2.0"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\..\src\BitCrafts.Core\BitCrafts.Core.Contracts\BitCrafts.Core.Contracts.csproj" />
-      <ProjectReference Include="..\..\..\src\BitCrafts.Core\BitCrafts.Core\BitCrafts.Core.csproj" />
-      <ProjectReference Include="..\BitCrafts.GestionCommerciale.Modules.Clients.Contracts\BitCrafts.GestionCommerciale.Modules.Clients.Contracts.csproj" />
+      <ProjectReference Include="..\..\..\src\Infrastructure\BitCrafts.Infrastructure.Abstraction\BitCrafts.Infrastructure.Abstraction.csproj" />
+      <ProjectReference Include="..\..\..\src\Infrastructure\BitCrafts.Infrastructure.Application.Avalonia\BitCrafts.Infrastructure.Application.Avalonia.csproj" />
+      <ProjectReference Include="..\..\..\src\Infrastructure\BitCrafts.Infrastructure.Application.Console\BitCrafts.Infrastructure.Application.Console.csproj" />
+      <ProjectReference Include="..\..\..\src\Infrastructure\BitCrafts.Infrastructure\BitCrafts.Infrastructure.csproj" />
     </ItemGroup>
 
     
