@@ -9,15 +9,17 @@ namespace BitCrafts.Customers.Repositories;
 public sealed class CustomerRepository : BaseRepository<ICustomer, int>, ICustomerRepository
 {
     private const string assignCustomerToGroupSql = "UPDATE Customers SET GroupId = @GroupId WHERE Id = @Id";
+
     public CustomerRepository(IDbConnectionFactory connectionFactory) : base(connectionFactory)
     {
     }
 
     public async Task<bool> AssignCustomerToGroup(int customerId, int groupId)
     {
-       using var connection = ConnectionFactory.Create();
-       
-       var rowAffected = await connection.ExecuteAsync(assignCustomerToGroupSql);
-       return rowAffected > 0;
+        using var connection = ConnectionFactory.Create();
+
+        var rowAffected =
+            await connection.ExecuteAsync(assignCustomerToGroupSql, new { Id = customerId, GroupId = groupId });
+        return rowAffected > 0;
     }
 }
