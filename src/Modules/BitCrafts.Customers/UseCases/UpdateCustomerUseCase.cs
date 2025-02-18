@@ -19,16 +19,16 @@ public class UpdateCustomerUseCase : IUpdateCustomerUseCase
         _customerRepository = customerRepository;
         _eventAggregator = eventAggregator;
         _logger = logger;
-        _eventAggregator.Subscribe<CustomerUpdateEvent>(ExecuteCreateCustomer);
+        _eventAggregator.Subscribe<CustomerUpdateEventRequest>(ExecuteCreateCustomer);
     }
 
-    private Task ExecuteCreateCustomer(CustomerUpdateEvent arg)
+    private Task ExecuteCreateCustomer(CustomerUpdateEventRequest arg)
     {
-        return Task.Run(async () => { await _customerRepository.UpdateAsync(arg.NewCustomer); });
+        return Task.Run(async () => { await _customerRepository.UpdateAsync(arg.Customer); });
     }
 
     public void Dispose()
     {
-        _eventAggregator.Unsubscribe<CustomerUpdateEvent>(ExecuteCreateCustomer);
+        _eventAggregator.Unsubscribe<CustomerUpdateEventRequest>(ExecuteCreateCustomer);
     }
 }

@@ -18,5 +18,6 @@ public sealed class CustomerModule : ICustomerModule
         services.AddTransient<ICreateCustomerUseCase, CreateCustomerUseCase>();
         services.AddTransient<IUpdateCustomerUseCase, UpdateCustomerUseCase>();
         services.AddTransient<IDeleteCustomerUseCase, DeleteCustomerUseCase>();
+        services.AddTransient<IAssignCustomerGroupUseCase, AssignCustomerGroupUseCase>();
     }
 }

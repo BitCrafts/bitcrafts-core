@@ -3,11 +3,12 @@
     <PropertyGroup>
         <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
+        <Nullable>disable</Nullable>
     </PropertyGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\..\Infrastructure\BitCrafts.Infrastructure\BitCrafts.Infrastructure.csproj" />
+      <ProjectReference Include="..\..\UsesCases\BitCrafts.UseCases.Abstraction\BitCrafts.UseCases.Abstraction.csproj" />
       <ProjectReference Include="..\BitCrafts.Customers.Abstraction\BitCrafts.Customers.Abstraction.csproj" />
     </ItemGroup>
 

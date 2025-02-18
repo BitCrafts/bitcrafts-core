@@ -19,16 +19,16 @@ public sealed class DeleteCustomerUseCase : IDeleteCustomerUseCase
         _customerRepository = customerRepository;
         _eventAggregator = eventAggregator;
         _logger = logger;
-        _eventAggregator.Subscribe<CustomerDeleteEvent>(ExecuteCreateCustomer);
+        _eventAggregator.Subscribe<CustomerDeleteEventResponse>(ExecuteCreateCustomer);
     }
 
-    private Task ExecuteCreateCustomer(CustomerDeleteEvent arg)
+    private Task ExecuteCreateCustomer(CustomerDeleteEventResponse arg)
     {
-        return Task.Run(async () => { await _customerRepository.DeleteAsync(arg.Customer.Id); });
+        return Task.Run(async () => { await _customerRepository.DeleteAsync(arg.CustomerId); });
     }
 
     public void Dispose()
     {
-        _eventAggregator.Unsubscribe<CustomerDeleteEvent>(ExecuteCreateCustomer);
+        _eventAggregator.Unsubscribe<CustomerDeleteEventResponse>(ExecuteCreateCustomer);
     }
 }

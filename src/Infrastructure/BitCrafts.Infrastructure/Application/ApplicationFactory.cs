@@ -1,5 +1,4 @@
 using BitCrafts.Infrastructure.Abstraction.Application;
-using BitCrafts.Infrastructure.Application.Console;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 

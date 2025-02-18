@@ -12,6 +12,7 @@ public abstract class BaseRepository<TEntity, TKey> : IRepository<TEntity, TKey>
     where TEntity : class, IEntity<TKey>
 {
     private readonly IDbConnectionFactory _connectionFactory;
+    protected IDbConnectionFactory ConnectionFactory => _connectionFactory;
 
     protected BaseRepository(IDbConnectionFactory connectionFactory)
     {
