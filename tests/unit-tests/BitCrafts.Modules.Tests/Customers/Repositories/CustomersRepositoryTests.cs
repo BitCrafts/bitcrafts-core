@@ -49,17 +49,28 @@ public sealed class CustomersRepositoryTests : BaseTest
     public async Task CustomerRepository_ShouldReturnCustomerById()
     {
         // Act
-        var result = await CustomerRepository.GetByIdAsync<Customer>(1);
+        var result = await CustomerRepository.GetByIdAsync(1);
 
         // Assert
         Assert.IsNotNull(result, "Customer should not be null");
+        Assert.AreEqual(1, result.Id, "Customer ID should be 1");
     }
-/*
+
+    [TestMethod]
+    public async Task CustomerRepository_ShouldNotReturnCustomerById_WhenIdIsInvalid()
+    {
+        // Act
+        var result = await CustomerRepository.GetByIdAsync(2);
+
+        // Assert
+        Assert.IsNull(result, "Customer should be null");
+    }
+
     [TestMethod]
     public async Task AssignCustomerToGroup_ShouldReturnTrue_WhenRowAffectedIsGreaterThanZero()
     {
         int customerId = 1;
-        int groupId = 100;
+        int groupId = 1;
 
         // Act
         bool result = await CustomerRepository.AssignCustomerToGroup(customerId, groupId);
@@ -79,31 +90,26 @@ public sealed class CustomersRepositoryTests : BaseTest
 
         // Assert
         Assert.IsFalse(result, "La méthode doit renvoyer false lorsque Aucune ligne n'est affectée.");
-    }*/
-    /*[TestMethod]
-  public async Task AddAsync_ShouldReturnEntityWithNewId()
-   {
-       // Arrange
-       var customer = new Customer()
-       {
-           FirstName = "Test",
-           LastName = "Test",
-           Email = "<EMAIL>",
-           Phone = "0123456789",
-           GroupId = 0
-       };
+    }
 
-       // Act
-       var addedCustomer = await CustomerRepository.AddAsync(customer);
+    [TestMethod]
+    public async Task AddAsync_ShouldReturnEntityWithNewId()
+    {
+        // Arrange
+        var customer = new Customer()
+        {
+            FirstName = "Test",
+            LastName = "Test",
+            Email = "<EMAIL>",
+            Phone = "0123456789",
+            GroupId = 0
+        };
 
-       // Assert
-       Assert.IsNotNull(addedCustomer);
-       Assert.IsTrue(addedCustomer.Id > 0, "L'identifiant généré doit être supérieur à 0.");
+        // Act
+        var addedCustomer = await CustomerRepository.AddAsync(customer);
 
-       // Vérification via GetByIdAsync
-       var fetched = await CustomerRepository.GetByIdAsync(addedCustomer.Id);
-       Assert.IsNotNull(fetched);
-       Assert.AreEqual(customer.FirstName, fetched.FirstName);
-       Assert.AreEqual(customer.LastName, fetched.LastName);
-   }*/
+        // Assert
+        Assert.IsNotNull(addedCustomer);
+        Assert.IsTrue(addedCustomer.Id > 0, "L'identifiant généré doit être supérieur à 0.");
+    }
 }
