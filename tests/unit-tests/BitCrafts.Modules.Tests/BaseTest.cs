@@ -13,23 +13,22 @@ namespace BitCrafts.Modules.Tests;
 [TestClass]
 public abstract class BaseTest
 {
-    // Références aux repositories qui utilisent une connexion "in memory"
     protected ICustomerRepository CustomerRepository;
     protected ICustomerGroupRepository CustomerGroupRepository;
 
-    // Exemple d'EventAggregator (à remplacer par votre implémentation ou interface réelle)
     protected IEventAggregator EventAggregator;
 
-    // Fake IDbConnectionFactory pour simuler la création de connexion
     protected IDbConnectionFactory DbConnectionFactory;
 
-    protected SqliteConnection _sqliteConnection = new SqliteConnection("Data Source=:memory:");
+    protected SqliteConnection _sqliteConnection;
 
     [TestInitialize]
     public virtual void TestInitialize()
     {
+        _sqliteConnection = new SqliteConnection("DataSource=:memory:");
         _sqliteConnection.Open();
-        DbConnectionFactory = Substitute.For<IDbConnectionFactory>();
+        DbConnectionFactory = Substitute.For<IDbConnectionFactory>(); 
+        DbConnectionFactory.IsMemoryProvider.Returns<bool>(true);
         DbConnectionFactory.Create().Returns<IDbConnection>(_sqliteConnection);
         CustomerRepository = new CustomerRepository(DbConnectionFactory);
         CustomerGroupRepository = new CustomerGroupRepository(DbConnectionFactory);
@@ -40,5 +39,6 @@ public abstract class BaseTest
     public virtual void TestCleanup()
     {
         EventAggregator = null;
+        _sqliteConnection.Close();
     }
 }

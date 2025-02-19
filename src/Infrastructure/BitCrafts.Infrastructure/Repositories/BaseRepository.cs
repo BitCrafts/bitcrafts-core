@@ -1,6 +1,4 @@
-using System.Data;
 using System.Reflection;
-using BitCrafts.Infrastructure.Abstraction.Attributes;
 using BitCrafts.Infrastructure.Abstraction.Databases;
 using BitCrafts.Infrastructure.Abstraction.Entities;
 using BitCrafts.Infrastructure.Abstraction.Repositories;
@@ -8,8 +6,7 @@ using Dapper;
 
 namespace BitCrafts.Infrastructure.Repositories;
 
-public abstract class BaseRepository<TEntity, TKey> : IRepository<TEntity, TKey>
-    where TEntity : class, IEntity<TKey>
+public abstract class BaseRepository<TKey> : IRepository<TKey>
 {
     private readonly IDbConnectionFactory _connectionFactory;
     protected IDbConnectionFactory ConnectionFactory => _connectionFactory;
@@ -19,196 +16,60 @@ public abstract class BaseRepository<TEntity, TKey> : IRepository<TEntity, TKey>
         _connectionFactory = connectionFactory ?? throw new ArgumentNullException(nameof(connectionFactory));
     }
 
-    public async Task<TEntity> GetByIdAsync(TKey id)
-    {
-        var searchParameter = new RepositorySearchParameter
-        {
-            Conditions = new List<RepositoryFilterCondition>
-            {
-                new("Id", "=", id)
-            }
-        };
-
-        var result = await SearchAsync(searchParameter);
-        return result.SingleOrDefault();
-    }
-
-    public async Task<IEnumerable<TEntity>> GetAllAsync()
-    {
-        var searchParameter = new RepositorySearchParameter
-        {
-            PageSize = int.MaxValue,
-            Page = 1
-        };
-
-        return await SearchAsync(searchParameter);
-    }
-
-    public async Task<TEntity> AddAsync(TEntity entity)
-    {
-        var sql = GetInsertQuery();
-
-        using var connection = _connectionFactory.Create();
-        using var transaction = connection.BeginTransaction();
-
-        try
-        {
-            // Exécute la requête d'insertion
-            await connection.ExecuteAsync(sql, entity, transaction);
-
-            // Récupère l'ID en fonction du provider
-            var id = await GetLastInsertedIdAsync(connection, transaction);
-
-            transaction.Commit();
-            entity.Id = id;
-            return entity;
-        }
-        catch
-        {
-            transaction.Rollback();
-            throw;
-        }
-    }
-
-    public async Task<bool> UpdateAsync(TEntity entity)
-    {
-        var sql = GetUpdateQuery();
-        using var connection = _connectionFactory.Create();
-        var rowAffected = await connection.ExecuteAsync(sql, entity);
-        return rowAffected > 0;
-    }
+    protected abstract string GetTableName();
 
     public async Task<bool> DeleteAsync(TKey id)
     {
-        var sql = GetDeleteQuery();
         using var connection = _connectionFactory.Create();
-        var rowAffected = await connection.ExecuteAsync(sql, new { Id = id });
-        return rowAffected > 0;
-    }
-
-    public async Task<IEnumerable<TEntity>> SearchAsync(RepositorySearchParameter parameter)
-    {
-        parameter.Validate();
-        var baseQuery = $"SELECT * FROM {GetTableName()} WHERE 1=1";
-
-        var query = BuildSearchWithPagination(baseQuery, parameter) + GetFilters(parameter);
-        using var connection = _connectionFactory.Create();
-        return await connection.QueryAsync<TEntity>(query, parameter);
-    }
-
-    private string BuildSearchWithPagination(string baseQuery, RepositorySearchParameter parameter)
-    {
-        var query = baseQuery;
-
-        if (parameter.Conditions != null && parameter.Conditions.Any())
-            foreach (var condition in parameter.Conditions)
-                if (condition.Value == null)
-                    query += $" AND {condition.ColumnName} {condition.Operator}";
-                else
-                    query += $" AND {condition.ColumnName} {condition.Operator} @{condition.ColumnName}";
-
-        if (!string.IsNullOrEmpty(parameter.OrderBy))
-            query += $" ORDER BY {parameter.OrderBy} {(parameter.Descending ? "DESC" : "ASC")}";
-
-        if (parameter.Page > 0 && parameter.PageSize > 0)
-        {
-            var offset = (parameter.Page - 1) * parameter.PageSize;
-            query += $" OFFSET {offset} ROWS FETCH NEXT {parameter.PageSize} ROWS ONLY";
-        }
-
-        return query;
-    }
-
-    protected virtual string GetInsertQuery()
-    {
-        var properties = typeof(TEntity).GetProperties();
-        var primaryKey = GetPrimaryKeyProperty<TEntity>();
-
-        var columns = properties
-            .Where(p => p != primaryKey || !IsPrimaryKeyAutoIncrement<TEntity>())
-            .Select(p => p.Name)
-            .ToList();
-
-        var values = columns.Select(c => $"@{c}").ToList();
-
         var tableName = GetTableName();
-        var columnPart = string.Join(", ", columns);
-        var valuesPart = string.Join(", ", values);
-
-        return $"INSERT INTO {tableName} ({columnPart}) VALUES ({valuesPart})";
+        var sql = $"DELETE FROM {tableName} WHERE Id = @Id";
+        return await connection.ExecuteAsync(sql, new { Id = id }) > 0;
     }
 
-    protected virtual string GetUpdateQuery()
+    public async Task<bool> UpdateAsync<TEntity>(TEntity entity) where TEntity : IEntity<TKey>
     {
-        var keyProperty = typeof(TEntity).GetProperties()
-                              .FirstOrDefault(prop => Attribute.IsDefined(prop, typeof(PrimaryKeyAttribute)))
-                          ?? throw new InvalidOperationException(
-                              $"No primary key defined for the entity {typeof(TEntity).Name}.");
+        using var connection = _connectionFactory.Create();
+        var tableName = GetTableName();
+        var properties = GetProperties<TEntity>();
 
-        var keyPropertyName = keyProperty.Name;
-
-        var setClause = string.Join(", ", typeof(TEntity).GetProperties()
-            .Where(prop => prop.Name != keyPropertyName)
-            .Select(prop => $"{prop.Name} = @{prop.Name}"));
-
-        return $"UPDATE {GetTableName()} SET {setClause} WHERE {keyPropertyName} = @{keyPropertyName}";
+        var sql =
+            $"UPDATE {tableName} SET {string.Join(", ", properties.Select(p => $"{p.Name} = @{p.Name}"))} WHERE Id = @Id";
+        return await connection.ExecuteAsync(sql, entity) > 0;
     }
 
-    protected virtual string GetDeleteQuery()
+    public async Task<TEntity> AddAsync<TEntity>(TEntity entity) where TEntity : IEntity<TKey>
     {
-        var keyProperty = typeof(TEntity).GetProperties()
-                              .FirstOrDefault(prop => Attribute.IsDefined(prop, typeof(PrimaryKeyAttribute)))
-                          ?? throw new InvalidOperationException(
-                              $"No primary key defined for the entity {typeof(TEntity).Name}.");
+        using var connection = _connectionFactory.Create();
+        var tableName = GetTableName();
+        var properties = GetProperties<TEntity>();
+        var sql =
+            $"INSERT INTO {tableName} ({string.Join(", ", properties.Select(p => p.Name))}) VALUES ({string.Join(", ", properties.Select(p => $"@{p.Name}"))}); SELECT LAST_INSERT_ROWID()";
 
-        var keyPropertyName = keyProperty.Name;
-
-        return $"DELETE FROM {GetTableName()} WHERE {keyPropertyName} = @{keyPropertyName}";
+        var id = await connection.ExecuteScalarAsync<TKey>(sql, entity);
+        entity.Id = id;
+        return entity;
     }
 
-    protected virtual string GetTableName()
+    public async Task<IEnumerable<TEntity>> GetAllAsync<TEntity>() where TEntity : IEntity<TKey>
     {
-        return typeof(TEntity).Name;
+        using var connection = _connectionFactory.Create();
+        var tableName = GetTableName();
+        var sql = $"SELECT * FROM {tableName}";
+        return await connection.QueryAsync<TEntity>(sql);
     }
 
-    protected virtual string GetFilters(RepositorySearchParameter parameter)
+    public async Task<TEntity> GetByIdAsync<TEntity>(TKey id) where TEntity : IEntity<TKey>
     {
-        return string.Empty;
+        using var connection = _connectionFactory.Create();
+        var tableName = GetTableName();
+        var sql = $"SELECT * FROM {tableName} WHERE Id = @Id";
+        DynamicParameters parameters = new DynamicParameters();
+        parameters.Add("@Id", id);
+        return await connection.QueryFirstOrDefaultAsync<TEntity>(sql, parameters);
     }
 
-    private async Task<TKey> GetLastInsertedIdAsync(IDbConnection connection, IDbTransaction transaction)
+    private IList<PropertyInfo> GetProperties<TEntity>()
     {
-        if (_connectionFactory.IsSqliteProvider)
-            return await connection.ExecuteScalarAsync<TKey>("SELECT last_insert_rowid();", transaction: transaction);
-
-        /*if (_connectionFactory.IsSqlServerProvider)
-            return await connection.ExecuteScalarAsync<TKey>("SELECT CAST(SCOPE_IDENTITY() as bigint);",
-                transaction: transaction);
-
-        if (_connectionFactory.IsMySqlProvider)
-            return await connection.ExecuteScalarAsync<TKey>("SELECT LAST_INSERT_ID();", transaction: transaction);*/
-
-        throw new NotSupportedException("Database provider not supported.");
-    }
-
-    public PropertyInfo GetPrimaryKeyProperty<T>()
-    {
-        var properties = typeof(T).GetProperties();
-
-        var primaryKeyProperty = properties.SingleOrDefault(prop =>
-            Attribute.IsDefined(prop, typeof(PrimaryKeyAttribute)));
-
-        if (primaryKeyProperty == null)
-            throw new InvalidOperationException($"No primary key defined for type {typeof(T).Name}.");
-
-        return primaryKeyProperty;
-    }
-
-    public bool IsPrimaryKeyAutoIncrement<T>()
-    {
-        var primaryKey = GetPrimaryKeyProperty<T>();
-
-        var attribute = primaryKey.GetCustomAttribute<PrimaryKeyAttribute>();
-        return attribute?.IsAutoIncrement ?? false;
+        return typeof(TEntity).GetProperties().Where(p => p.Name != "Id").ToList();
     }
 }

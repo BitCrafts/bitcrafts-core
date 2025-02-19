@@ -1,14 +1,14 @@
-using BitCrafts.Customers.Abstraction.Entities;
 using BitCrafts.Customers.Abstraction.Repositories;
+using BitCrafts.Customers.Entities;
 using BitCrafts.Infrastructure.Abstraction.Databases;
 using BitCrafts.Infrastructure.Repositories;
 using Dapper;
 
 namespace BitCrafts.Customers.Repositories;
 
-public sealed class CustomerRepository : BaseRepository<ICustomer, int>, ICustomerRepository
+public sealed class CustomerRepository : BaseRepository<int>, ICustomerRepository
 {
-    private const string assignCustomerToGroupSql = "UPDATE Customers SET GroupId = @GroupId WHERE Id = @Id";
+    private const string assignCustomerToGroupSql = $"UPDATE  Customer SET GroupId = @GroupId WHERE Id = @Id";
 
     public CustomerRepository(IDbConnectionFactory connectionFactory) : base(connectionFactory)
     {
@@ -21,5 +21,10 @@ public sealed class CustomerRepository : BaseRepository<ICustomer, int>, ICustom
         var rowAffected =
             await connection.ExecuteAsync(assignCustomerToGroupSql, new { Id = customerId, GroupId = groupId });
         return rowAffected > 0;
+    }
+
+    protected override string GetTableName()
+    {
+        return "Customer";
     }
 }

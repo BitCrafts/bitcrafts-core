@@ -12,6 +12,7 @@ public sealed class DbConnectionFactory : IDbConnectionFactory
     private readonly ILogger<DbConnectionFactory> _logger;
 
     public bool IsSqliteProvider { get; private set; }
+    public bool IsMemoryProvider { get; private set; }
 
     public DbConnectionFactory(IConfiguration configuration, ILogger<DbConnectionFactory> logger)
     {
@@ -39,7 +40,9 @@ public sealed class DbConnectionFactory : IDbConnectionFactory
             case "sqlite":
                 IsSqliteProvider = true;
                 return new SqliteConnection($"Data Source={database}");
-
+            default:
+                IsMemoryProvider = true;
+                return new SqliteConnection($"Data Source=:memory:");
             /*case "sqlserver":
                 IsSqlServerProvider = true;
                 _logger.LogInformation("Using SqlServer database.");
@@ -68,8 +71,6 @@ public sealed class DbConnectionFactory : IDbConnectionFactory
                     $"User={user};" +
                     $"Password={password};"
                 );*/
-            default:
-                throw new NotSupportedException($"Provider not supported : {databaseProvider}");
         }
     }
 }

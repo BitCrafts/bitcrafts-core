@@ -1,6 +1,9 @@
+using System.ComponentModel.DataAnnotations;
+using BitCrafts.Infrastructure.Abstraction.Attributes;
+
 namespace BitCrafts.Infrastructure.Abstraction.Entities;
 
 public interface IEntity<T>
 {
-    T Id { get; set; }
+    [PrimaryKey(true)] [Key] T Id { get; set; }
 }
