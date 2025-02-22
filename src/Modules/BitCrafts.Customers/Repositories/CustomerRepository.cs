@@ -73,7 +73,7 @@ public sealed class CustomerRepository : ICustomerRepository
     {
         using var connection = _connectionFactory.Create();
         var selectByIdSql = $"SELECT * FROM {GetTableName()} WHERE Id = @Id";
-        var result = await connection.QueryFirstAsync<Customer>(selectByIdSql, new { Id = id });
+        var result = await connection.QueryFirstOrDefaultAsync<Customer>(selectByIdSql, new { Id = id });
         return result as ICustomer;
     }
 }

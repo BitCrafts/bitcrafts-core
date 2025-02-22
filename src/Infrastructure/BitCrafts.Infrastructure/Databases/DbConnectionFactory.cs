@@ -23,6 +23,7 @@ public sealed class DbConnectionFactory : IDbConnectionFactory
     public IDbConnection Create()
     {
         var connection = GetConnection();
+        connection.Open();
         return connection;
     }
 

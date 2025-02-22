@@ -23,7 +23,7 @@ public sealed class CustomerGroupRepository : ICustomerGroupRepository
     public async Task<bool> DeleteAsync(int id)
     {
         using var connection = _connectionFactory.Create();
-        var deleteSql = "DELETE FROM CustomerGroup WHERE Id = @Id";
+        var deleteSql = $"DELETE FROM {GetTableName()} WHERE Id = @Id";
         var result = await connection.ExecuteAsync(deleteSql, new { Id = id });
         return result > 0;
     }
@@ -31,16 +31,22 @@ public sealed class CustomerGroupRepository : ICustomerGroupRepository
     public async Task<bool> UpdateAsync(ICustomerGroup entity)
     {
         using var connection = _connectionFactory.Create();
-        var updateSql = "UPDATE CustomerGroup SET Name = @Name WHERE Id = @Id";
-        var result = await connection.ExecuteAsync(updateSql, entity);
+        var updateSql = $@"UPDATE CustomerGroup SET 
+                            Name = @Name,
+                            CreatedBy = @CreatedBy,
+                            UpdatedBy = @UpdatedBy
+                            WHERE Id = @Id;";
+        var result = await connection.ExecuteAsync(updateSql, new { Name = entity.Name, CreatedBy = entity.CreatedBy, UpdatedBy = entity.UpdatedBy });
         return result > 0;
     }
 
     public async Task<ICustomerGroup> AddAsync(ICustomerGroup entity)
     {
         using var connection = _connectionFactory.Create();
-        var insertSql = "INSERT INTO CustomerGroup (Name) VALUES (@Name)";
-        var id = await connection.ExecuteScalarAsync<int>(insertSql, entity);
+        var insertSql = $"INSERT INTO {GetTableName()} (Name) VALUES (@Name)";
+        var rowAffected = await connection.ExecuteScalarAsync<int>(insertSql, entity);
+        var getLastInsertedIdSql = "select last_insert_rowid();";
+        var id = connection.QueryFirstOrDefault<int>(getLastInsertedIdSql);
         entity.Id = id;
         return entity;
     }
@@ -48,7 +54,7 @@ public sealed class CustomerGroupRepository : ICustomerGroupRepository
     public async Task<IEnumerable<ICustomerGroup>> GetAllAsync()
     {
         using var connection = _connectionFactory.Create();
-        var selectAllSql = "SELECT * FROM CustomerGroup";
+        var selectAllSql = $"SELECT * FROM {GetTableName()}";
         var result = await connection.QueryAsync<CustomerGroup>(selectAllSql);
         return result.Cast<ICustomerGroup>();
     }
@@ -56,7 +62,7 @@ public sealed class CustomerGroupRepository : ICustomerGroupRepository
     public async Task<ICustomerGroup> GetByIdAsync(int id)
     {
         using var connection = _connectionFactory.Create();
-        var selectByIdSql = "SELECT * FROM CustomerGroup WHERE Id = @Id";
+        var selectByIdSql = $"SELECT * FROM {GetTableName()} WHERE Id = @Id";
         var result = await connection.QueryFirstOrDefaultAsync<CustomerGroup>(selectByIdSql, new { Id = id });
         return result as ICustomerGroup;
     }

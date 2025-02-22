@@ -38,7 +38,10 @@ public static class ServiceCollectionExtension
         services.AddSingleton<IParallelism, Parallelism>();
         services.AddSingleton<IEventAggregator, EventAggregator>();
         services.AddSingleton<IApplicationFactory, ApplicationFactory>();
-        
+        services.AddSingleton<IDapperWrapper, DapperWrapper>();
+        services.AddSingleton<IDatabaseManager, DatabaseManager>();
+        services.AddSingleton<ISqlDialectFactory, SqlDialectFactory>();
+
         CreateDirectoryDirectory("Modules");
         CreateDirectoryDirectory("Settings");
         CreateDirectoryDirectory("Databases");
@@ -50,6 +53,7 @@ public static class ServiceCollectionExtension
 
         return services;
     }
+
     private static void CreateDirectoryDirectory(string directory)
     {
         var directoryPath = Path.Combine(Directory.GetCurrentDirectory(), directory);

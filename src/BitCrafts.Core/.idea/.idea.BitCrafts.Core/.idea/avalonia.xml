@@ -4,6 +4,7 @@
     <option name="projectPerEditor">
       <map>
         <entry key="../Infrastructure/BitCrafts.Infrastructure.Application.Avalonia/App.axaml" value="../Infrastructure/BitCrafts.Infrastructure.Application.Avalonia/BitCrafts.Infrastructure.Application.Avalonia.csproj" />
+        <entry key="../Infrastructure/BitCrafts.Infrastructure.Application.Avalonia/MainWindow.axaml" value="../../samples/gestion-commerciale/BitCrafts.GestionCommerciale.Application/BitCrafts.GestionCommerciale.Application.csproj" />
       </map>
     </option>
   </component>
