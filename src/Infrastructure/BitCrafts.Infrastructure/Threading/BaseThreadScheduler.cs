@@ -61,6 +61,22 @@ public abstract class BaseThreadScheduler : TaskScheduler, IThreadScheduler
         Dispose();
     }
 
+    public void Schedule(Action action)
+    {
+        Task.Factory.StartNew(() =>
+        {
+            try
+            {
+                action();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erreur lors de l'exécution d'une tâche dans le scheduler.");
+                throw;
+            }
+        }, CancellationToken.None, TaskCreationOptions.None, this);
+    }
+
     public Task ScheduleAsync(Action action, CancellationToken cancellationToken = new CancellationToken())
     {
         return Task.Factory.StartNew(() =>

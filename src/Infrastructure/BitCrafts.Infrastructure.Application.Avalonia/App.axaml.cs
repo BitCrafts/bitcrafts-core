@@ -1,5 +1,7 @@
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using BitCrafts.Infrastructure.Abstraction.Application;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace BitCrafts.Infrastructure.Application.Avalonia;
 
@@ -10,13 +12,13 @@ public partial class App : global::Avalonia.Application
         AvaloniaXamlLoader.Load(this);
     }
 
-    public override void OnFrameworkInitializationCompleted()
+    public override async void OnFrameworkInitializationCompleted()
     {
-        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-        {
-            desktop.MainWindow = new MainWindow();
-        }
-
+        var uiManager =
+            (AvaloniaUiManager)AvaloniaApplication.ServiceProvider.GetRequiredService<IUiManager>(); 
+        var desktop = ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
+        uiManager.SetNativeApplication(desktop);
+        await uiManager.StartAsync();
         base.OnFrameworkInitializationCompleted();
     }
 }

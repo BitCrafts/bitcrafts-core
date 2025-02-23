@@ -9,20 +9,22 @@ namespace BitCrafts.Infrastructure.Application.Avalonia;
 public sealed class AvaloniaApplication : BaseApplication, IApplication
 {
     private AppBuilder _appbuilder;
+    public static IServiceProvider ServiceProvider { get; private set; }
 
     public AvaloniaApplication(ILogger<BaseApplication> logger, IServiceProvider serviceProvider) : base(logger,
         serviceProvider)
     {
+        ServiceProvider = serviceProvider;
         _appbuilder = AppBuilder.Configure<App>()
             .UsePlatformDetect()
             .WithInterFont()
             .LogToTrace();
     }
 
-    public override async Task StartAsync()
+    protected override Task OnStartupAsync()
     {
-        await base.StartAsync();
         Logger.LogInformation("Starting Avalonia Application...");
         _appbuilder.StartWithClassicDesktopLifetime(Environment.GetCommandLineArgs());
+        return Task.CompletedTask;
     }
 }

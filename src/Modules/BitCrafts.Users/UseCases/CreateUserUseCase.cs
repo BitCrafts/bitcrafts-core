@@ -7,19 +7,19 @@ using Microsoft.Extensions.Logging;
 
 namespace BitCrafts.Users.UseCases;
 
-public sealed class CreateUserUseCase : BaseUseCase<UserCreateEventRequest, UserCreateEventResponse>, ICreateUserUseCase
+public sealed class CreateUserUseCase : BaseUseCase<UserEventRequest, UserEventResponse>, ICreateUserUseCase
 {
     private readonly IUsersRepository _usersRepository;
 
-    public CreateUserUseCase(ILogger<BaseUseCase<UserCreateEventRequest, UserCreateEventResponse>> logger,
+    public CreateUserUseCase(ILogger<BaseUseCase<UserEventRequest, UserEventResponse>> logger,
         IEventAggregator eventAggregator, IUsersRepository usersRepository) : base(logger, eventAggregator)
     {
         _usersRepository = usersRepository;
     }
 
 
-    protected override async Task ExecuteCoreAsync(UserCreateEventRequest createEvent)
+    protected override async Task ExecuteCoreAsync(UserEventRequest @event)
     {
-        await _usersRepository.AddAsync(createEvent.User);
+        await _usersRepository.AddAsync(@event.User);
     }
 }

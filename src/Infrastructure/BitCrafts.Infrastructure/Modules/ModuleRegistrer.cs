@@ -9,11 +9,13 @@ namespace BitCrafts.Infrastructure.Modules;
 public sealed class ModuleRegistrer : IModuleRegistrer
 {
     private readonly ILogger _logger;
+    private readonly IModuleManager _moduleManager;
     private List<Assembly> _loadedAssemblies;
 
-    public ModuleRegistrer(ILogger logger)
+    public ModuleRegistrer(ILogger logger,IModuleManager moduleManager)
     {
         _logger = logger;
+        _moduleManager = moduleManager;
         _loadedAssemblies = new List<Assembly>();
     }
 
@@ -70,6 +72,7 @@ public sealed class ModuleRegistrer : IModuleRegistrer
                 if (Activator.CreateInstance(type) is IModule moduleInstance)
                 {
                     moduleInstance.RegisterServices(services);
+                    _moduleManager.AddModule(moduleInstance);
                 }
         }
         catch (Exception ex)

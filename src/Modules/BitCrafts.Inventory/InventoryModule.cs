@@ -18,4 +18,9 @@ public class InventoryModule : IInventoryModule
         services.AddTransient<IDeleteInventoryUseCase, DeleteInventoryUseCase>();
         services.AddTransient<IUpdateInventoryUseCase, UpdateInventoryUseCase>();
     }
+
+    public Type GetViewType()
+    {
+        throw new NotImplementedException();
+    }
 }

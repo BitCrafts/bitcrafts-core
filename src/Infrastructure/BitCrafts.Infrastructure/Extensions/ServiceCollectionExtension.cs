@@ -48,8 +48,11 @@ public static class ServiceCollectionExtension
         CreateDirectoryDirectory("Files");
         CreateDirectoryDirectory("Temporary");
 
-        using var moduleRegister = new ModuleRegistrer(logger);
+        var moduleManager = new ModuleManager();
+
+        using var moduleRegister = new ModuleRegistrer(logger, moduleManager);
         moduleRegister.RegisterModules(services);
+        services.AddSingleton(moduleManager);
 
         return services;
     }

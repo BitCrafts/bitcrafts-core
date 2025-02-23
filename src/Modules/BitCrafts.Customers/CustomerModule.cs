@@ -20,4 +20,9 @@ public sealed class CustomerModule : ICustomerModule
         services.AddTransient<IDeleteCustomerUseCase, DeleteCustomerUseCase>();
         services.AddTransient<IAssignCustomerGroupUseCase, AssignCustomerGroupUseCase>();
     }
+
+    public Type GetViewType()
+    {
+        throw new NotImplementedException();
+    }
 }

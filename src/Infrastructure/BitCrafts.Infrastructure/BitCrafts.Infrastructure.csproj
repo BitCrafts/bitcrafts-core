@@ -35,7 +35,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\BitCrafts.Infrastructure.Abstraction\BitCrafts.Infrastructure.Abstraction.csproj" />
-      <ProjectReference Include="..\BitCrafts.Infrastructure.Application.Console\BitCrafts.Infrastructure.Application.Console.csproj" />
     </ItemGroup>
 
 </Project>

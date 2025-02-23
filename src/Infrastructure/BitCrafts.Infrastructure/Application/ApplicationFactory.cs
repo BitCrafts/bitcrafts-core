@@ -25,11 +25,8 @@ public sealed class ApplicationFactory : IApplicationFactory
         var applicationType = configurationSection.GetValue<string>("Type")?.ToLower();
         switch (applicationType)
         {
-            case "avalonia":
-                return _serviceProvider.GetRequiredKeyedService<IApplication>("Avalonia");
-            case "console":
             default:
-                return _serviceProvider.GetRequiredKeyedService<IApplication>("Console");
+                return _serviceProvider.GetRequiredKeyedService<IApplication>("Avalonia");
         }
     }
 }

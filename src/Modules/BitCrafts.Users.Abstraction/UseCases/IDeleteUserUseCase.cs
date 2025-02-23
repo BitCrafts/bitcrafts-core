@@ -1,10 +1,10 @@
 using BitCrafts.Infrastructure.Abstraction.Events;
+using BitCrafts.UseCases.Abstraction;
+using BitCrafts.Users.Abstraction.Events;
 
 namespace BitCrafts.Users.Abstraction.UseCases;
 
-public interface IDeleteUserUseCase<TRequest, TResponse>
-    where TRequest : class, IEventRequest
-    where TResponse : class, IEventResponse
+public interface IDeleteUserUseCase : IUseCase<UserEventRequest, UserEventResponse>
 {
-    Task ExecuteAsync(TRequest request);
+    
 }
