@@ -4,6 +4,6 @@ namespace BitCrafts.Customers.Abstraction.Events;
 
 public sealed class CustomerUpdateEventResponse : BaseEvent, IEventResponse
 {
-    public IEventRequest Request { get; set; }
     public bool Success { get; }
+    public IEventRequest Request { get; set; }
 }

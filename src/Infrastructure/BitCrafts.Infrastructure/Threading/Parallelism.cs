@@ -6,15 +6,10 @@ public sealed class Parallelism : IParallelism
 {
     public int GetOptimalParallelism(bool isCpuBound = false)
     {
-        int processorCount = Environment.ProcessorCount;
+        var processorCount = Environment.ProcessorCount;
 
-        if (isCpuBound)
-        {
-            return Math.Max(1, processorCount - 1);
-        }
-        else
-        {
-            return processorCount * 2;
-        }
+        if (isCpuBound) return Math.Max(1, processorCount - 1);
+
+        return processorCount * 2;
     }
 }

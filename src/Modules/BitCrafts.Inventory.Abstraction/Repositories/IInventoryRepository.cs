@@ -3,7 +3,6 @@ using BitCrafts.Inventory.Abstraction.Entities;
 
 namespace BitCrafts.Inventory.Abstraction.Repositories;
 
-public interface IInventoryRepository : IRepository<IInventory,int>
+public interface IInventoryRepository : IRepository<IInventory, int>
 {
-    
 }

@@ -8,8 +8,7 @@ namespace BitCrafts.Infrastructure.Application.Avalonia;
 
 public sealed class AvaloniaApplication : BaseApplication, IApplication
 {
-    private AppBuilder _appbuilder;
-    public static IServiceProvider ServiceProvider { get; private set; }
+    private readonly AppBuilder _appbuilder;
 
     public AvaloniaApplication(ILogger<BaseApplication> logger, IServiceProvider serviceProvider) : base(logger,
         serviceProvider)
@@ -20,6 +19,8 @@ public sealed class AvaloniaApplication : BaseApplication, IApplication
             .WithInterFont()
             .LogToTrace();
     }
+
+    public static IServiceProvider ServiceProvider { get; private set; }
 
     protected override Task OnStartupAsync()
     {

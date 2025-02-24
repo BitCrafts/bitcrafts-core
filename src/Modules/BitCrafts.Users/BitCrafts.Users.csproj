@@ -7,13 +7,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\UsesCases\BitCrafts.UseCases\BitCrafts.UseCases.csproj" />
-      <ProjectReference Include="..\BitCrafts.Users.Abstraction\BitCrafts.Users.Abstraction.csproj" />
+        <ProjectReference Include="..\..\UsesCases\BitCrafts.UseCases\BitCrafts.UseCases.csproj"/>
+        <ProjectReference Include="..\BitCrafts.Users.Abstraction\BitCrafts.Users.Abstraction.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Avalonia.Desktop" Version="11.2.4" />
-      <PackageReference Include="Dapper" Version="2.1.66" />
+        <PackageReference Include="Avalonia.Desktop" Version="11.2.4"/>
+        <PackageReference Include="Dapper" Version="2.1.66"/>
     </ItemGroup>
 
 </Project>

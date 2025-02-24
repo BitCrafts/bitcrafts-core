@@ -4,5 +4,5 @@ namespace BitCrafts.Infrastructure.Abstraction.Modules;
 
 public interface IModuleRegistrer : IDisposable
 {
-    void RegisterModules(IServiceCollection services); 
+    void RegisterModules(IServiceCollection services);
 }

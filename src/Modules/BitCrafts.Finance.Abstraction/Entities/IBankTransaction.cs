@@ -8,5 +8,4 @@ public interface IBankTransaction : IEntity<int>
     decimal Amount { get; set; }
     DateTime Date { get; set; }
     BankTransactionType Type { get; set; }
-    
 }

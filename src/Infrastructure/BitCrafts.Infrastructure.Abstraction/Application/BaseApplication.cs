@@ -4,18 +4,24 @@ namespace BitCrafts.Infrastructure.Abstraction.Application;
 
 public abstract class BaseApplication : IApplication
 {
-    protected readonly ILogger<BaseApplication> Logger;
     private readonly IServiceProvider _serviceProvider;
+    protected readonly ILogger<BaseApplication> Logger;
 
     protected BaseApplication(ILogger<BaseApplication> logger, IServiceProvider serviceProvider)
     {
         Logger = logger;
         _serviceProvider = serviceProvider;
     }
-  
+
     public async Task StartAsync()
     {
         await OnStartupAsync();
+    }
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
     }
 
     protected abstract Task OnStartupAsync();
@@ -28,11 +34,5 @@ public abstract class BaseApplication : IApplication
         }
 
         Logger.LogInformation("Application disposed");
-    }
-
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
     }
 }

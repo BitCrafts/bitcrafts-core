@@ -30,13 +30,9 @@ public sealed class DeleteInventoryUseCase : BaseUseCase<InventoryEventRequest, 
 
         var result = await _inventoryRepository.DeleteAsync(request.Inventory.Id);
         if (result)
-        {
             Logger.LogInformation($"Successfully deleted inventory with ID: {request.Inventory.Id}");
-        }
         else
-        {
             Logger.LogWarning($"Failed to delete inventory with ID: {request.Inventory.Id}");
-        }
     }
 
     protected override Task ExecuteCoreAsync(InventoryEventRequest createEvent)

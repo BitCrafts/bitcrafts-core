@@ -7,9 +7,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\Infrastructure\BitCrafts.Infrastructure\BitCrafts.Infrastructure.csproj" />
-      <ProjectReference Include="..\..\UsesCases\BitCrafts.UseCases.Abstraction\BitCrafts.UseCases.Abstraction.csproj" />
-      <ProjectReference Include="..\BitCrafts.Customers.Abstraction\BitCrafts.Customers.Abstraction.csproj" />
+        <ProjectReference Include="..\..\Infrastructure\BitCrafts.Infrastructure\BitCrafts.Infrastructure.csproj"/>
+        <ProjectReference Include="..\..\UsesCases\BitCrafts.UseCases.Abstraction\BitCrafts.UseCases.Abstraction.csproj"/>
+        <ProjectReference Include="..\BitCrafts.Customers.Abstraction\BitCrafts.Customers.Abstraction.csproj"/>
     </ItemGroup>
 
 </Project>

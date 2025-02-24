@@ -3,7 +3,7 @@ using BitCrafts.Users.Abstraction.Entities;
 
 namespace BitCrafts.Users.Entities;
 
-public class User : BaseEntity<int>,IUser
+public class User : BaseEntity<int>, IUser
 {
     public string FirstName { get; set; }
     public string LastName { get; set; }

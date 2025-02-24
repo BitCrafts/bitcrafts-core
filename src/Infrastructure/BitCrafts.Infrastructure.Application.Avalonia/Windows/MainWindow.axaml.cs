@@ -9,10 +9,10 @@ namespace BitCrafts.Infrastructure.Application.Avalonia.Windows;
 
 public partial class MainWindow : Window, IWindow
 {
+    private readonly ContentControl _content;
     private readonly Dictionary<string, UserControl> _loadedModules;
+    private readonly ListBox _menuList;
     private IReadOnlyDictionary<string, IModule> _modules;
-    private ListBox _menuList;
-    private ContentControl _content;
 
     public MainWindow()
     {
@@ -47,8 +47,6 @@ public partial class MainWindow : Window, IWindow
             return;
 
         if (_loadedModules.TryGetValue(selectedTextBlock.Text, out var selectedModule))
-        {
             _content.Content = selectedModule;
-        }
-    } 
+    }
 }

@@ -3,6 +3,6 @@ using BitCrafts.Infrastructure.Abstraction.Repositories;
 
 namespace BitCrafts.Customers.Abstraction.Repositories;
 
-public interface ICustomerGroupRepository : IRepository<ICustomerGroup,int>
+public interface ICustomerGroupRepository : IRepository<ICustomerGroup, int>
 {
 }

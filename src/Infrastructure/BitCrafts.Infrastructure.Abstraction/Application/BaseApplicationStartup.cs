@@ -14,14 +14,6 @@ public abstract class BaseApplicationStartup : IApplicationStartup
         ServiceProvider = serviceProvider;
     }
 
-    protected virtual void Dispose(bool disposing)
-    {
-        if (disposing)
-        {
-            // TODO release managed resources here
-        }
-    }
-
     public void Dispose()
     {
         Dispose(true);
@@ -29,4 +21,12 @@ public abstract class BaseApplicationStartup : IApplicationStartup
     }
 
     public abstract Task StartAsync();
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            // TODO release managed resources here
+        }
+    }
 }

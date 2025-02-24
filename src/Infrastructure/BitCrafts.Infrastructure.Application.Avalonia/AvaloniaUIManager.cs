@@ -14,10 +14,10 @@ namespace BitCrafts.Infrastructure.Application.Avalonia;
 public sealed class AvaloniaUiManager : IUiManager
 {
     private readonly IApplicationStartup _applicationStartup;
+    private readonly MainWindow _mainWindow;
     private readonly IModuleManager _moduleManager;
     private readonly IServiceProvider _serviceProvider;
     private readonly ISplashScreen _splashScreen;
-    private readonly MainWindow _mainWindow;
     private readonly Dictionary<string, Type> _views = new();
 
     private IClassicDesktopStyleApplicationLifetime? _applicationLifetime;
@@ -34,16 +34,6 @@ public sealed class AvaloniaUiManager : IUiManager
 
         _splashScreen = new AvaloniaSplashScreen();
         _mainWindow = new MainWindow();
-    }
-
-    public void SetNativeApplication(IClassicDesktopStyleApplicationLifetime applicationLifetime)
-    {
-        if (_isInitialized)
-            return;
-
-        _applicationLifetime = applicationLifetime ?? throw new ArgumentNullException(nameof(applicationLifetime));
-        _applicationLifetime.MainWindow = _splashScreen.GetNativeObject<Window>();
-        _applicationLifetime.ShutdownMode = ShutdownMode.OnMainWindowClose;
     }
 
     public async Task StartAsync()
@@ -70,13 +60,28 @@ public sealed class AvaloniaUiManager : IUiManager
         _applicationLifetime.MainWindow.Show();
     }
 
+    public void Dispose()
+    {
+        _splashScreen.Dispose();
+    }
+
+    public void SetNativeApplication(IClassicDesktopStyleApplicationLifetime applicationLifetime)
+    {
+        if (_isInitialized)
+            return;
+
+        _applicationLifetime = applicationLifetime ?? throw new ArgumentNullException(nameof(applicationLifetime));
+        _applicationLifetime.MainWindow = _splashScreen.GetNativeObject<Window>();
+        _applicationLifetime.ShutdownMode = ShutdownMode.OnMainWindowClose;
+    }
+
     private async Task LoadModuleViews()
     {
         var modules = new Dictionary<string, UserControl>();
 
         foreach (var module in _moduleManager.Modules)
         {
-            string moduleName = module.Value.Name;
+            var moduleName = module.Value.Name;
             _splashScreen.SetText($"Loading {moduleName} Module...");
 
             var viewType = module.Value.GetViewType();
@@ -105,10 +110,5 @@ public sealed class AvaloniaUiManager : IUiManager
 
         _splashScreen.SetText(statusMessage);
         await action();
-    }
-
-    public void Dispose()
-    {
-        _splashScreen.Dispose();
     }
 }

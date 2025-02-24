@@ -7,15 +7,15 @@ public abstract class BaseUseCase<TEventRequest, TEventResponse> : IUseCase<TEve
     where TEventRequest : IEventRequest
     where TEventResponse : IEventResponse
 {
-    private IEventAggregator EventAggregator { get; set; }
-    protected ILogger<BaseUseCase<TEventRequest, TEventResponse>> Logger { get; private set; }
-
     protected BaseUseCase(ILogger<BaseUseCase<TEventRequest, TEventResponse>> logger, IEventAggregator eventAggregator)
     {
         Logger = logger;
         EventAggregator = eventAggregator;
         EventAggregator.Subscribe<TEventRequest>(ExecuteAsync);
     }
+
+    private IEventAggregator EventAggregator { get; }
+    protected ILogger<BaseUseCase<TEventRequest, TEventResponse>> Logger { get; }
 
     public async Task ExecuteAsync(TEventRequest createEvent)
     {
@@ -28,24 +28,21 @@ public abstract class BaseUseCase<TEventRequest, TEventResponse> : IUseCase<TEve
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, $"Error while executing use case {this.GetType().Name}");
+            Logger.LogError(ex, $"Error while executing use case {GetType().Name}");
         }
+    }
+
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
     }
 
     protected abstract Task ExecuteCoreAsync(TEventRequest createEvent);
 
     protected virtual void Dispose(bool disposing)
     {
-        if (disposing)
-        {
-            EventAggregator.Unsubscribe<TEventRequest>(ExecuteAsync);
-        }
-    }
- 
-
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
+        if (disposing) EventAggregator.Unsubscribe<TEventRequest>(ExecuteAsync);
     }
 }

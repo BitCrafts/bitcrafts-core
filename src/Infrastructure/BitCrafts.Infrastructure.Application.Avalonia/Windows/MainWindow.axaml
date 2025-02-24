@@ -11,8 +11,7 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <ListBox x:Name="ModulesListBox" Grid.Column="0" SelectionChanged="OnModuleSelected">
-        </ListBox>
+        <ListBox x:Name="ModulesListBox" Grid.Column="0" SelectionChanged="OnModuleSelected" />
 
 
         <ContentControl x:Name="ModuleContent" Grid.Column="1" VerticalAlignment="Stretch"

@@ -18,8 +18,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\src\Modules\BitCrafts.Inventory.Abstraction\BitCrafts.Inventory.Abstraction.csproj" />
-      <ProjectReference Include="..\..\src\Modules\BitCrafts.Inventory\BitCrafts.Inventory.csproj" />
+        <ProjectReference Include="..\..\src\Modules\BitCrafts.Inventory.Abstraction\BitCrafts.Inventory.Abstraction.csproj"/>
+        <ProjectReference Include="..\..\src\Modules\BitCrafts.Inventory\BitCrafts.Inventory.csproj"/>
     </ItemGroup>
 
 </Project>

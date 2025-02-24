@@ -12,6 +12,11 @@ public class SqlDialectFactory : ISqlDialectFactory
         _configuration = configuration;
     }
 
+    public ISqlDialect Create()
+    {
+        return CreateSqlDialect();
+    }
+
     private ISqlDialect CreateSqlDialect()
     {
         var configSection = _configuration.GetSection("DatabaseSettings");
@@ -28,10 +33,5 @@ public class SqlDialectFactory : ISqlDialectFactory
             default:
                 throw new ApplicationException("Unknown database provider");
         }
-    }
-
-    public ISqlDialect Create()
-    {
-        return CreateSqlDialect();
     }
 }

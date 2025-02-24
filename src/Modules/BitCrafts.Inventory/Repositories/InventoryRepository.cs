@@ -32,7 +32,7 @@ public class InventoryRepository : IInventoryRepository
     public async Task<IInventory> GetByIdAsync(int id)
     {
         return await _dbManager.QuerySingleAsync<IInventory>(
-            "SELECT * FROM Inventory WHERE Id = @Id;", 
+            "SELECT * FROM Inventory WHERE Id = @Id;",
             new { Id = id });
     }
 
@@ -48,10 +48,9 @@ public class InventoryRepository : IInventoryRepository
     public async Task<bool> DeleteAsync(int id)
     {
         var result = await _dbManager.ExecuteAsync(
-            "DELETE FROM Inventory WHERE Id = @Id;", 
+            "DELETE FROM Inventory WHERE Id = @Id;",
             new { Id = id });
 
         return result > 0;
     }
-    
 }

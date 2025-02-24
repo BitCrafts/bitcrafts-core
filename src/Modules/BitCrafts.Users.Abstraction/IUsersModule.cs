@@ -4,5 +4,4 @@ namespace BitCrafts.Users.Abstraction;
 
 public interface IUsersModule : IModule
 {
-    
 }

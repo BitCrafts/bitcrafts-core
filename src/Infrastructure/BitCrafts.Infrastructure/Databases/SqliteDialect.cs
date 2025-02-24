@@ -8,5 +8,4 @@ public class SqliteDialect : ISqlDialect
     {
         return "SELECT last_insert_rowid();";
     }
-
 }

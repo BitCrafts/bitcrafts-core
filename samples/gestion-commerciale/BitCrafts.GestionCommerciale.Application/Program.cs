@@ -20,7 +20,7 @@ internal class Program
         */
 
     [STAThread]
-    static async Task Main(string[] args)
+    private static async Task Main(string[] args)
     {
         var serviceCollection = new ServiceCollection();
         serviceCollection.AddSingleton<IApplicationStartup, ApplicationStartup>();

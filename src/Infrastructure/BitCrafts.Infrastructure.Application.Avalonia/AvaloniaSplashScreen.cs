@@ -24,9 +24,7 @@ public sealed class AvaloniaSplashScreen : ISplashScreen
 
         var loadingTextBlock = _splashWindow.FindControl<TextBlock>("LoadingTextBlock");
         if (loadingTextBlock == null)
-        {
             throw new InvalidOperationException("LoadingTextBlock control not found in the SplashScreen.");
-        }
 
         loadingTextBlock.Text = text;
     }

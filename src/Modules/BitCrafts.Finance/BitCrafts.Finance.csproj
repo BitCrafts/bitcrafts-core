@@ -7,8 +7,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\Infrastructure\BitCrafts.Infrastructure.Abstraction\BitCrafts.Infrastructure.Abstraction.csproj" />
-      <ProjectReference Include="..\BitCrafts.Finance.Abstraction\BitCrafts.Finance.Abstraction.csproj" />
+        <ProjectReference Include="..\..\Infrastructure\BitCrafts.Infrastructure.Abstraction\BitCrafts.Infrastructure.Abstraction.csproj"/>
+        <ProjectReference Include="..\BitCrafts.Finance.Abstraction\BitCrafts.Finance.Abstraction.csproj"/>
     </ItemGroup>
 
 </Project>

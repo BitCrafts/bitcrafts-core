@@ -15,11 +15,6 @@ public sealed class CustomerGroupRepository : ICustomerGroupRepository
         _connectionFactory = connectionFactory;
     }
 
-    private string GetTableName()
-    {
-        return "CustomerGroup";
-    }
-
     public async Task<bool> DeleteAsync(int id)
     {
         using var connection = _connectionFactory.Create();
@@ -31,12 +26,12 @@ public sealed class CustomerGroupRepository : ICustomerGroupRepository
     public async Task<bool> UpdateAsync(ICustomerGroup entity)
     {
         using var connection = _connectionFactory.Create();
-        var updateSql = $@"UPDATE CustomerGroup SET 
+        var updateSql = @"UPDATE CustomerGroup SET 
                             Name = @Name,
                             CreatedBy = @CreatedBy,
                             UpdatedBy = @UpdatedBy
                             WHERE Id = @Id;";
-        var result = await connection.ExecuteAsync(updateSql, new { Name = entity.Name, CreatedBy = entity.CreatedBy, UpdatedBy = entity.UpdatedBy });
+        var result = await connection.ExecuteAsync(updateSql, new { entity.Name, entity.CreatedBy, entity.UpdatedBy });
         return result > 0;
     }
 
@@ -56,7 +51,7 @@ public sealed class CustomerGroupRepository : ICustomerGroupRepository
         using var connection = _connectionFactory.Create();
         var selectAllSql = $"SELECT * FROM {GetTableName()}";
         var result = await connection.QueryAsync<CustomerGroup>(selectAllSql);
-        return result.Cast<ICustomerGroup>();
+        return result;
     }
 
     public async Task<ICustomerGroup> GetByIdAsync(int id)
@@ -64,6 +59,11 @@ public sealed class CustomerGroupRepository : ICustomerGroupRepository
         using var connection = _connectionFactory.Create();
         var selectByIdSql = $"SELECT * FROM {GetTableName()} WHERE Id = @Id";
         var result = await connection.QueryFirstOrDefaultAsync<CustomerGroup>(selectByIdSql, new { Id = id });
-        return result as ICustomerGroup;
+        return result;
+    }
+
+    private string GetTableName()
+    {
+        return "CustomerGroup";
     }
 }

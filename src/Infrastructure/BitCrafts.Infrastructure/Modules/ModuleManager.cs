@@ -12,20 +12,13 @@ public sealed class ModuleManager : IModuleManager
     public void AddModule(IModule module)
     {
         if (!_modules.ContainsKey(module.Name))
-        {
             _modules.Add(module.Name, module);
-        }
         else
-        {
-            throw new System.Exception($"Un module avec le nom '{module.Name}' existe déjà.");
-        }
+            throw new Exception($"Un module avec le nom '{module.Name}' existe déjà.");
     }
 
     public void AddModules(IEnumerable<IModule> modules)
     {
-        foreach (var module in modules)
-        {
-            AddModule(module);
-        }
+        foreach (var module in modules) AddModule(module);
     }
 }

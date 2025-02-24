@@ -4,5 +4,5 @@ public interface IWindow
 {
     void Show();
     void Hide();
-    void Close(); 
+    void Close();
 }

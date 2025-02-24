@@ -8,8 +8,8 @@ namespace BitCrafts.Customers.Repositories;
 
 public sealed class CustomerRepository : ICustomerRepository
 {
+    private const string assignCustomerToGroupSql = "UPDATE  Customer SET GroupId = @GroupId WHERE Id = @Id";
     private readonly IDbConnectionFactory _connectionFactory;
-    private const string assignCustomerToGroupSql = $"UPDATE  Customer SET GroupId = @GroupId WHERE Id = @Id";
 
     public CustomerRepository(IDbConnectionFactory connectionFactory)
     {
@@ -23,11 +23,6 @@ public sealed class CustomerRepository : ICustomerRepository
         var rowAffected =
             await connection.ExecuteAsync(assignCustomerToGroupSql, new { Id = customerId, GroupId = groupId });
         return rowAffected > 0;
-    }
-
-    private string GetTableName()
-    {
-        return "Customer";
     }
 
     public Task<bool> DeleteAsync(int id)
@@ -66,7 +61,7 @@ public sealed class CustomerRepository : ICustomerRepository
         using var connection = _connectionFactory.Create();
         var selectAllSql = $"SELECT * FROM {GetTableName()}";
         var result = await connection.QueryAsync<Customer>(selectAllSql);
-        return result.Cast<ICustomer>();
+        return result;
     }
 
     public async Task<ICustomer> GetByIdAsync(int id)
@@ -74,6 +69,11 @@ public sealed class CustomerRepository : ICustomerRepository
         using var connection = _connectionFactory.Create();
         var selectByIdSql = $"SELECT * FROM {GetTableName()} WHERE Id = @Id";
         var result = await connection.QueryFirstOrDefaultAsync<Customer>(selectByIdSql, new { Id = id });
-        return result as ICustomer;
+        return result;
+    }
+
+    private string GetTableName()
+    {
+        return "Customer";
     }
 }

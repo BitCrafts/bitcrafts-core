@@ -8,5 +8,4 @@ public interface ILoan : IEntity<int>
     decimal InterestRate { get; set; }
     DateTime StartDate { get; set; }
     int TermMonths { get; set; }
-
 }

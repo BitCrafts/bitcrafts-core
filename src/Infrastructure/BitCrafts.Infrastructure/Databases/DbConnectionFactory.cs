@@ -11,14 +11,14 @@ public sealed class DbConnectionFactory : IDbConnectionFactory
     private readonly IConfiguration _configuration;
     private readonly ILogger<DbConnectionFactory> _logger;
 
-    public bool IsSqliteProvider { get; private set; }
-    public bool IsMemoryProvider { get; private set; }
-
     public DbConnectionFactory(IConfiguration configuration, ILogger<DbConnectionFactory> logger)
     {
         _configuration = configuration;
         _logger = logger;
     }
+
+    public bool IsSqliteProvider { get; private set; }
+    public bool IsMemoryProvider { get; private set; }
 
     public IDbConnection Create()
     {
@@ -43,7 +43,7 @@ public sealed class DbConnectionFactory : IDbConnectionFactory
                 return new SqliteConnection($"Data Source={database}");
             default:
                 IsMemoryProvider = true;
-                return new SqliteConnection($"Data Source=:memory:");
+                return new SqliteConnection("Data Source=:memory:");
             /*case "sqlserver":
                 IsSqlServerProvider = true;
                 _logger.LogInformation("Using SqlServer database.");

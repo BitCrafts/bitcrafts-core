@@ -29,18 +29,14 @@ public sealed class UpdateInventoryUseCase : BaseUseCase<InventoryEventRequest, 
         {
             Logger.LogWarning("UpdateInventory event received with invalid or null Inventory object.");
             return;
-        } 
-        
+        }
+
         Logger.LogInformation($"Handling UpdateInventory event for ID: {request.Inventory.Id}");
 
         var result = await _inventoryRepository.UpdateAsync(request.Inventory);
         if (result)
-        {
             Logger.LogInformation($"Successfully updated inventory with ID: {request.Inventory.Id}");
-        }
         else
-        {
             Logger.LogWarning($"Failed to update inventory with ID: {request.Inventory.Id}");
-        }
     }
 }

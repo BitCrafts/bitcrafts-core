@@ -8,17 +8,25 @@ namespace BitCrafts.Users.Presenters;
 
 public class UsersPresenter : IUsersPresenter
 {
-    private readonly IUsersView _view;
     private readonly ICreateUserUseCase _createUserUseCase;
     private readonly IUpdateUserUseCase _updateUserUseCase;
+    private readonly IUsersView _view;
 
     public UsersPresenter(IUsersView view, ICreateUserUseCase createUserUseCase, IUpdateUserUseCase updateUserUseCase)
     {
         _view = view;
         _createUserUseCase = createUserUseCase;
         _updateUserUseCase = updateUserUseCase;
- 
+
         InitializeViewEvents();
+    }
+
+    public async Task SaveUserAsync()
+    {
+        var user = _view.GetUser();
+        ValidateUser(user);
+
+        await _createUserUseCase.ExecuteAsync(new UserEventRequest { User = user });
     }
 
     private void InitializeViewEvents()
@@ -28,20 +36,12 @@ public class UsersPresenter : IUsersPresenter
         _view.CancelClicked += (_, _) => CancelEditing();
     }
 
-    public async Task SaveUserAsync()
-    {
-        var user = _view.GetUser();
-        ValidateUser(user);
-
-        await _createUserUseCase.ExecuteAsync(new UserEventRequest { User = user }); 
-    }
-
     public async Task UpdateUserAsync()
     {
         var user = _view.GetUser();
         ValidateUser(user);
 
-        await _updateUserUseCase.ExecuteAsync(new UserEventRequest { User = user }); 
+        await _updateUserUseCase.ExecuteAsync(new UserEventRequest { User = user });
     }
 
     public void CancelEditing()
@@ -58,7 +58,6 @@ public class UsersPresenter : IUsersPresenter
             throw new ArgumentException("Last name is required.");
 
         if (!user.Email.Contains("@"))
-            throw new ArgumentException("Invalid email."); 
+            throw new ArgumentException("Invalid email.");
     }
-
 }

@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using BitCrafts.Users.Abstraction.Entities;
 using BitCrafts.Users.Abstraction.Views;
@@ -8,14 +9,14 @@ namespace BitCrafts.Users.Views;
 
 public partial class UsersView : UserControl, IUsersView
 {
-    public event EventHandler SaveClicked;
-    public event EventHandler UpdateClicked;
-    public event EventHandler CancelClicked;
-
     public UsersView()
     {
         AvaloniaXamlLoader.Load(this);
     }
+
+    public event EventHandler SaveClicked;
+    public event EventHandler UpdateClicked;
+    public event EventHandler CancelClicked;
 
     public void SetUser(IUser user)
     {
@@ -38,21 +39,21 @@ public partial class UsersView : UserControl, IUsersView
             PhoneNumber = this.FindControl<TextBox>("PhoneNumberTextBox").Text,
             BirthDate = this.FindControl<CalendarDatePicker>("BirthDatePicker").SelectedDate.GetValueOrDefault(),
             NationalNumber = this.FindControl<TextBox>("NationalNumberTextBox").Text,
-            PassportNumber = this.FindControl<TextBox>("PassportNumberTextBox").Text,
+            PassportNumber = this.FindControl<TextBox>("PassportNumberTextBox").Text
         };
     }
 
-    private void SaveButton_OnClick(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void SaveButton_OnClick(object sender, RoutedEventArgs e)
     {
         SaveClicked?.Invoke(this, EventArgs.Empty);
     }
 
-    private void CancelButton_OnClick(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void CancelButton_OnClick(object sender, RoutedEventArgs e)
     {
         CancelClicked?.Invoke(this, EventArgs.Empty);
     }
 
-    private void UpdateButton_OnClick(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void UpdateButton_OnClick(object sender, RoutedEventArgs e)
     {
         UpdateClicked?.Invoke(this, EventArgs.Empty);
     }

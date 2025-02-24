@@ -12,7 +12,7 @@ public sealed class ModuleRegistrer : IModuleRegistrer
     private readonly IModuleManager _moduleManager;
     private List<Assembly> _loadedAssemblies;
 
-    public ModuleRegistrer(ILogger logger,IModuleManager moduleManager)
+    public ModuleRegistrer(ILogger logger, IModuleManager moduleManager)
     {
         _logger = logger;
         _moduleManager = moduleManager;

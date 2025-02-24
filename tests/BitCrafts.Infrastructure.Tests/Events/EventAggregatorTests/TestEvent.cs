@@ -4,8 +4,4 @@ namespace BitCrafts.Infrastructure.Tests.Events.EventAggregatorTests;
 
 public class TestEvent : BaseEvent
 {
-    public TestEvent()
-    {
-        
-    }
 }

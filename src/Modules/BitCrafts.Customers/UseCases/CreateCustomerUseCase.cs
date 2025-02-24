@@ -22,13 +22,13 @@ public sealed class CreateCustomerUseCase : ICreateCustomerUseCase
         _eventAggregator.Subscribe<CustomerCreateEventRequest>(ExecuteCreateCustomer);
     }
 
-    private Task ExecuteCreateCustomer(CustomerCreateEventRequest arg)
-    {
-        return Task.Run(async () => { await _customerRepository.AddAsync(arg.Customer); });
-    }
-
     public void Dispose()
     {
         _eventAggregator.Unsubscribe<CustomerCreateEventRequest>(ExecuteCreateCustomer);
+    }
+
+    private Task ExecuteCreateCustomer(CustomerCreateEventRequest arg)
+    {
+        return Task.Run(async () => { await _customerRepository.AddAsync(arg.Customer); });
     }
 }

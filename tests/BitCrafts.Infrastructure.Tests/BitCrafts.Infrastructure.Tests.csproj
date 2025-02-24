@@ -17,8 +17,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\src\Infrastructure\BitCrafts.Infrastructure.Abstraction\BitCrafts.Infrastructure.Abstraction.csproj" />
-      <ProjectReference Include="..\..\src\Infrastructure\BitCrafts.Infrastructure\BitCrafts.Infrastructure.csproj" />
+        <ProjectReference Include="..\..\src\Infrastructure\BitCrafts.Infrastructure.Abstraction\BitCrafts.Infrastructure.Abstraction.csproj"/>
+        <ProjectReference Include="..\..\src\Infrastructure\BitCrafts.Infrastructure\BitCrafts.Infrastructure.csproj"/>
     </ItemGroup>
 
 </Project>

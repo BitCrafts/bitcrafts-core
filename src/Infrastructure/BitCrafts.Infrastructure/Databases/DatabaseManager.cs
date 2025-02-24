@@ -17,15 +17,6 @@ public class DatabaseManager : IDatabaseManager
         _dialectFactory = dialectFactory;
     }
 
-    private async Task<TResult> UseConnectionAsync<TResult>(Func<IDbConnection, ISqlDialect, Task<TResult>> operation)
-    {
-        using var connection = _connectionFactory.Create();
-        connection.Open();
-
-        var dialect = _dialectFactory.Create();
-        return await operation(connection, dialect);
-    }
-
     public async Task<T> QuerySingleAsync<T>(string sql, object param = null, IDbTransaction transaction = null)
     {
         return await UseConnectionAsync((conn, _) => _dapper.QuerySingleAsync<T>(conn, sql, param, transaction));
@@ -47,11 +38,18 @@ public class DatabaseManager : IDatabaseManager
         {
             var query = dialect.GetLastInsertedIdQuery();
             if (string.IsNullOrEmpty(query))
-            {
                 throw new NotSupportedException("This database does not support last inserted ID queries directly.");
-            }
 
             return await _dapper.QuerySingleAsync<int>(conn, query);
         });
+    }
+
+    private async Task<TResult> UseConnectionAsync<TResult>(Func<IDbConnection, ISqlDialect, Task<TResult>> operation)
+    {
+        using var connection = _connectionFactory.Create();
+        connection.Open();
+
+        var dialect = _dialectFactory.Create();
+        return await operation(connection, dialect);
     }
 }

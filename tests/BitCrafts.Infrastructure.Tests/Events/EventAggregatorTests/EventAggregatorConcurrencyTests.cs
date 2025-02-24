@@ -21,31 +21,22 @@ public class EventAggregatorConcurrencyTests
     {
         var callCount = 0;
         var testEvent = new TestEvent();
- 
+
         _eventAggregator.Subscribe<TestEvent>(async evnt =>
         {
             Interlocked.Increment(ref callCount);
             await Task.CompletedTask;
         });
 
-        var threads = new List<Thread>(); 
-        for (int i = 0; i < 50; i++)
-        {
-            threads.Add(new Thread(() => { _eventAggregator.Publish(testEvent); }));
-        }
- 
-        foreach (var thread in threads)
-        {
-            thread.Start();
-        }
- 
-        foreach (var thread in threads)
-        {
-            thread.Join();
-        }
- 
+        var threads = new List<Thread>();
+        for (var i = 0; i < 50; i++) threads.Add(new Thread(() => { _eventAggregator.Publish(testEvent); }));
+
+        foreach (var thread in threads) thread.Start();
+
+        foreach (var thread in threads) thread.Join();
+
         Task.Delay(200).Wait();
- 
+
         Assert.AreEqual(50, callCount);
     }
 
@@ -56,9 +47,8 @@ public class EventAggregatorConcurrencyTests
         var callCount = 0;
         var subscriptionsAdded = 0;
         var threads = new List<Thread>();
- 
-        for (int i = 0; i < 25; i++)
-        {
+
+        for (var i = 0; i < 25; i++)
             threads.Add(new Thread(() =>
             {
                 _eventAggregator.Subscribe<TestEvent>(async evnt =>
@@ -68,27 +58,17 @@ public class EventAggregatorConcurrencyTests
                 });
                 Interlocked.Increment(ref subscriptionsAdded);
             }));
-        }
- 
-        for (int i = 0; i < 25; i++)
-        {
-            threads.Add(new Thread(() => { _eventAggregator.Publish(testEvent); }));
-        }
- 
-        foreach (var thread in threads)
-        {
-            thread.Start();
-        }
- 
-        foreach (var thread in threads)
-        {
-            thread.Join();
-        }
- 
+
+        for (var i = 0; i < 25; i++) threads.Add(new Thread(() => { _eventAggregator.Publish(testEvent); }));
+
+        foreach (var thread in threads) thread.Start();
+
+        foreach (var thread in threads) thread.Join();
+
         Task.Delay(500).Wait();
- 
+
         Assert.AreEqual(25, subscriptionsAdded);
- 
+
         Assert.IsTrue(callCount >= 1);
     }
 }

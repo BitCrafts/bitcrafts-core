@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace BitCrafts.Infrastructure.Application.Avalonia;
 
-public partial class App : global::Avalonia.Application
+public class App : global::Avalonia.Application
 {
     public override void Initialize()
     {
@@ -15,7 +15,7 @@ public partial class App : global::Avalonia.Application
     public override async void OnFrameworkInitializationCompleted()
     {
         var uiManager =
-            (AvaloniaUiManager)AvaloniaApplication.ServiceProvider.GetRequiredService<IUiManager>(); 
+            (AvaloniaUiManager)AvaloniaApplication.ServiceProvider.GetRequiredService<IUiManager>();
         var desktop = ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
         uiManager.SetNativeApplication(desktop);
         await uiManager.StartAsync();

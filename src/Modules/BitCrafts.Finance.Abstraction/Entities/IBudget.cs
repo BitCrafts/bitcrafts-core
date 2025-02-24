@@ -8,5 +8,4 @@ public interface IBudget : IEntity<int>
     decimal Limit { get; init; }
     DateTime StartDate { get; init; }
     DateTime EndDate { get; init; }
-
 }

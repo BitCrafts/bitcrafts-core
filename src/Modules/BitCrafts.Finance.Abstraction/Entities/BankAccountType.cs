@@ -4,5 +4,5 @@ public enum BankAccountType
 {
     Checking,
     Savings,
-    Credit,
+    Credit
 }

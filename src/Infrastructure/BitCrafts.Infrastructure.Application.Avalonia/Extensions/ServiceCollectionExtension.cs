@@ -7,9 +7,9 @@ public static class ServiceCollectionExtension
 {
     public static IServiceCollection AddBitCraftsAvaloniaApplication(this IServiceCollection services)
     {
-        services.AddKeyedSingleton<IApplication, AvaloniaApplication>("Avalonia"); 
-        services.AddSingleton<IUiManager, AvaloniaUiManager>(); 
-        services.AddSingleton<ISplashScreen, AvaloniaSplashScreen>(); 
+        services.AddKeyedSingleton<IApplication, AvaloniaApplication>("Avalonia");
+        services.AddSingleton<IUiManager, AvaloniaUiManager>();
+        services.AddSingleton<ISplashScreen, AvaloniaSplashScreen>();
         return services;
     }
 }

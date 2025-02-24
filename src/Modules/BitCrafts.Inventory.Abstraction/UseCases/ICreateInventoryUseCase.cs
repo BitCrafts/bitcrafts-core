@@ -5,5 +5,4 @@ namespace BitCrafts.Inventory.Abstraction.UseCases;
 
 public interface ICreateInventoryUseCase : IUseCase<InventoryEventRequest, InventoryEventResponse>
 {
-    
 }

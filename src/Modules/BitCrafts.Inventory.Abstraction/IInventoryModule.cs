@@ -4,5 +4,4 @@ namespace BitCrafts.Inventory.Abstraction;
 
 public interface IInventoryModule : IModule
 {
-    
 }

@@ -4,15 +4,16 @@ namespace BitCrafts.Infrastructure.Threading;
 
 public sealed class LimitedThreadScheduler : TaskScheduler
 {
-    private readonly LinkedList<Task> _tasks = new LinkedList<Task>();
-    private readonly int _maxDegreeOfParallelism;
-    private int _runningTasks = 0;
+    private readonly LinkedList<Task> _tasks = new();
+    private int _runningTasks;
 
 
     public LimitedThreadScheduler(IParallelism parallelism)
     {
-        _maxDegreeOfParallelism = parallelism.GetOptimalParallelism(false);
+        MaximumConcurrencyLevel = parallelism.GetOptimalParallelism();
     }
+
+    public override int MaximumConcurrencyLevel { get; }
 
     protected override IEnumerable<Task> GetScheduledTasks()
     {
@@ -33,11 +34,9 @@ public sealed class LimitedThreadScheduler : TaskScheduler
 
     protected override bool TryExecuteTaskInline(Task task, bool taskWasPreviouslyQueued)
     {
-        if (Interlocked.CompareExchange(ref _runningTasks, _maxDegreeOfParallelism, _maxDegreeOfParallelism) <
-            _maxDegreeOfParallelism)
-        {
+        if (Interlocked.CompareExchange(ref _runningTasks, MaximumConcurrencyLevel, MaximumConcurrencyLevel) <
+            MaximumConcurrencyLevel)
             return TryExecuteTask(task);
-        }
 
         return false;
     }
@@ -46,10 +45,10 @@ public sealed class LimitedThreadScheduler : TaskScheduler
     {
         lock (_tasks)
         {
-            if (_runningTasks >= _maxDegreeOfParallelism || !_tasks.Any())
+            if (_runningTasks >= MaximumConcurrencyLevel || !_tasks.Any())
                 return;
 
-            Task task = _tasks.First?.Value;
+            var task = _tasks.First?.Value;
             _tasks.RemoveFirst();
 
             Interlocked.Increment(ref _runningTasks);
@@ -69,6 +68,4 @@ public sealed class LimitedThreadScheduler : TaskScheduler
             });
         }
     }
-
-    public override int MaximumConcurrencyLevel => _maxDegreeOfParallelism;
 }

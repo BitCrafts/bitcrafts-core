@@ -37,14 +37,13 @@ public class UsersRepositoryTests
 
         _dbManagerMock.QuerySingleAsync<int>(
             Arg.Any<string>(),
-            Arg.Any<object>(),
-            null).Returns(1);
+            Arg.Any<object>()).Returns(1);
 
         var result = await _repository.AddAsync(user);
 
         Assert.IsNotNull(result);
         Assert.AreEqual(1, result.Id);
-        await _dbManagerMock.Received(1).ExecuteAsync(Arg.Any<string>(), Arg.Any<object>(), null);
+        await _dbManagerMock.Received(1).ExecuteAsync(Arg.Any<string>(), Arg.Any<object>());
         await _dbManagerMock.Received(1).GetLastInsertedIdAsync();
     }
 
@@ -64,14 +63,14 @@ public class UsersRepositoryTests
             PassportNumber = "AB123456"
         };
         _dbManagerMock.GetLastInsertedIdAsync().Returns(1);
-        _dbManagerMock.QuerySingleAsync<IUser>(Arg.Any<string>(), Arg.Any<object>(), null).Returns(user);
+        _dbManagerMock.QuerySingleAsync<IUser>(Arg.Any<string>(), Arg.Any<object>()).Returns(user);
 
         var result = await _repository.GetByIdAsync(1);
 
         Assert.IsNotNull(result);
         Assert.AreEqual(1, result.Id);
         Assert.AreEqual("John", result.FirstName);
-        await _dbManagerMock.Received(1).QuerySingleAsync<IUser>(Arg.Any<string>(), Arg.Any<object>(), null);
+        await _dbManagerMock.Received(1).QuerySingleAsync<IUser>(Arg.Any<string>(), Arg.Any<object>());
     }
 
     [TestMethod]
@@ -105,13 +104,13 @@ public class UsersRepositoryTests
             }
         };
 
-        _dbManagerMock.QueryAsync<IUser>(Arg.Any<string>(), null).Returns(users);
+        _dbManagerMock.QueryAsync<IUser>(Arg.Any<string>()).Returns(users);
 
         var result = await _repository.GetAllAsync();
 
         Assert.IsNotNull(result);
         Assert.AreEqual(2, result.Count());
-        await _dbManagerMock.Received(1).QueryAsync<IUser>(Arg.Any<string>(), null, null);
+        await _dbManagerMock.Received(1).QueryAsync<IUser>(Arg.Any<string>());
     }
 
     [TestMethod]
@@ -130,12 +129,12 @@ public class UsersRepositoryTests
             PassportNumber = "AB123456"
         };
 
-        _dbManagerMock.ExecuteAsync(Arg.Any<string>(), Arg.Any<object>(), null).Returns(1);
+        _dbManagerMock.ExecuteAsync(Arg.Any<string>(), Arg.Any<object>()).Returns(1);
 
         var result = await _repository.UpdateAsync(user);
 
         Assert.IsTrue(result);
-        await _dbManagerMock.Received(1).ExecuteAsync(Arg.Any<string>(), Arg.Any<object>(), null);
+        await _dbManagerMock.Received(1).ExecuteAsync(Arg.Any<string>(), Arg.Any<object>());
     }
 
     [TestMethod]
@@ -154,33 +153,33 @@ public class UsersRepositoryTests
             PassportNumber = "AB123456"
         };
 
-        _dbManagerMock.ExecuteAsync(Arg.Any<string>(), Arg.Any<object>(), null).Returns(0);
+        _dbManagerMock.ExecuteAsync(Arg.Any<string>(), Arg.Any<object>()).Returns(0);
 
         var result = await _repository.UpdateAsync(user);
 
         Assert.IsFalse(result);
-        await _dbManagerMock.Received(1).ExecuteAsync(Arg.Any<string>(), Arg.Any<object>(), null);
+        await _dbManagerMock.Received(1).ExecuteAsync(Arg.Any<string>(), Arg.Any<object>());
     }
 
     [TestMethod]
     public async Task DeleteAsync_ShouldReturnTrue_WhenUserIsDeleted()
     {
-        _dbManagerMock.ExecuteAsync(Arg.Any<string>(), Arg.Any<object>(), null).Returns(1);
+        _dbManagerMock.ExecuteAsync(Arg.Any<string>(), Arg.Any<object>()).Returns(1);
 
         var result = await _repository.DeleteAsync(1);
 
         Assert.IsTrue(result);
-        await _dbManagerMock.Received(1).ExecuteAsync(Arg.Any<string>(), Arg.Any<object>(), null);
+        await _dbManagerMock.Received(1).ExecuteAsync(Arg.Any<string>(), Arg.Any<object>());
     }
 
     [TestMethod]
     public async Task DeleteAsync_ShouldReturnFalse_WhenNoRowsAffected()
     {
-        _dbManagerMock.ExecuteAsync(Arg.Any<string>(), Arg.Any<object>(), null).Returns(0);
+        _dbManagerMock.ExecuteAsync(Arg.Any<string>(), Arg.Any<object>()).Returns(0);
 
         var result = await _repository.DeleteAsync(1);
 
         Assert.IsFalse(result);
-        await _dbManagerMock.Received(1).ExecuteAsync(Arg.Any<string>(), Arg.Any<object>(), null);
+        await _dbManagerMock.Received(1).ExecuteAsync(Arg.Any<string>(), Arg.Any<object>());
     }
 }
