@@ -1,6 +1,7 @@
 using BitCrafts.Infrastructure.Abstraction.Application;
 using BitCrafts.Infrastructure.Abstraction.Databases;
 using BitCrafts.Infrastructure.Abstraction.Events;
+using BitCrafts.Infrastructure.Abstraction.Modules;
 using BitCrafts.Infrastructure.Abstraction.Threading;
 using BitCrafts.Infrastructure.Application;
 using BitCrafts.Infrastructure.Databases;
@@ -52,7 +53,7 @@ public static class ServiceCollectionExtension
 
         using var moduleRegister = new ModuleRegistrer(logger, moduleManager);
         moduleRegister.RegisterModules(services);
-        services.AddSingleton(moduleManager);
+        services.AddSingleton<IModuleManager>(moduleManager);
 
         return services;
     }

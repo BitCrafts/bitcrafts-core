@@ -5,7 +5,7 @@ using Avalonia.Markup.Xaml;
 using BitCrafts.Infrastructure.Abstraction.Application.UI;
 using BitCrafts.Infrastructure.Abstraction.Modules;
 
-namespace BitCrafts.Infrastructure.Application.Avalonia;
+namespace BitCrafts.Infrastructure.Application.Avalonia.Windows;
 
 public partial class MainNativeWindow : Window
 {

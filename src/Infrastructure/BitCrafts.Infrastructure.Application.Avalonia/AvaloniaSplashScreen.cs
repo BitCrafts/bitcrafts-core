@@ -9,16 +9,10 @@ namespace BitCrafts.Infrastructure.Application.Avalonia;
 
 public sealed class AvaloniaSplashScreen : ISplashScreen
 {
-    private readonly IApplicationStartup _applicationStartup;
-    private readonly IBackgroundThreadScheduler _backgroundThreadScheduler;
-    private readonly IUiManager _uiManager;
     private readonly Window _splashWindow;
 
-    public AvaloniaSplashScreen(IApplicationStartup applicationStartup,
-        IBackgroundThreadScheduler backgroundThreadScheduler)
+    public AvaloniaSplashScreen()
     {
-        _applicationStartup = applicationStartup;
-        _backgroundThreadScheduler = backgroundThreadScheduler; 
         _splashWindow = new SplashScreen
         {
             WindowStartupLocation = WindowStartupLocation.CenterScreen,
@@ -26,13 +20,23 @@ public sealed class AvaloniaSplashScreen : ISplashScreen
         };
     }
 
-    public async Task ShowAsync()
+    public void SetText(string text)
+    {
+        if (text == null) throw new ArgumentNullException(nameof(text));
+
+        var loadingTextBlock = _splashWindow.FindControl<TextBlock>("LoadingTextBlock");
+        if (loadingTextBlock == null)
+        {
+            throw new InvalidOperationException("LoadingTextBlock control not found in the SplashScreen.");
+        }
+
+        loadingTextBlock.Text = text;
+    }
+
+    public Task ShowAsync()
     {
         _splashWindow.Show();
-        _backgroundThreadScheduler.Schedule(() => { _applicationStartup.StartAsync(); });
-        await Task.Delay(2000);
-        _splashWindow.Close();
-        await _uiManager.ShowWindowAsync(new MainWindow());
+        return Task.CompletedTask;
     }
 
     public void Close()
@@ -42,7 +46,8 @@ public sealed class AvaloniaSplashScreen : ISplashScreen
 
     public T GetNativeObject<T>() where T : class
     {
-        return _splashWindow as T;
+        return _splashWindow as T ??
+               throw new InvalidOperationException($"The splash window cannot be cast to type {typeof(T)}.");
     }
 
     public void Dispose()

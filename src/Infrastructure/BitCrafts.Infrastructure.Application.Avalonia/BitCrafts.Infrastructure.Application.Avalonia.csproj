@@ -20,10 +20,17 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\Presentation\BitCrafts.Presentation.Abstraction\BitCrafts.Presentation.Abstraction.csproj" />
+      <ProjectReference Include="..\..\Presentation\BitCrafts.Presentation\BitCrafts.Presentation.csproj" />
+      <ProjectReference Include="..\..\UsesCases\BitCrafts.UseCases.Abstraction\BitCrafts.UseCases.Abstraction.csproj" />
+      <ProjectReference Include="..\..\UsesCases\BitCrafts.UseCases\BitCrafts.UseCases.csproj" />
       <ProjectReference Include="..\BitCrafts.Infrastructure.Abstraction\BitCrafts.Infrastructure.Abstraction.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Views\" />
+      <Compile Update="Windows\MainNativeWindow.axaml.cs">
+        <DependentUpon>MainNativeWindow.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
     </ItemGroup>
 </Project>

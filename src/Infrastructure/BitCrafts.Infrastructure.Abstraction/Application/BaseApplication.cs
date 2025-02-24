@@ -27,7 +27,7 @@ public abstract class BaseApplication : IApplication
     {
         if (disposing)
         {
-            _serviceProvider.GetRequiredService<IBackgroundThreadScheduler>().Stop();
+            //_serviceProvider.GetRequiredService<IBackgroundThreadScheduler>().Stop();
         }
 
         Logger.LogInformation("Application disposed");

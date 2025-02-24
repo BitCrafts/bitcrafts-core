@@ -1,31 +1,47 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using BitCrafts.Infrastructure.Abstraction.Application;
 using BitCrafts.Infrastructure.Abstraction.Application.UI;
+using BitCrafts.Infrastructure.Abstraction.Modules;
+using BitCrafts.Infrastructure.Application.Avalonia.Windows;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace BitCrafts.Infrastructure.Application.Avalonia;
 
 public sealed class AvaloniaUiManager : IUiManager
 {
+    private readonly IApplicationStartup _applicationStartup;
+    private readonly IModuleManager _moduleManager;
+    private readonly IServiceProvider _serviceProvider;
     private readonly ISplashScreen _splashScreen;
-    private IClassicDesktopStyleApplicationLifetime _applicationLifetime;
+    private readonly MainWindow _mainWindow;
+    private readonly Dictionary<string, Type> _views = new();
+
+    private IClassicDesktopStyleApplicationLifetime? _applicationLifetime;
     private bool _isInitialized;
-    private readonly Dictionary<IWindow, Window> _windows = new();
-    private readonly Dictionary<IView, UserControl> _views = new();
 
-
-    public AvaloniaUiManager(ISplashScreen splashScreen)
+    public AvaloniaUiManager(
+        IApplicationStartup applicationStartup,
+        IModuleManager moduleManager,
+        IServiceProvider serviceProvider)
     {
-        _splashScreen = splashScreen;
+        _applicationStartup = applicationStartup ?? throw new ArgumentNullException(nameof(applicationStartup));
+        _moduleManager = moduleManager ?? throw new ArgumentNullException(nameof(moduleManager));
+        _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+
+        _splashScreen = new AvaloniaSplashScreen();
+        _mainWindow = new MainWindow();
     }
 
     public void SetNativeApplication(IClassicDesktopStyleApplicationLifetime applicationLifetime)
     {
         if (_isInitialized)
             return;
-        _applicationLifetime = applicationLifetime;
+
+        _applicationLifetime = applicationLifetime ?? throw new ArgumentNullException(nameof(applicationLifetime));
         _applicationLifetime.MainWindow = _splashScreen.GetNativeObject<Window>();
         _applicationLifetime.ShutdownMode = ShutdownMode.OnMainWindowClose;
     }
@@ -34,33 +50,65 @@ public sealed class AvaloniaUiManager : IUiManager
     {
         if (_isInitialized)
             return;
-        _isInitialized = true;
-        await _splashScreen.ShowAsync();
-    }
 
-    public async Task ShowWindowAsync(IWindow window)
-    {
-        _applicationLifetime.MainWindow = window.GetNativeWindow<Window>();
+        _isInitialized = true;
+
+
+        await _splashScreen.ShowAsync();
+
+
+        await UpdateSplashScreenAsync("Loading modules...", LoadModuleViews);
+
+
+        await UpdateSplashScreenAsync("Loading main window...", () =>
+        {
+            _applicationLifetime!.MainWindow = _mainWindow.GetNativeWindow<Window>();
+            return Task.CompletedTask;
+        });
+
+        _splashScreen.Close();
         _applicationLifetime.MainWindow.Show();
     }
 
-    public async Task CloseWindowAsync(IWindow window)
+    private async Task LoadModuleViews()
     {
-        throw new System.NotImplementedException();
+        var modules = new Dictionary<string, UserControl>();
+
+        foreach (var module in _moduleManager.Modules)
+        {
+            string moduleName = module.Value.Name;
+            _splashScreen.SetText($"Loading {moduleName} Module...");
+
+            var viewType = module.Value.GetViewType();
+            _views.TryAdd(moduleName, viewType);
+
+            var view = _serviceProvider.GetRequiredService(viewType) as IView;
+            if (view == null)
+                throw new InvalidOperationException($"Failed to resolve view for module: {moduleName}");
+
+            var userControl = view.GetNativeView<UserControl>();
+            if (userControl == null)
+                throw new InvalidOperationException($"View for module {moduleName} does not provide a UserControl.");
+
+            modules.Add(moduleName, userControl);
+
+            await Task.Delay(3000);
+        }
+
+        _mainWindow.InitializeMenuList(modules);
     }
 
-    public async Task LoadViewAsync(IView view)
+    private async Task UpdateSplashScreenAsync(string statusMessage, Func<Task> action)
     {
-        throw new System.NotImplementedException();
-    }
+        if (string.IsNullOrWhiteSpace(statusMessage))
+            throw new ArgumentException("Status message cannot be null or empty.", nameof(statusMessage));
 
-    public async Task UnloadViewAsync(IView view)
-    {
-        throw new System.NotImplementedException();
+        _splashScreen.SetText(statusMessage);
+        await action();
     }
 
     public void Dispose()
     {
-        _splashScreen?.Dispose();
+        _splashScreen.Dispose();
     }
 }
