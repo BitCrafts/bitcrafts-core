@@ -1,4 +1,3 @@
-using BitCrafts.Inventory.Abstraction.Entities;
 using BitCrafts.Inventory.Abstraction.Events;
 using BitCrafts.UseCases.Abstraction;
 

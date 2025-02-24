@@ -1,9 +1,6 @@
-using System.Data;
 using BitCrafts.Infrastructure.Abstraction.Databases;
 using BitCrafts.Users.Abstraction.Entities;
 using BitCrafts.Users.Abstraction.Repositories;
-using BitCrafts.Users.Entities;
-using Dapper;
 
 namespace BitCrafts.Users.Repositories;
 

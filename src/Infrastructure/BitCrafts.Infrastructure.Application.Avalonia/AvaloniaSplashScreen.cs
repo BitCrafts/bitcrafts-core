@@ -2,8 +2,6 @@ using System;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using BitCrafts.Infrastructure.Abstraction.Application;
-using BitCrafts.Infrastructure.Abstraction.Threading;
-using BitCrafts.Infrastructure.Application.Avalonia.Windows;
 
 namespace BitCrafts.Infrastructure.Application.Avalonia;
 

@@ -1,10 +1,7 @@
-using System.Data;
 using BitCrafts.Infrastructure.Abstraction.Databases;
 using BitCrafts.Users.Abstraction.Entities;
 using BitCrafts.Users.Entities;
 using BitCrafts.Users.Repositories;
-using BitCrafts.Users.Tests.Fakes;
-using Dapper;
 using NSubstitute;
 
 namespace BitCrafts.Users.Tests;

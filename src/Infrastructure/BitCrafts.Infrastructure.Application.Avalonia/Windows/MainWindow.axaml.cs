@@ -1,24 +1,27 @@
 using System;
 using System.Collections.Generic;
 using Avalonia.Controls;
+using Avalonia.Markup.Xaml;
 using BitCrafts.Infrastructure.Abstraction.Application.UI;
+using BitCrafts.Infrastructure.Abstraction.Modules;
 
 namespace BitCrafts.Infrastructure.Application.Avalonia.Windows;
 
-public class MainWindow : IWindow
+public partial class MainWindow : Window, IWindow
 {
-    private readonly Window _window;
-    private readonly ListBox _menuList;
-    private readonly ContentControl _currentContentControl;
     private readonly Dictionary<string, UserControl> _loadedModules;
+    private IReadOnlyDictionary<string, IModule> _modules;
+    private ListBox _menuList;
+    private ContentControl _content;
 
     public MainWindow()
     {
-        _window = new MainNativeWindow();
-        _menuList = _window.FindControl<ListBox>("ModulesListBox") ??
+        AvaloniaXamlLoader.Load(this);
+
+        _menuList = this.FindControl<ListBox>("ModulesListBox") ??
                     throw new InvalidOperationException("ModulesListBox not found in the window.");
-        _currentContentControl = _window.FindControl<ContentControl>("ModuleContent") ??
-                                 throw new InvalidOperationException("ModuleContent not found in the window.");
+        _content = this.FindControl<ContentControl>("ModuleContent") ??
+                   throw new InvalidOperationException("ModuleContent not found in the window.");
         _loadedModules = new Dictionary<string, UserControl>();
     }
 
@@ -45,19 +48,7 @@ public class MainWindow : IWindow
 
         if (_loadedModules.TryGetValue(selectedTextBlock.Text, out var selectedModule))
         {
-            _currentContentControl.Content = selectedModule;
+            _content.Content = selectedModule;
         }
-    }
-
-
-    public void Show() => _window.Show();
-
-
-    public void Hide() => _window.Hide();
-
-
-    public void Close() => _window.Close();
-
-    public T GetNativeWindow<T>() where T : class =>
-        _window as T ?? throw new InvalidOperationException($"Window is not of type {typeof(T)}.");
+    } 
 }

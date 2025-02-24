@@ -62,7 +62,7 @@ public sealed class AvaloniaUiManager : IUiManager
 
         await UpdateSplashScreenAsync("Loading main window...", () =>
         {
-            _applicationLifetime!.MainWindow = _mainWindow.GetNativeWindow<Window>();
+            _applicationLifetime!.MainWindow = _mainWindow;
             return Task.CompletedTask;
         });
 
@@ -86,7 +86,7 @@ public sealed class AvaloniaUiManager : IUiManager
             if (view == null)
                 throw new InvalidOperationException($"Failed to resolve view for module: {moduleName}");
 
-            var userControl = view.GetNativeView<UserControl>();
+            var userControl = (UserControl)view;
             if (userControl == null)
                 throw new InvalidOperationException($"View for module {moduleName} does not provide a UserControl.");
 

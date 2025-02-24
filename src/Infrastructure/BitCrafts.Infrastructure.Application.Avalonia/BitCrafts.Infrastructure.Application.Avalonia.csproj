@@ -28,7 +28,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Update="Windows\MainNativeWindow.axaml.cs">
+      <Compile Update="Windows\MainWindow.axaml.cs">
         <DependentUpon>MainNativeWindow.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>

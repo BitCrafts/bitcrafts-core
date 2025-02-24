@@ -3,7 +3,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="BitCrafts.Infrastructure.Application.Avalonia.Windows.MainNativeWindow"
+        x:Class="BitCrafts.Infrastructure.Application.Avalonia.Windows.MainWindow"
         Title="BitCrafts.Infrastructure.Application.Avalonia">
     <Grid>
         <Grid.ColumnDefinitions>
@@ -11,7 +11,7 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <ListBox x:Name="ModulesListBox" Grid.Column="0" SelectionChanged="ModulesListBox_SelectionChanged">
+        <ListBox x:Name="ModulesListBox" Grid.Column="0" SelectionChanged="OnModuleSelected">
         </ListBox>
 
 

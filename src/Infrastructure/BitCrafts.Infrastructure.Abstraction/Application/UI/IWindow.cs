@@ -4,6 +4,5 @@ public interface IWindow
 {
     void Show();
     void Hide();
-    void Close();
-    T GetNativeWindow<T>() where T : class;
+    void Close(); 
 }

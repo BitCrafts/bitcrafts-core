@@ -1,9 +1,9 @@
-using BitCrafts.Infrastructure.Abstraction.Application.UI;
-using BitCrafts.Infrastructure.Abstraction.Modules;
 using BitCrafts.Users.Abstraction;
+using BitCrafts.Users.Abstraction.Presenters;
 using BitCrafts.Users.Abstraction.Repositories;
 using BitCrafts.Users.Abstraction.UseCases;
 using BitCrafts.Users.Abstraction.Views;
+using BitCrafts.Users.Presenters;
 using BitCrafts.Users.Repositories;
 using BitCrafts.Users.UseCases;
 using BitCrafts.Users.Views;
@@ -22,6 +22,7 @@ public class UsersModule : IUsersModule
         services.AddTransient<IDeleteUserUseCase, DeleteUserUseCase>();
         services.AddTransient<IUpdateUserUseCase, UpdateUserUseCase>();
         services.AddTransient<IUsersView, UsersView>();
+        services.AddTransient<IUsersPresenter, UsersPresenter>();
     }
 
     public Type GetViewType()
