@@ -35,7 +35,7 @@ public static class ServiceCollectionExtension
         );
 
         services.AddSingleton<IDbConnectionFactory, DbConnectionFactory>();
-        services.AddSingleton<IBackgroundThreadScheduler, BackgroundThreadScheduler>();
+        services.AddSingleton<IBackgroundThreadDispatcher, BackgroundThreadDispatcher>();
         services.AddSingleton<IParallelism, Parallelism>();
         services.AddSingleton<IEventAggregator, EventAggregator>();
         services.AddSingleton<IApplicationFactory, ApplicationFactory>();

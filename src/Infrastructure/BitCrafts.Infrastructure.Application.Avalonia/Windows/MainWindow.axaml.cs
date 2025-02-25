@@ -7,12 +7,11 @@ using BitCrafts.Infrastructure.Abstraction.Modules;
 
 namespace BitCrafts.Infrastructure.Application.Avalonia.Windows;
 
-public partial class MainWindow : Window, IWindow
+public partial class MainWindow : Window, IMainWindow
 {
     private readonly ContentControl _content;
     private readonly Dictionary<string, UserControl> _loadedModules;
     private readonly ListBox _menuList;
-    private IReadOnlyDictionary<string, IModule> _modules;
 
     public MainWindow()
     {
@@ -24,23 +23,7 @@ public partial class MainWindow : Window, IWindow
                    throw new InvalidOperationException("ModuleContent not found in the window.");
         _loadedModules = new Dictionary<string, UserControl>();
     }
-
-    public void InitializeMenuList(IReadOnlyDictionary<string, UserControl> modules)
-    {
-        if (modules == null) throw new ArgumentNullException(nameof(modules));
-
-        _menuList.Items.Clear();
-        _loadedModules.Clear();
-
-        foreach (var (name, moduleView) in modules)
-        {
-            _menuList.Items.Add(new TextBlock { Text = name });
-            _loadedModules[name] = moduleView;
-        }
-
-        _menuList.SelectionChanged += OnModuleSelected;
-    }
-
+ 
     private void OnModuleSelected(object sender, SelectionChangedEventArgs e)
     {
         if (_menuList.SelectedItem is not TextBlock selectedTextBlock || selectedTextBlock.Text == null)
@@ -48,5 +31,22 @@ public partial class MainWindow : Window, IWindow
 
         if (_loadedModules.TryGetValue(selectedTextBlock.Text, out var selectedModule))
             _content.Content = selectedModule;
+    }
+
+    public void InitializeMenu(IReadOnlyDictionary<string, IView> views)
+    {
+        if (views == null) throw new ArgumentNullException(nameof(views));
+        _menuList.SelectionChanged -= OnModuleSelected;
+        _menuList.Items.Clear();
+        _loadedModules.Clear();
+
+        foreach (var (name, moduleView) in views)
+        {
+            if (_loadedModules.TryAdd(name, (UserControl)moduleView))
+            {
+                _menuList.Items.Add(new TextBlock { Text = name });
+            }
+        }
+        _menuList.SelectionChanged += OnModuleSelected;
     }
 }

@@ -1,8 +1,7 @@
 namespace BitCrafts.Infrastructure.Abstraction.Application.UI;
 
-public interface IWindow
+public interface IWindow : IView
 {
-    void Show();
-    void Hide();
+   
     void Close();
 }

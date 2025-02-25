@@ -57,4 +57,14 @@ public partial class UsersView : UserControl, IUsersView
     {
         UpdateClicked?.Invoke(this, EventArgs.Empty);
     }
+
+    public void Show()
+    {
+        IsVisible = true;
+    }
+
+    public void Hide()
+    {
+        IsVisible = false;
+    }
 }

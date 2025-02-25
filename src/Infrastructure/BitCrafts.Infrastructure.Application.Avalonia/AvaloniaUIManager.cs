@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Threading;
 using BitCrafts.Infrastructure.Abstraction.Application;
 using BitCrafts.Infrastructure.Abstraction.Application.UI;
 using BitCrafts.Infrastructure.Abstraction.Modules;
+using BitCrafts.Infrastructure.Abstraction.Threading;
 using BitCrafts.Infrastructure.Application.Avalonia.Windows;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -13,27 +15,17 @@ namespace BitCrafts.Infrastructure.Application.Avalonia;
 
 public sealed class AvaloniaUiManager : IUiManager
 {
-    private readonly IApplicationStartup _applicationStartup;
-    private readonly MainWindow _mainWindow;
+    private readonly IStartupWindow _startupWindow;
     private readonly IModuleManager _moduleManager;
     private readonly IServiceProvider _serviceProvider;
-    private readonly ISplashScreen _splashScreen;
-    private readonly Dictionary<string, Type> _views = new();
-
-    private IClassicDesktopStyleApplicationLifetime? _applicationLifetime;
+    private IClassicDesktopStyleApplicationLifetime _applicationLifetime;
     private bool _isInitialized;
 
-    public AvaloniaUiManager(
-        IApplicationStartup applicationStartup,
-        IModuleManager moduleManager,
-        IServiceProvider serviceProvider)
+    public AvaloniaUiManager(IServiceProvider serviceProvider)
     {
-        _applicationStartup = applicationStartup ?? throw new ArgumentNullException(nameof(applicationStartup));
-        _moduleManager = moduleManager ?? throw new ArgumentNullException(nameof(moduleManager));
-        _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
-
-        _splashScreen = new AvaloniaSplashScreen();
-        _mainWindow = new MainWindow();
+        _moduleManager = serviceProvider.GetService<IModuleManager>();
+        _serviceProvider = serviceProvider;
+        _startupWindow = serviceProvider.GetService<IStartupWindow>();
     }
 
     public async Task StartAsync()
@@ -42,27 +34,26 @@ public sealed class AvaloniaUiManager : IUiManager
             return;
 
         _isInitialized = true;
+        SetMainWindow(_startupWindow);
+        await Task.Delay(300);
+    }
 
-
-        await _splashScreen.ShowAsync();
-
-
-        await UpdateSplashScreenAsync("Loading modules...", LoadModuleViews);
-
-
-        await UpdateSplashScreenAsync("Loading main window...", () =>
+    public void SetMainWindow(IWindow window)
+    {
+        if (window == null)
+            return;
+        if (_applicationLifetime.MainWindow != null)
         {
-            _applicationLifetime!.MainWindow = _mainWindow;
-            return Task.CompletedTask;
-        });
+            _applicationLifetime.MainWindow.Close();
+            _applicationLifetime.MainWindow = null;
+        }
 
-        _splashScreen.Close();
+        _applicationLifetime.MainWindow = (Window)window;
         _applicationLifetime.MainWindow.Show();
     }
 
     public void Dispose()
     {
-        _splashScreen.Dispose();
     }
 
     public void SetNativeApplication(IClassicDesktopStyleApplicationLifetime applicationLifetime)
@@ -71,22 +62,16 @@ public sealed class AvaloniaUiManager : IUiManager
             return;
 
         _applicationLifetime = applicationLifetime ?? throw new ArgumentNullException(nameof(applicationLifetime));
-        _applicationLifetime.MainWindow = _splashScreen.GetNativeObject<Window>();
         _applicationLifetime.ShutdownMode = ShutdownMode.OnMainWindowClose;
     }
 
-    private async Task LoadModuleViews()
+    /*private void LoadModuleViews()
     {
-        var modules = new Dictionary<string, UserControl>();
-
         foreach (var module in _moduleManager.Modules)
         {
             var moduleName = module.Value.Name;
-            _splashScreen.SetText($"Loading {moduleName} Module...");
-
             var viewType = module.Value.GetViewType();
             _views.TryAdd(moduleName, viewType);
-
             var view = _serviceProvider.GetRequiredService(viewType) as IView;
             if (view == null)
                 throw new InvalidOperationException($"Failed to resolve view for module: {moduleName}");
@@ -95,20 +80,7 @@ public sealed class AvaloniaUiManager : IUiManager
             if (userControl == null)
                 throw new InvalidOperationException($"View for module {moduleName} does not provide a UserControl.");
 
-            modules.Add(moduleName, userControl);
-
-            await Task.Delay(3000);
+            ModuleControles.Add(moduleName, userControl);
         }
-
-        _mainWindow.InitializeMenuList(modules);
-    }
-
-    private async Task UpdateSplashScreenAsync(string statusMessage, Func<Task> action)
-    {
-        if (string.IsNullOrWhiteSpace(statusMessage))
-            throw new ArgumentException("Status message cannot be null or empty.", nameof(statusMessage));
-
-        _splashScreen.SetText(statusMessage);
-        await action();
-    }
+    }*/
 }

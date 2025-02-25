@@ -1,3 +1,4 @@
+using BitCrafts.Infrastructure.Abstraction.Application.UI;
 using BitCrafts.Infrastructure.Abstraction.Modules;
 
 namespace BitCrafts.Infrastructure.Modules;
@@ -5,9 +6,7 @@ namespace BitCrafts.Infrastructure.Modules;
 public sealed class ModuleManager : IModuleManager
 {
     private readonly Dictionary<string, IModule> _modules = new();
-
     public IReadOnlyDictionary<string, IModule> Modules => _modules;
-
 
     public void AddModule(IModule module)
     {
@@ -20,5 +19,10 @@ public sealed class ModuleManager : IModuleManager
     public void AddModules(IEnumerable<IModule> modules)
     {
         foreach (var module in modules) AddModule(module);
+    }
+
+    public IModule GetModuleByName(string name)
+    {
+        return _modules.TryGetValue(name, out var module) ? module : null;
     }
 }

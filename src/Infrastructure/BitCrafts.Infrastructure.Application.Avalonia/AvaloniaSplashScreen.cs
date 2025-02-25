@@ -4,7 +4,7 @@ using Avalonia.Controls;
 using BitCrafts.Infrastructure.Abstraction.Application;
 
 namespace BitCrafts.Infrastructure.Application.Avalonia;
-
+/*
 public sealed class AvaloniaSplashScreen : ISplashScreen
 {
     private readonly Window _splashWindow;
@@ -22,7 +22,7 @@ public sealed class AvaloniaSplashScreen : ISplashScreen
     {
         if (text == null) throw new ArgumentNullException(nameof(text));
 
-        var loadingTextBlock = _splashWindow.FindControl<TextBlock>("LoadingTextBlock");
+        var loadingTextBlock = _splashWindow.
         if (loadingTextBlock == null)
             throw new InvalidOperationException("LoadingTextBlock control not found in the SplashScreen.");
 
@@ -50,4 +50,4 @@ public sealed class AvaloniaSplashScreen : ISplashScreen
     {
         Close();
     }
-}
+}*/
