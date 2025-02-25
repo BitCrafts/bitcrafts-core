@@ -1,3 +1,5 @@
+using BitCrafts.Infrastructure.Abstraction.Application.Presenters;
+using BitCrafts.Infrastructure.Abstraction.Application.Views;
 using BitCrafts.Infrastructure.Abstraction.Modules;
 
 namespace BitCrafts.Infrastructure.Modules;
@@ -23,5 +25,10 @@ public sealed class ModuleManager : IModuleManager
     public IModule GetModuleByName(string name)
     {
         return _modules.TryGetValue(name, out var module) ? module : null;
+    }
+    
+    public Type GetModulePresenter(string name)
+    {
+        return _modules.TryGetValue(name, out var module) ? module.GetPresenterType() : null;
     }
 }

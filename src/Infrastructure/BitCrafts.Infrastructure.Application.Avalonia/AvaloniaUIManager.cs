@@ -62,20 +62,6 @@ public sealed class AvaloniaUiManager : IUiManager
 
     /*private void LoadModuleViews()
     {
-        foreach (var module in _moduleManager.Modules)
-        {
-            var moduleName = module.Value.Name;
-            var viewType = module.Value.GetViewType();
-            _views.TryAdd(moduleName, viewType);
-            var view = _serviceProvider.GetRequiredService(viewType) as IView;
-            if (view == null)
-                throw new InvalidOperationException($"Failed to resolve view for module: {moduleName}");
-
-            var userControl = (UserControl)view;
-            if (userControl == null)
-                throw new InvalidOperationException($"View for module {moduleName} does not provide a UserControl.");
-
-            ModuleControles.Add(moduleName, userControl);
-        }
+       
     }*/
 }
