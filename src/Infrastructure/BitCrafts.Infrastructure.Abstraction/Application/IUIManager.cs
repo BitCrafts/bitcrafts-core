@@ -1,4 +1,4 @@
-using BitCrafts.Infrastructure.Abstraction.Application.UI;
+using BitCrafts.Infrastructure.Abstraction.Application.Views;
 
 namespace BitCrafts.Infrastructure.Abstraction.Application;
 

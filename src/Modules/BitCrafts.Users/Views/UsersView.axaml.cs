@@ -58,6 +58,10 @@ public partial class UsersView : UserControl, IUsersView
         UpdateClicked?.Invoke(this, EventArgs.Empty);
     }
 
+    public void Initialize()
+    {
+    }
+
     public void Show()
     {
         IsVisible = true;
@@ -66,5 +70,10 @@ public partial class UsersView : UserControl, IUsersView
     public void Hide()
     {
         IsVisible = false;
+    }
+
+    public void Dispose()
+    {
+        // TODO release managed resources here
     }
 }

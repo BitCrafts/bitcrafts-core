@@ -6,7 +6,7 @@ namespace BitCrafts.Infrastructure.Threading;
 public sealed class BackgroundThreadDispatcher : BaseThreadDispatcher, IBackgroundThreadDispatcher
 {
     public BackgroundThreadDispatcher(ILogger<BackgroundThreadDispatcher> logger)
-        : base(logger, "Background")
+        : base(logger, "Background Thread Dispatcher")
     {
         Start();
     }

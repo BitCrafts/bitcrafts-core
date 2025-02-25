@@ -23,7 +23,6 @@ internal class Program
     private static async Task Main(string[] args)
     {
         var serviceCollection = new ServiceCollection();
-        serviceCollection.AddSingleton<IApplicationStartup, ApplicationStartup>();
         serviceCollection
             .AddBitCraftsInfrastructure()
             .AddBitCraftsAvaloniaApplication();

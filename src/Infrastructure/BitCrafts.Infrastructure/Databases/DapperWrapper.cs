@@ -1,7 +1,8 @@
 using System.Data;
+using BitCrafts.Infrastructure.Abstraction.Databases;
 using Dapper;
 
-namespace BitCrafts.Infrastructure.Abstraction.Databases;
+namespace BitCrafts.Infrastructure.Databases;
 
 public class DapperWrapper : IDapperWrapper
 {

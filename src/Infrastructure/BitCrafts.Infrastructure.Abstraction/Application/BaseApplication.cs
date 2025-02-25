@@ -1,3 +1,5 @@
+using BitCrafts.Infrastructure.Abstraction.Threading;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace BitCrafts.Infrastructure.Abstraction.Application;
@@ -30,7 +32,7 @@ public abstract class BaseApplication : IApplication
     {
         if (disposing)
         {
-            //_serviceProvider.GetRequiredService<IBackgroundThreadScheduler>().Stop();
+            _serviceProvider.GetRequiredService<IBackgroundThreadDispatcher>().Stop();
         }
 
         Logger.LogInformation("Application disposed");

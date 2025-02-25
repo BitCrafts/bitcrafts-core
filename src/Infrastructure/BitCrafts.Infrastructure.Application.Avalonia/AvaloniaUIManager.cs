@@ -5,7 +5,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
 using BitCrafts.Infrastructure.Abstraction.Application;
-using BitCrafts.Infrastructure.Abstraction.Application.UI;
+using BitCrafts.Infrastructure.Abstraction.Application.Views;
 using BitCrafts.Infrastructure.Abstraction.Modules;
 using BitCrafts.Infrastructure.Abstraction.Threading;
 using BitCrafts.Infrastructure.Application.Avalonia.Windows;
@@ -15,27 +15,22 @@ namespace BitCrafts.Infrastructure.Application.Avalonia;
 
 public sealed class AvaloniaUiManager : IUiManager
 {
-    private readonly IStartupWindow _startupWindow;
-    private readonly IModuleManager _moduleManager;
     private readonly IServiceProvider _serviceProvider;
     private IClassicDesktopStyleApplicationLifetime _applicationLifetime;
     private bool _isInitialized;
 
     public AvaloniaUiManager(IServiceProvider serviceProvider)
     {
-        _moduleManager = serviceProvider.GetService<IModuleManager>();
         _serviceProvider = serviceProvider;
-        _startupWindow = serviceProvider.GetService<IStartupWindow>();
     }
 
     public async Task StartAsync()
     {
         if (_isInitialized)
             return;
-
         _isInitialized = true;
-        SetMainWindow(_startupWindow);
-        await Task.Delay(300);
+        var startupApp = _serviceProvider.GetRequiredService<IApplicationStartup>();
+        await startupApp.StartAsync();
     }
 
     public void SetMainWindow(IWindow window)
