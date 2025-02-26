@@ -1,4 +1,5 @@
 using BitCrafts.Infrastructure.Abstraction.Application;
+using BitCrafts.Infrastructure.Abstraction.Application.Managers;
 using BitCrafts.Infrastructure.Abstraction.Application.Presenters;
 using BitCrafts.Infrastructure.Abstraction.Application.Views;
 using BitCrafts.Infrastructure.Application.Avalonia.Presenters;
@@ -14,9 +15,12 @@ public static class ServiceCollectionExtension
         services.AddKeyedSingleton<IApplication, AvaloniaApplication>("Avalonia");
         services.AddSingleton<IUiManager, AvaloniaUiManager>();
         services.AddSingleton<IApplicationStartup, AvaloniaApplicationStartup>();
+        services.AddSingleton<IStartupPresenter, StartupPresenter>();
+        services.AddSingleton<IMainPresenter, MainPresenter>();
         services.AddSingleton<IStartupView, StartupView>();
         services.AddSingleton<IMainView, MainView>();
-        services.AddSingleton<IPresenter<IStartupView>, StartupPresenter>();
+        services.AddSingleton<IWindowingManager, AvaloniaWindowingManager>();
+
         return services;
     }
 }

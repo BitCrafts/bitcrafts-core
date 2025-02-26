@@ -12,9 +12,9 @@ public class UsersPresenter : BasePresenter<IUsersView>, IUsersPresenter
     private readonly ICreateUserUseCase _createUserUseCase;
     private readonly IUpdateUserUseCase _updateUserUseCase;
 
-    public override void Initialize()
+    public override async Task InitializeAsync()
     {
-        base.Initialize();
+        await base.InitializeAsync();
         InitializeViewEvents();
     }
 

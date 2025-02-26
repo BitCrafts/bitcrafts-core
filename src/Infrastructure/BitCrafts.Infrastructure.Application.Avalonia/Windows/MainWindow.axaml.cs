@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using BitCrafts.Infrastructure.Abstraction.Application.Views;
-using BitCrafts.Infrastructure.Abstraction.Modules;
 
 namespace BitCrafts.Infrastructure.Application.Avalonia.Windows;
 
@@ -58,4 +57,6 @@ public partial class MainView : Window, IMainView
         _menuList.Items.Clear();
         _loadedModules.Clear();
     }
+
+    public IWindow Owner { get; set; }
 }

@@ -1,4 +1,3 @@
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using BitCrafts.Infrastructure.Abstraction.Application.Views;
@@ -31,4 +30,6 @@ public partial class StartupView : Window, IStartupView
     {
         // TODO release managed resources here
     }
+
+    public IWindow Owner { get; set; }
 }

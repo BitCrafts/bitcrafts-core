@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Avalonia;
 using BitCrafts.Infrastructure.Abstraction.Application;
+using BitCrafts.Infrastructure.Abstraction.Application.Managers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 

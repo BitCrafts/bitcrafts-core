@@ -1,6 +1,6 @@
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using BitCrafts.Infrastructure.Abstraction.Application;
+using BitCrafts.Infrastructure.Abstraction.Application.Managers;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace BitCrafts.Infrastructure.Application.Avalonia;
@@ -14,8 +14,7 @@ public class App : global::Avalonia.Application
 
     public override async void OnFrameworkInitializationCompleted()
     {
-        var uiManager =
-            (AvaloniaUiManager)AvaloniaApplication.ServiceProvider.GetRequiredService<IUiManager>();
+        var uiManager = (AvaloniaUiManager)AvaloniaApplication.ServiceProvider.GetRequiredService<IUiManager>();
         var desktop = ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
         uiManager.SetNativeApplication(desktop);
         await uiManager.StartAsync();

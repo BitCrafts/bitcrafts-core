@@ -1,4 +1,5 @@
-﻿using BitCrafts.Infrastructure.Abstraction.Application.Views;
+﻿using BitCrafts.Infrastructure.Abstraction.Application.Managers;
+using BitCrafts.Infrastructure.Abstraction.Application.Views;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -9,8 +10,7 @@ public abstract class BasePresenter<TView> : IPresenter<TView>, IDisposable
 {
     protected IServiceProvider ServiceProvider { get; }
     public TView View { get; }
-
-    public IUiManager UiManager => ServiceProvider.GetRequiredService<IUiManager>();
+    public IWindowingManager WindowingManager => ServiceProvider.GetRequiredService<IWindowingManager>();
     public ILogger<BasePresenter<TView>> Logger => ServiceProvider.GetRequiredService<ILogger<BasePresenter<TView>>>();
 
     public BasePresenter(IServiceProvider serviceProvider)
@@ -19,18 +19,18 @@ public abstract class BasePresenter<TView> : IPresenter<TView>, IDisposable
         View = serviceProvider.GetRequiredService<TView>();
     }
 
-    public virtual void Initialize()
+    public virtual Task InitializeAsync()
     {
         Logger.LogInformation($"Initializing presenter {this.GetType().Name}");
         View.Initialize();
+        return Task.CompletedTask;
     }
 
     public virtual void Show()
     {
         if (View is IWindow window)
         {
-            UiManager.SetMainWindow(window);
-            //View.Show();
+            WindowingManager.ShowWindow(window);
         }
     }
 
