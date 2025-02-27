@@ -17,6 +17,7 @@ public class UsersModule : IUsersModule
 
     public void RegisterServices(IServiceCollection services)
     {
+        services.AddTransient<IUserAccountsRepository, UserAccountsRepository>();
         services.AddTransient<IUsersRepository, UsersRepository>();
         services.AddTransient<ICreateUserUseCase, CreateUserUseCase>();
         services.AddTransient<IDeleteUserUseCase, DeleteUserUseCase>();

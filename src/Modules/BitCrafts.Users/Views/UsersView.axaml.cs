@@ -9,15 +9,15 @@ namespace BitCrafts.Users.Views;
 
 public partial class UsersView : UserControl, IUsersView
 {
+    public event EventHandler SaveClicked;
+    public event EventHandler UpdateClicked;
+    public event EventHandler CancelClicked;
+    
     public UsersView()
     {
         AvaloniaXamlLoader.Load(this);
     }
-
-    public event EventHandler SaveClicked;
-    public event EventHandler UpdateClicked;
-    public event EventHandler CancelClicked;
-
+ 
     public void SetUser(IUser user)
     {
         this.FindControl<TextBox>("FirstNameTextBox").Text = user.FirstName;

@@ -6,4 +6,5 @@ namespace BitCrafts.Users.Abstraction.Events;
 public class UserEventRequest : BaseEventRequest, IEventRequest
 {
     public IUser User { get; set; }
+    public string Password { get; set; }
 }

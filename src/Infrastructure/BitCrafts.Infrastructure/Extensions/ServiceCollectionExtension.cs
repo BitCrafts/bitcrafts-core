@@ -2,11 +2,13 @@ using BitCrafts.Infrastructure.Abstraction.Application;
 using BitCrafts.Infrastructure.Abstraction.Databases;
 using BitCrafts.Infrastructure.Abstraction.Events;
 using BitCrafts.Infrastructure.Abstraction.Modules;
+using BitCrafts.Infrastructure.Abstraction.Services;
 using BitCrafts.Infrastructure.Abstraction.Threading;
 using BitCrafts.Infrastructure.Application;
 using BitCrafts.Infrastructure.Databases;
 using BitCrafts.Infrastructure.Events;
 using BitCrafts.Infrastructure.Modules;
+using BitCrafts.Infrastructure.Services;
 using BitCrafts.Infrastructure.Threading;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -42,6 +44,7 @@ public static class ServiceCollectionExtension
         services.AddSingleton<IDapperWrapper, DapperWrapper>();
         services.AddSingleton<IDatabaseManager, DatabaseManager>();
         services.AddSingleton<ISqlDialectFactory, SqlDialectFactory>();
+        services.AddSingleton<IHashingService, HashingService>();
 
         CreateDirectoryDirectory("Modules");
         CreateDirectoryDirectory("Settings");
@@ -49,7 +52,7 @@ public static class ServiceCollectionExtension
         CreateDirectoryDirectory("Files");
         CreateDirectoryDirectory("Temporary");
 
-        var moduleManager = new ModuleManager(); 
+        var moduleManager = new ModuleManager();
         using var moduleRegister = new ModuleRegistrer(logger, moduleManager);
         moduleRegister.RegisterModules(services);
         services.AddSingleton<IModuleManager>(moduleManager);

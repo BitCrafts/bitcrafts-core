@@ -1,4 +1,5 @@
 using System.Data;
+using System.Data.Common;
 using BitCrafts.Infrastructure.Abstraction.Databases;
 
 namespace BitCrafts.Infrastructure.Databases;
@@ -44,10 +45,19 @@ public class DatabaseManager : IDatabaseManager
         });
     }
 
+    public async Task<IDatabaseTransaction> BeginTransactionAsync()
+    {
+        var connection = _connectionFactory.Create() as DbConnection;
+        await connection.OpenAsync().ConfigureAwait(false);
+        var transaction = await connection.BeginTransactionAsync().ConfigureAwait(false);
+        return new DatabaseTransaction(transaction as DbTransaction, connection as DbConnection);
+    }
+
+
     private async Task<TResult> UseConnectionAsync<TResult>(Func<IDbConnection, ISqlDialect, Task<TResult>> operation)
     {
-        using var connection = _connectionFactory.Create();
-        connection.Open();
+        using var connection = _connectionFactory.Create() as DbConnection;
+        await connection.OpenAsync().ConfigureAwait(false);
 
         var dialect = _dialectFactory.Create();
         return await operation(connection, dialect);

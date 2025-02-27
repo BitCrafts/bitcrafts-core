@@ -13,47 +13,47 @@ public sealed class UsersRepository : IUsersRepository
         _dbManager = dbManager;
     }
 
-    public async Task<IUser> AddAsync(IUser entity)
+    public async Task<IUser> AddAsync(IUser entity, IDatabaseTransaction transaction = null)
     {
         await _dbManager.ExecuteAsync(
-            "INSERT INTO Users (FirstName, LastName, Email, Password, PhoneNumber, BirthDate, NationalNumber, PassportNumber) " +
-            "VALUES (@FirstName, @LastName, @Email, @Password, @PhoneNumber, @BirthDate, @NationalNumber, @PassportNumber);",
-            entity);
+            "INSERT INTO User (FirstName, LastName, Email, PhoneNumber, BirthDate, NationalNumber, PassportNumber) " +
+            "VALUES (@FirstName, @LastName, @Email, @PhoneNumber, @BirthDate, @NationalNumber, @PassportNumber);",
+            entity, transaction?.DbTransaction);
 
         var id = await _dbManager.GetLastInsertedIdAsync();
         entity.Id = id;
         return entity;
     }
 
-    public async Task<IEnumerable<IUser>> GetAllAsync()
+    public async Task<IEnumerable<IUser>> GetAllAsync(IDatabaseTransaction transaction = null)
     {
         return await _dbManager.QueryAsync<IUser>(
-            "SELECT * FROM Users;");
+            "SELECT * FROM User;", transaction?.DbTransaction);
     }
 
-    public async Task<IUser> GetByIdAsync(int id)
+    public async Task<IUser> GetByIdAsync(int id, IDatabaseTransaction transaction = null)
     {
         return await _dbManager.QuerySingleAsync<IUser>(
-            "SELECT * FROM Users WHERE Id = @Id;",
-            new { Id = id });
+            "SELECT * FROM User WHERE Id = @Id;",
+            new { Id = id }, transaction?.DbTransaction);
     }
 
-    public async Task<bool> UpdateAsync(IUser entity)
+    public async Task<bool> UpdateAsync(IUser entity, IDatabaseTransaction transaction = null)
     {
         var result = await _dbManager.ExecuteAsync(
-            "UPDATE Users SET FirstName = @FirstName, LastName = @LastName, Email = @Email, Password = @Password, " +
+            "UPDATE User SET FirstName = @FirstName, LastName = @LastName, Email = @Email, " +
             "PhoneNumber = @PhoneNumber, BirthDate = @BirthDate, NationalNumber = @NationalNumber, PassportNumber = @PassportNumber " +
             "WHERE Id = @Id;",
-            entity);
+            entity, transaction?.DbTransaction);
 
         return result > 0;
     }
 
-    public async Task<bool> DeleteAsync(int id)
+    public async Task<bool> DeleteAsync(int id, IDatabaseTransaction transaction = null)
     {
         var result = await _dbManager.ExecuteAsync(
-            "DELETE FROM Users WHERE Id = @Id;",
-            new { Id = id });
+            "DELETE FROM User WHERE Id = @Id;",
+            new { Id = id }, transaction?.DbTransaction);
 
         return result > 0;
     }

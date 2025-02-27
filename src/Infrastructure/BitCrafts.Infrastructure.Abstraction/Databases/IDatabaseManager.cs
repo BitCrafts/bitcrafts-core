@@ -9,4 +9,5 @@ public interface IDatabaseManager
     Task<int> ExecuteAsync(string sql, object param = null, IDbTransaction transaction = null);
 
     Task<int> GetLastInsertedIdAsync();
+    Task<IDatabaseTransaction> BeginTransactionAsync();
 }

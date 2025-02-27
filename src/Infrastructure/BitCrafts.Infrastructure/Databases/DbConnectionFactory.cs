@@ -3,6 +3,7 @@ using BitCrafts.Infrastructure.Abstraction.Databases;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using MySqlConnector;
 
 namespace BitCrafts.Infrastructure.Databases;
 
@@ -18,6 +19,8 @@ public sealed class DbConnectionFactory : IDbConnectionFactory
     }
 
     public bool IsSqliteProvider { get; private set; }
+    public bool IsMySqlProvider { get; private set; }
+    public bool IsMariaDbProvider { get; private set; }
     public bool IsMemoryProvider { get; private set; }
 
     public IDbConnection Create()
@@ -41,6 +44,24 @@ public sealed class DbConnectionFactory : IDbConnectionFactory
             case "sqlite":
                 IsSqliteProvider = true;
                 return new SqliteConnection($"Data Source={database}");
+            case "mariadb":
+                IsMariaDbProvider = true;
+                _logger.LogInformation("Using MariaDB/MySQL database.");
+                return new MySqlConnection(
+                    $"Server={server};" +
+                    $"Database={database};" +
+                    $"User={user};" +
+                    $"Password={password};"
+                );
+            case "mysql":
+                IsMySqlProvider = true;
+                _logger.LogInformation("Using MariaDB/MySQL database.");
+                return new MySqlConnection(
+                    $"Server={server};" +
+                    $"Database={database};" +
+                    $"User={user};" +
+                    $"Password={password};"
+                );
             default:
                 IsMemoryProvider = true;
                 return new SqliteConnection("Data Source=:memory:");
@@ -61,17 +82,7 @@ public sealed class DbConnectionFactory : IDbConnectionFactory
                     $"Database={database};" +
                     $"Username={user};" +
                     $"Password={password};"
-                );
-            case "mariadb":
-            case "mysql":
-                IsMySqlProvider = true;
-                _logger.LogInformation("Using MariaDB/MySQL database.");
-                return new MySqlConnection(
-                    $"Server={server};" +
-                    $"Database={database};" +
-                    $"User={user};" +
-                    $"Password={password};"
-                );*/
+                ); */
         }
     }
 }
