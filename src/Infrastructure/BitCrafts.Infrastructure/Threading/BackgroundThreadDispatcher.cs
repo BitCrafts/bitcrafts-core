@@ -8,6 +8,6 @@ public sealed class BackgroundThreadDispatcher : BaseThreadDispatcher, IBackgrou
     public BackgroundThreadDispatcher(ILogger<BackgroundThreadDispatcher> logger)
         : base(logger, "Background Thread Dispatcher")
     {
-        Start();
+       
     }
 }

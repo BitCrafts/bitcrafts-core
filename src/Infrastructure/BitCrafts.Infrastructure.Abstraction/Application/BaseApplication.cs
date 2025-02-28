@@ -17,6 +17,7 @@ public abstract class BaseApplication : IApplication
 
     public async Task StartAsync()
     {
+        _serviceProvider.GetRequiredService<IBackgroundThreadDispatcher>().Start();
         await OnStartupAsync();
     }
 

@@ -1,12 +1,11 @@
 using System;
 using System.Threading.Tasks;
-using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using BitCrafts.Infrastructure.Abstraction.Application;
 using BitCrafts.Infrastructure.Abstraction.Application.Managers;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace BitCrafts.Infrastructure.Application.Avalonia;
+namespace BitCrafts.Infrastructure.Application.Avalonia.Managers;
 
 public sealed class AvaloniaUiManager : IUiManager
 {
@@ -19,7 +18,6 @@ public sealed class AvaloniaUiManager : IUiManager
     {
         _serviceProvider = serviceProvider;
         _windowingManager = serviceProvider.GetService<IWindowingManager>();
-        ((AvaloniaWindowingManager)_windowingManager).SetNativeApplication(_applicationLifetime);
     }
 
     public async Task StartAsync()
@@ -27,11 +25,17 @@ public sealed class AvaloniaUiManager : IUiManager
         if (_isInitialized)
             return;
         _isInitialized = true;
-        
+
         var startupApp = _serviceProvider.GetRequiredService<IApplicationStartup>();
         await startupApp.StartAsync();
     }
- 
+
+    public async Task ShutdownAsync()
+    {
+        await Task.Delay(100);
+        _applicationLifetime.Shutdown();
+    }
+
     public void Dispose()
     {
     }
@@ -42,6 +46,6 @@ public sealed class AvaloniaUiManager : IUiManager
             return;
 
         _applicationLifetime = applicationLifetime ?? throw new ArgumentNullException(nameof(applicationLifetime));
-        _applicationLifetime.ShutdownMode = ShutdownMode.OnMainWindowClose;
+        ((AvaloniaWindowingManager)_windowingManager).SetNativeApplication(_applicationLifetime);
     }
 }

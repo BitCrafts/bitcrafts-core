@@ -12,12 +12,26 @@ public partial class UsersView : UserControl, IUsersView
     public event EventHandler SaveClicked;
     public event EventHandler UpdateClicked;
     public event EventHandler CancelClicked;
-    
+    public event EventHandler WindowLoaded;
+    public event EventHandler WindowClosed;
+
     public UsersView()
     {
         AvaloniaXamlLoader.Load(this);
+        Loaded += OnLoaded;
+        Unloaded += OnUnloaded;
     }
- 
+
+    private void OnUnloaded(object sender, RoutedEventArgs e)
+    {
+        WindowClosed?.Invoke(this, EventArgs.Empty);
+    }
+
+    private void OnLoaded(object sender, RoutedEventArgs e)
+    {
+        WindowLoaded?.Invoke(this, EventArgs.Empty);
+    }
+
     public void SetUser(IUser user)
     {
         this.FindControl<TextBox>("FirstNameTextBox").Text = user.FirstName;
@@ -57,6 +71,7 @@ public partial class UsersView : UserControl, IUsersView
     {
         UpdateClicked?.Invoke(this, EventArgs.Empty);
     }
+
 
     public void Initialize()
     {

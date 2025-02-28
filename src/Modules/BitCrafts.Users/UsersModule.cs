@@ -8,6 +8,7 @@ using BitCrafts.Users.Repositories;
 using BitCrafts.Users.UseCases;
 using BitCrafts.Users.Views;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace BitCrafts.Users;
 
@@ -17,13 +18,13 @@ public class UsersModule : IUsersModule
 
     public void RegisterServices(IServiceCollection services)
     {
-        services.AddTransient<IUserAccountsRepository, UserAccountsRepository>();
-        services.AddTransient<IUsersRepository, UsersRepository>();
-        services.AddTransient<ICreateUserUseCase, CreateUserUseCase>();
-        services.AddTransient<IDeleteUserUseCase, DeleteUserUseCase>();
-        services.AddTransient<IUpdateUserUseCase, UpdateUserUseCase>();
-        services.AddTransient<IUsersView, UsersView>();
-        services.AddTransient<IUsersPresenter, UsersPresenter>();
+        services.TryAddTransient<IUserAccountsRepository, UserAccountsRepository>();
+        services.TryAddTransient<IUsersRepository, UsersRepository>();
+        services.TryAddTransient<ICreateUserUseCase, CreateUserUseCase>();
+        services.TryAddTransient<IDeleteUserUseCase, DeleteUserUseCase>();
+        services.TryAddTransient<IUpdateUserUseCase, UpdateUserUseCase>();
+        services.TryAddTransient<IUsersView, UsersView>();
+        services.TryAddTransient<IUsersPresenter, UsersPresenter>();
     }
 
     public Type GetViewType()

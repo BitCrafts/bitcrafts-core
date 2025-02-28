@@ -8,5 +8,6 @@ public interface IPresenter<TView> : IDisposable
     TView View { get; }
     Task InitializeAsync();
     void Show();
-    void Hide();
+    void Hide(); 
+    void Close();
 }

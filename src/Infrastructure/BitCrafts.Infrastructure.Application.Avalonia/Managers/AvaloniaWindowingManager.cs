@@ -5,7 +5,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using BitCrafts.Infrastructure.Abstraction.Application.Managers;
 using BitCrafts.Infrastructure.Abstraction.Application.Views;
 
-namespace BitCrafts.Infrastructure.Application.Avalonia;
+namespace BitCrafts.Infrastructure.Application.Avalonia.Managers;
 
 public class AvaloniaWindowingManager : IWindowingManager
 {
@@ -19,43 +19,14 @@ public class AvaloniaWindowingManager : IWindowingManager
         _serviceProvider = serviceProvider;
     }
 
-    public T CreateWindow<T>() where T : IWindow, new()
-    {
-        var type = typeof(T);
-        if (!_windows.ContainsKey(type))
-        {
-            var window = new T();
-            _windows[type] = window;
-        }
-
-        return (T)_windows[type];
-    }
-
-    public void ShowWindow<T>() where T : IWindow, new()
-    {
-        var window = CreateWindow<T>() as Window;
-        if (window == null) return;
-
-        if (_lastVisibleWindow != null && _lastVisibleWindow.IsVisible)
-        {
-            ((IWindow)window).Owner = (IWindow)_lastVisibleWindow;
-        }
-
-        if (!window.IsVisible)
-        {
-            window.Show();
-            SetRootWindow(window);
-        }
-        else
-        {
-            window.Focus();
-        }
-    }
-
     public void ShowWindow(IWindow window)
     {
         var nativeWindow = (Window)window;
         if (nativeWindow == null) return;
+        if (!_windows.ContainsKey(window.GetType()))
+        {
+            _windows.TryAdd(window.GetType(), window);
+        }
 
         if (_lastVisibleWindow != null && _lastVisibleWindow.IsVisible)
         {
@@ -79,30 +50,13 @@ public class AvaloniaWindowingManager : IWindowingManager
     }
 
 
-    public void HideWindow<T>() where T : IWindow
+    public void HideWindow(IWindow window)
     {
-        var window = GetWindow<T>() as Window;
-        if (window != null && window.IsVisible)
+        if (window is Window wnd)
         {
-            window.Hide();
+            wnd.Hide();
         }
     }
-
-    public void CloseWindow<T>() where T : IWindow
-    {
-        var window = GetWindow<T>() as Window;
-        if (window != null)
-        {
-            if (_lastVisibleWindow == window)
-            {
-                _lastVisibleWindow = null;
-            }
-
-            window.Close();
-            _windows.Remove(typeof(T));
-        }
-    }
-
 
     public void CloseWindow(IWindow window)
     {
@@ -137,5 +91,6 @@ public class AvaloniaWindowingManager : IWindowingManager
     public void SetNativeApplication(IClassicDesktopStyleApplicationLifetime applicationLifetime)
     {
         _applicationLifetime = applicationLifetime;
+        _applicationLifetime.ShutdownMode = ShutdownMode.OnMainWindowClose;
     }
 }

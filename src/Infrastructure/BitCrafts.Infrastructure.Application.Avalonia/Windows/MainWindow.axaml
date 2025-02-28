@@ -4,20 +4,37 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="BitCrafts.Infrastructure.Application.Avalonia.Windows.MainView"
-        Title="BitCrafts.Infrastructure.Application.Avalonia">
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="200" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
+        WindowStartupLocation="CenterScreen"
+        Title="BitCrafts">
+    <Window.Resources>
+        <ControlTemplate x:Key="TabItemTemplate" TargetType="TabItem">
+            <Grid>
+                <Border BorderBrush="Gray" BorderThickness="1">
+                    <StackPanel Orientation="Horizontal">
+                        <ContentPresenter Content="{TemplateBinding Header}" /> 
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </ControlTemplate>
+    </Window.Resources>
 
-        <ListBox x:Name="ModulesListBox" Grid.Column="0" SelectionChanged="OnModuleSelected" />
+    <DockPanel>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="Fichier">
+                <MenuItem Header="Nouveau" />
+                <MenuItem Header="Ouvrir" />
+                <MenuItem Header="Enregistrer" />
+                <MenuItem Header="Quitter" />
+            </MenuItem>
+            <MenuItem Header="Edition" />
+            <MenuItem Header="Affichage" />
+        </Menu>
+        <Expander ExpandDirection="Right" Header="" DockPanel.Dock="Left" Width="200">
+            <ListBox x:Name="ModulesListBox" />
+        </Expander>
 
+        <TabControl x:Name="MainTabControl" />
+    </DockPanel>
 
-        <ContentControl x:Name="ModuleContent" Grid.Column="1" VerticalAlignment="Stretch"
-                        HorizontalAlignment="Stretch"
-                        VerticalContentAlignment="Stretch"
-                        HorizontalContentAlignment="Stretch" />
-    </Grid>
 
 </Window>

@@ -1,7 +1,6 @@
 using BitCrafts.Infrastructure.Abstraction.Application;
 using BitCrafts.Infrastructure.Abstraction.Databases;
 using BitCrafts.Infrastructure.Abstraction.Events;
-using BitCrafts.Infrastructure.Abstraction.Modules;
 using BitCrafts.Infrastructure.Abstraction.Services;
 using BitCrafts.Infrastructure.Abstraction.Threading;
 using BitCrafts.Infrastructure.Application;
@@ -12,6 +11,7 @@ using BitCrafts.Infrastructure.Services;
 using BitCrafts.Infrastructure.Threading;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Serilog;
 
 namespace BitCrafts.Infrastructure.Extensions;
@@ -36,27 +36,22 @@ public static class ServiceCollectionExtension
             loggingBuilder.AddSerilog(dispose: true)
         );
 
-        services.AddSingleton<IDbConnectionFactory, DbConnectionFactory>();
-        services.AddSingleton<IBackgroundThreadDispatcher, BackgroundThreadDispatcher>();
-        services.AddSingleton<IParallelism, Parallelism>();
-        services.AddSingleton<IEventAggregator, EventAggregator>();
-        services.AddSingleton<IApplicationFactory, ApplicationFactory>();
-        services.AddSingleton<IDapperWrapper, DapperWrapper>();
-        services.AddSingleton<IDatabaseManager, DatabaseManager>();
-        services.AddSingleton<ISqlDialectFactory, SqlDialectFactory>();
-        services.AddSingleton<IHashingService, HashingService>();
-
+        services.TryAddSingleton<IDbConnectionFactory, DbConnectionFactory>();
+        services.TryAddSingleton<IBackgroundThreadDispatcher, BackgroundThreadDispatcher>();
+        services.TryAddSingleton<IParallelism, Parallelism>();
+        services.TryAddSingleton<IEventAggregator, EventAggregator>();
+        services.TryAddSingleton<IApplicationFactory, ApplicationFactory>();
+        services.TryAddSingleton<IDapperWrapper, DapperWrapper>();
+        services.TryAddSingleton<IDatabaseManager, DatabaseManager>();
+        services.TryAddSingleton<ISqlDialectFactory, SqlDialectFactory>();
+        services.TryAddSingleton<IHashingService, HashingService>();
         CreateDirectoryDirectory("Modules");
         CreateDirectoryDirectory("Settings");
         CreateDirectoryDirectory("Databases");
         CreateDirectoryDirectory("Files");
         CreateDirectoryDirectory("Temporary");
-
-        var moduleManager = new ModuleManager();
-        using var moduleRegister = new ModuleRegistrer(logger, moduleManager);
-        moduleRegister.RegisterModules(services);
-        services.AddSingleton<IModuleManager>(moduleManager);
-
+        ModuleRegistrer moduleRegistrer = new ModuleRegistrer(Log.Logger);
+        moduleRegistrer.RegisterModules(services);
         return services;
     }
 

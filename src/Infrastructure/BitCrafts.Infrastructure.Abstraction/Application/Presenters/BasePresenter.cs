@@ -17,7 +17,15 @@ public abstract class BasePresenter<TView> : IPresenter<TView>, IDisposable
     {
         ServiceProvider = serviceProvider;
         View = serviceProvider.GetRequiredService<TView>();
+        if (View is IWindow window)
+        {
+            window.WindowLoaded += OnWindowLoaded;
+            window.WindowClosed += OnWindowClosed;
+        }
     }
+
+    protected abstract void OnWindowClosed(object sender, EventArgs e);
+    protected abstract void OnWindowLoaded(object sender, EventArgs e);
 
     public virtual Task InitializeAsync()
     {
@@ -30,21 +38,38 @@ public abstract class BasePresenter<TView> : IPresenter<TView>, IDisposable
     {
         if (View is IWindow window)
         {
+            Logger.LogInformation($"Showing View {View.GetType().Name}");
             WindowingManager.ShowWindow(window);
         }
     }
 
     public virtual void Hide()
     {
+        Logger.LogInformation($"Hiding View {View.GetType().Name}");
+
         View.Hide();
+    }
+
+    public void Close()
+    {
+        if (View is IWindow window)
+        {
+            window.Close();
+        }
     }
 
     protected virtual void Dispose(bool disposing)
     {
         if (disposing)
         {
-            Logger.LogInformation($"Disposing presenter {this.GetType().Name}");
+            if (View is IWindow window)
+            {
+                window.WindowLoaded -= OnWindowLoaded;
+                window.WindowClosed -= OnWindowClosed;
+            }
+
             View.Dispose();
+            Logger.LogInformation($"Disposed presenter {this.GetType().Name}");
         }
     }
 

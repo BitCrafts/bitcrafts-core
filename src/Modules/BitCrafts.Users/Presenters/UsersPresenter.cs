@@ -12,6 +12,7 @@ public class UsersPresenter : BasePresenter<IUsersView>, IUsersPresenter
     private readonly ICreateUserUseCase _createUserUseCase;
     private readonly IUpdateUserUseCase _updateUserUseCase;
 
+
     public override async Task InitializeAsync()
     {
         await base.InitializeAsync();
@@ -27,7 +28,7 @@ public class UsersPresenter : BasePresenter<IUsersView>, IUsersPresenter
 
     public async Task SaveUserAsync()
     {
-        var user = View.GetUser();
+        var user = ((IUsersView)View).GetUser();
         ValidateUser(user);
 
         await _createUserUseCase.ExecuteAsync(new UserEventRequest { User = user });
@@ -35,9 +36,9 @@ public class UsersPresenter : BasePresenter<IUsersView>, IUsersPresenter
 
     private void InitializeViewEvents()
     {
-        View.SaveClicked += async (_, _) => await SaveUserAsync();
-        View.UpdateClicked += async (_, _) => await UpdateUserAsync();
-        View.CancelClicked += (_, _) => CancelEditing();
+        ((IUsersView)View).SaveClicked += async (_, _) => await SaveUserAsync();
+        ((IUsersView)View).UpdateClicked += async (_, _) => await UpdateUserAsync();
+        ((IUsersView)View).CancelClicked += (_, _) => CancelEditing();
     }
 
     public async Task UpdateUserAsync()
@@ -63,5 +64,13 @@ public class UsersPresenter : BasePresenter<IUsersView>, IUsersPresenter
 
         if (!user.Email.Contains("@"))
             throw new ArgumentException("Invalid email.");
+    }
+
+    protected override void OnWindowClosed(object sender, EventArgs e)
+    {
+    }
+
+    protected override void OnWindowLoaded(object sender, EventArgs e)
+    {
     }
 }

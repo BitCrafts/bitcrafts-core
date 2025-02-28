@@ -2,6 +2,7 @@ using System.Reflection;
 using System.Runtime.Loader;
 using BitCrafts.Infrastructure.Abstraction.Modules;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Serilog;
 
 namespace BitCrafts.Infrastructure.Modules;
@@ -9,13 +10,11 @@ namespace BitCrafts.Infrastructure.Modules;
 public sealed class ModuleRegistrer : IModuleRegistrer
 {
     private readonly ILogger _logger;
-    private readonly IModuleManager _moduleManager;
     private List<Assembly> _loadedAssemblies;
 
-    public ModuleRegistrer(ILogger logger, IModuleManager moduleManager)
+    public ModuleRegistrer(ILogger logger)
     {
         _logger = logger;
-        _moduleManager = moduleManager;
         _loadedAssemblies = new List<Assembly>();
     }
 
@@ -24,6 +23,7 @@ public sealed class ModuleRegistrer : IModuleRegistrer
         var modulesPath = GetModulesPath();
         if (string.IsNullOrEmpty(modulesPath)) return;
         var allFiles = Directory.GetFiles(modulesPath, "*.dll");
+        
         foreach (var dll in allFiles.Where(x => x.Contains("Abstraction")))
         {
             var dllName = Path.GetFileName(dll);
@@ -60,7 +60,9 @@ public sealed class ModuleRegistrer : IModuleRegistrer
         var assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(dll);
         _loadedAssemblies.Add(assembly);
         if (registerAsModule)
+        {
             RegisterModules(assembly, services);
+        }
     }
 
     private void RegisterModules(Assembly assembly, IServiceCollection services)
@@ -69,11 +71,13 @@ public sealed class ModuleRegistrer : IModuleRegistrer
         {
             var moduleTypes = assembly.GetTypes().Where(IsValidModule);
             foreach (var type in moduleTypes)
+            {
                 if (Activator.CreateInstance(type) is IModule moduleInstance)
                 {
                     moduleInstance.RegisterServices(services);
-                    _moduleManager.AddModule(moduleInstance);
+                    services.AddSingleton<IModule>(moduleInstance);
                 }
+            }
         }
         catch (Exception ex)
         {

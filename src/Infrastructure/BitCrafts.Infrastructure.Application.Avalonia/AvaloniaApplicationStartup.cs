@@ -9,12 +9,10 @@ namespace BitCrafts.Infrastructure.Application.Avalonia;
 public class AvaloniaApplicationStartup : IApplicationStartup
 {
     private IPresenter<IStartupView> _startupPresenter;
-    private readonly IModuleManager _moduleManager;
 
-    public AvaloniaApplicationStartup(IStartupPresenter startupPresenter, IModuleManager moduleManager)
+    public AvaloniaApplicationStartup(IStartupPresenter startupPresenter)
     {
         _startupPresenter = startupPresenter;
-        _moduleManager = moduleManager;
     }
 
     public void Dispose()
@@ -25,6 +23,6 @@ public class AvaloniaApplicationStartup : IApplicationStartup
     public async Task StartAsync()
     {
         await _startupPresenter.InitializeAsync();
-        _startupPresenter.Show(); 
+        _startupPresenter.Show();
     }
 }
