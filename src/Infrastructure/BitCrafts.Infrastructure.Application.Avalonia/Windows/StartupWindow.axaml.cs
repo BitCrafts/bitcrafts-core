@@ -48,5 +48,5 @@ public partial class StartupView : Window, IStartupView
         // TODO release managed resources here
     }
 
-    public IWindow Owner { get; set; }
+    public IWindow ParentWindow { get; set; }
 }

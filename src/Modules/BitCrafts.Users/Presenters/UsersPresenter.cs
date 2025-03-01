@@ -4,34 +4,29 @@ using BitCrafts.Users.Abstraction.Events;
 using BitCrafts.Users.Abstraction.Presenters;
 using BitCrafts.Users.Abstraction.UseCases;
 using BitCrafts.Users.Abstraction.Views;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace BitCrafts.Users.Presenters;
 
 public class UsersPresenter : BasePresenter<IUsersView>, IUsersPresenter
 {
-    private readonly ICreateUserUseCase _createUserUseCase;
-    private readonly IUpdateUserUseCase _updateUserUseCase;
+   
 
-
+    public UsersPresenter(IServiceProvider serviceProvider) : base(serviceProvider)
+    {
+    }
     public override async Task InitializeAsync()
     {
         await base.InitializeAsync();
         InitializeViewEvents();
     }
-
-    public UsersPresenter(IServiceProvider serviceProvider, ICreateUserUseCase createUserUseCase,
-        IUpdateUserUseCase updateUserUseCase) : base(serviceProvider)
-    {
-        _createUserUseCase = createUserUseCase;
-        _updateUserUseCase = updateUserUseCase;
-    }
-
     public async Task SaveUserAsync()
     {
         var user = ((IUsersView)View).GetUser();
         ValidateUser(user);
 
-        await _createUserUseCase.ExecuteAsync(new UserEventRequest { User = user });
+        await ServiceProvider.GetRequiredService<ICreateUserUseCase>()
+            .ExecuteAsync(new UserEventRequest { User = user });
     }
 
     private void InitializeViewEvents()
@@ -39,6 +34,7 @@ public class UsersPresenter : BasePresenter<IUsersView>, IUsersPresenter
         ((IUsersView)View).SaveClicked += async (_, _) => await SaveUserAsync();
         ((IUsersView)View).UpdateClicked += async (_, _) => await UpdateUserAsync();
         ((IUsersView)View).CancelClicked += (_, _) => CancelEditing();
+        ((IUsersView)View).CloseClicked += (_, _) => Close();
     }
 
     public async Task UpdateUserAsync()
@@ -46,7 +42,8 @@ public class UsersPresenter : BasePresenter<IUsersView>, IUsersPresenter
         var user = View.GetUser();
         ValidateUser(user);
 
-        await _updateUserUseCase.ExecuteAsync(new UserEventRequest { User = user });
+        await ServiceProvider.GetRequiredService<IUpdateUserUseCase>()
+            .ExecuteAsync(new UserEventRequest { User = user });
     }
 
     public void CancelEditing()

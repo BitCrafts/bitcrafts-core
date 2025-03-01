@@ -4,7 +4,6 @@ public interface IWindow : IView
 {
     event EventHandler WindowLoaded;
     event EventHandler WindowClosed;
-    
-    IWindow Owner { get; set; }
+    IWindow ParentWindow { get; set; }
     void Close();
 }

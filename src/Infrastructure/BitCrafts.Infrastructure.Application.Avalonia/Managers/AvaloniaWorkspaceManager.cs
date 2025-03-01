@@ -23,13 +23,15 @@ public sealed class AvaloniaWorkspaceManager : IWorkspaceManager
         _tabControl = tabControl;
     }
 
-    public void ShowPresenter(string title, dynamic presenter)
+    public async void ShowPresenter(string title, dynamic presenter)
     {
         var added = _views.TryAdd(title, presenter);
         if (!added) return;
 
         var tabItem = new TabItem { Header = title, Content = presenter.View };
         _tabControl.Items.Add(tabItem);
+        await presenter.InitializeAsync();
+        presenter.Show();
     }
 
     public void ClosePresenter(string title)

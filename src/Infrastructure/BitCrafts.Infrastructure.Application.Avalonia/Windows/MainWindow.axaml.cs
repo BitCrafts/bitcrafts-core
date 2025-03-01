@@ -16,7 +16,7 @@ public partial class MainView : Window, IMainView
     public event EventHandler WindowLoaded;
     public event EventHandler WindowClosed;
     public event EventHandler<string> MenuItemClicked;
-    public IWindow Owner { get; set; }
+    public IWindow ParentWindow { get; set; }
 
     public MainView()
     {

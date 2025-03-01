@@ -4,7 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="BitCrafts.Infrastructure.Application.Avalonia.Windows.MainView"
-        WindowStartupLocation="CenterScreen"
+        WindowStartupLocation="CenterScreen"  
         Title="BitCrafts">
     <Window.Resources>
         <ControlTemplate x:Key="TabItemTemplate" TargetType="TabItem">
@@ -17,8 +17,8 @@
             </Grid>
         </ControlTemplate>
     </Window.Resources>
-
-    <DockPanel>
+   
+    <DockPanel> 
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="Fichier">
                 <MenuItem Header="Nouveau" />

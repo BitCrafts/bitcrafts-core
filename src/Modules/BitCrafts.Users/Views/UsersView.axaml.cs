@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
@@ -12,12 +13,15 @@ public partial class UsersView : UserControl, IUsersView
     public event EventHandler SaveClicked;
     public event EventHandler UpdateClicked;
     public event EventHandler CancelClicked;
+    public event EventHandler CloseClicked;
     public event EventHandler WindowLoaded;
     public event EventHandler WindowClosed;
 
+    private ObservableCollection<User> _users = new ObservableCollection<User>();
+
     public UsersView()
     {
-        AvaloniaXamlLoader.Load(this);
+        InitializeComponent();
         Loaded += OnLoaded;
         Unloaded += OnUnloaded;
     }
@@ -30,30 +34,42 @@ public partial class UsersView : UserControl, IUsersView
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
         WindowLoaded?.Invoke(this, EventArgs.Empty);
+        SetUser(new User()
+        {
+            FirstName = "John",
+            LastName = "Doe",
+            BirthDate = DateTime.Today,
+            NationalNumber = "123456",
+            PassportNumber = "123456",
+            Email = "john.doe@example.com",
+            PhoneNumber = "123456"
+        });
+        UsersDataGrid.ItemsSource = _users;
+        UsersDataGrid.SelectionMode = DataGridSelectionMode.Single;
     }
 
     public void SetUser(IUser user)
     {
-        this.FindControl<TextBox>("FirstNameTextBox").Text = user.FirstName;
-        this.FindControl<TextBox>("LastNameTextBox").Text = user.LastName;
-        this.FindControl<TextBox>("EmailTextBox").Text = user.Email;
-        this.FindControl<TextBox>("PhoneNumberTextBox").Text = user.PhoneNumber;
-        this.FindControl<CalendarDatePicker>("BirthDatePicker").SelectedDate = user.BirthDate;
-        this.FindControl<TextBox>("NationalNumberTextBox").Text = user.NationalNumber;
-        this.FindControl<TextBox>("PassportNumberTextBox").Text = user.PassportNumber;
+        FirstNameTextBox.Text = user.FirstName;
+        LastNameTextBox.Text = user.LastName;
+        EmailTextBox.Text = user.Email;
+        PhoneNumberTextBox.Text = user.PhoneNumber;
+        BirthDatePicker.SelectedDate = user.BirthDate;
+        NationalNumberTextBox.Text = user.NationalNumber;
+        PassportNumberTextBox.Text = user.PassportNumber;
     }
 
     public IUser GetUser()
     {
         return new User
         {
-            FirstName = this.FindControl<TextBox>("FirstNameTextBox").Text,
-            LastName = this.FindControl<TextBox>("LastNameTextBox").Text,
-            Email = this.FindControl<TextBox>("EmailTextBox").Text,
-            PhoneNumber = this.FindControl<TextBox>("PhoneNumberTextBox").Text,
-            BirthDate = this.FindControl<CalendarDatePicker>("BirthDatePicker").SelectedDate.GetValueOrDefault(),
-            NationalNumber = this.FindControl<TextBox>("NationalNumberTextBox").Text,
-            PassportNumber = this.FindControl<TextBox>("PassportNumberTextBox").Text
+            FirstName = FirstNameTextBox.Text,
+            LastName = LastNameTextBox.Text,
+            Email = EmailTextBox.Text,
+            PhoneNumber = PhoneNumberTextBox.Text,
+            BirthDate = BirthDatePicker.SelectedDate.GetValueOrDefault(),
+            NationalNumber = NationalNumberTextBox.Text,
+            PassportNumber = PassportNumberTextBox.Text
         };
     }
 
@@ -72,9 +88,24 @@ public partial class UsersView : UserControl, IUsersView
         UpdateClicked?.Invoke(this, EventArgs.Empty);
     }
 
+    private void DataGrid_AddUser(User user)
+    {
+        _users.Add(user);
+        UsersDataGrid.ItemsSource = _users;
+    }
 
     public void Initialize()
     {
+        DataGrid_AddUser(new User()
+        {
+            FirstName = "John",
+            LastName = "Doe",
+            BirthDate = DateTime.Today,
+            NationalNumber = "123456",
+            PassportNumber = "123456",
+            Email = "john.doe@example.com",
+            PhoneNumber = "123456"
+        });
     }
 
     public void Show()
@@ -90,5 +121,10 @@ public partial class UsersView : UserControl, IUsersView
     public void Dispose()
     {
         // TODO release managed resources here
+    }
+
+    private void Closebutton_OnClick(object sender, RoutedEventArgs e)
+    {
+        CloseClicked?.Invoke(this, EventArgs.Empty);
     }
 }

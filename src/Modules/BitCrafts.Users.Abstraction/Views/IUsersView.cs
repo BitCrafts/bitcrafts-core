@@ -8,6 +8,7 @@ public interface IUsersView : IView
     event EventHandler SaveClicked;
     event EventHandler CancelClicked;
     event EventHandler UpdateClicked;
+    event EventHandler CloseClicked;
     void SetUser(IUser user);
     IUser GetUser();
 }

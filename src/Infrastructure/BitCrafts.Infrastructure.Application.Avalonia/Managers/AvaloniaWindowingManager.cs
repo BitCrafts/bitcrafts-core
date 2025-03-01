@@ -30,7 +30,7 @@ public class AvaloniaWindowingManager : IWindowingManager
 
         if (_lastVisibleWindow != null && _lastVisibleWindow.IsVisible)
         {
-            window.Owner = (IWindow)_lastVisibleWindow;
+            window.ParentWindow = (IWindow)_lastVisibleWindow;
         }
 
         if (!nativeWindow.IsVisible)

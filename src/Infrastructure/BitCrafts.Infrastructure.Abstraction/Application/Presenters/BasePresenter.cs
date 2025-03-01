@@ -29,7 +29,7 @@ public abstract class BasePresenter<TView> : IPresenter<TView>, IDisposable
 
     public virtual Task InitializeAsync()
     {
-        Logger.LogInformation($"Initializing presenter {this.GetType().Name}");
+        Logger.LogInformation($"Initializing {this.GetType().Name}");
         View.Initialize();
         return Task.CompletedTask;
     }
@@ -54,7 +54,11 @@ public abstract class BasePresenter<TView> : IPresenter<TView>, IDisposable
     {
         if (View is IWindow window)
         {
-            window.Close();
+            WindowingManager.CloseWindow((IWindow)View);
+        }
+        else if (View is IView view)
+        {
+            ServiceProvider.GetService<IWorkspaceManager>().ClosePresenter("Users");
         }
     }
 
@@ -69,7 +73,7 @@ public abstract class BasePresenter<TView> : IPresenter<TView>, IDisposable
             }
 
             View.Dispose();
-            Logger.LogInformation($"Disposed presenter {this.GetType().Name}");
+            Logger.LogInformation($"Disposed {this.GetType().Name}");
         }
     }
 
