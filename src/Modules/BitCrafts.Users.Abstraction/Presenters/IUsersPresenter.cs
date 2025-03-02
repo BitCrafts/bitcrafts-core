@@ -4,7 +4,7 @@ using BitCrafts.Users.Abstraction.Views;
 
 namespace BitCrafts.Users.Abstraction.Presenters;
 
-public interface IUsersPresenter : IPresenter<IUsersView>
+public interface IUsersPresenter : IPresenter
 {
     Task SaveUserAsync();
 }

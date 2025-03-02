@@ -9,6 +9,7 @@ using BitCrafts.Infrastructure.Abstraction.Application.Managers;
 using BitCrafts.Infrastructure.Abstraction.Application.Presenters;
 using BitCrafts.Infrastructure.Abstraction.Application.Views;
 using BitCrafts.Infrastructure.Abstraction.Modules;
+using BitCrafts.Infrastructure.Application.Avalonia.Windows;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
@@ -24,7 +25,8 @@ public sealed class StartupPresenter : BasePresenter<IStartupView>, IStartupPres
     protected override async void OnViewLoaded(object sender, EventArgs e)
     {
         base.OnViewLoaded(sender, e);
-        View.SetLoadingText("Loading Terminated"); 
-        await CloseAndOpenPresenterAsync<IMainPresenter>();
+        var view = GetView<StartupView>();
+        view.SetLoadingText("Loading Terminated");
+        await CloseAndOpenPresenterAsync<IMainPresenter>(true);
     }
 }

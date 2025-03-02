@@ -20,14 +20,14 @@ public sealed class MainPresenter : BasePresenter<IMainView>, IMainPresenter
     {
     }
 
-
     private async void ViewOnMenuItemClicked(object sender, string e)
     {
         var module = ServiceProvider.GetServices<IModule>().FirstOrDefault(x => x.Name.Equals(e));
         var presenterType = module.GetPresenterType();
         var presenter = ServiceProvider.GetRequiredService(presenterType);
         dynamic dynamicPresenter = presenter;
-        await _workspaceManager.ShowPresenterAsync(dynamicPresenter);
+        IPresenter presenter2 = dynamicPresenter as IPresenter;
+        await _workspaceManager.ShowPresenterAsync(presenter2);
     }
 
     protected override void OnViewLoaded(object sender, EventArgs e)
@@ -38,16 +38,15 @@ public sealed class MainPresenter : BasePresenter<IMainView>, IMainPresenter
         {
             _workspaceManager.SetControl((View as MainView)?.GetTabControl());
         }
-
-        View.MenuItemClicked += ViewOnMenuItemClicked;
+        var view = View as MainView;
+        view.MenuItemClicked += ViewOnMenuItemClicked;
         var dicModules = ServiceProvider.GetServices<IModule>();
-        View.InitializeMenu(dicModules);
+        view.InitializeMenu(dicModules);
     }
 
     protected override async void OnViewClosed(object sender, EventArgs e)
     {
         base.OnViewClosed(sender, e);
-        Logger.LogInformation($"{this.GetType().Name} closed");
         await ServiceProvider.GetRequiredService<IUiManager>().ShutdownAsync();
     }
 }

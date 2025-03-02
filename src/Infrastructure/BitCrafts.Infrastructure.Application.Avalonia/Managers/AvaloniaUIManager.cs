@@ -35,6 +35,7 @@ public sealed class AvaloniaUiManager : IUiManager
 
     public async Task ShutdownAsync()
     {
+        _serviceProvider.GetService<ILogger<AvaloniaUiManager>>().LogInformation("Shutting down application...");
         await Task.Delay(100);
         _applicationLifetime.Shutdown();
     }
@@ -53,8 +54,7 @@ public sealed class AvaloniaUiManager : IUiManager
         _applicationLifetime = applicationLifetime ?? throw new ArgumentNullException(nameof(applicationLifetime));
         _applicationLifetime.ShutdownRequested += ApplicationLifetimeOnShutdownRequested;
         _applicationLifetime.Exit += ApplicationLifetimeOnExit;
-        _applicationLifetime.Startup += ApplicationLifetimeOnStartup;
-        _applicationLifetime.ShutdownMode = ShutdownMode.OnLastWindowClose;
+        _applicationLifetime.Startup += ApplicationLifetimeOnStartup; 
         _windowingManager = _serviceProvider.GetService<IWindowingManager>() as AvaloniaWindowingManager;
         if (_windowingManager != null) _windowingManager.SetNativeApplication(_applicationLifetime);
     }

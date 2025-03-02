@@ -51,7 +51,7 @@ public partial class StartupView : Window, IStartupView
         Title = title;
     }
 
-    public string GetTitle(string title)
+    public string GetTitle()
     {
         return Title;
     }

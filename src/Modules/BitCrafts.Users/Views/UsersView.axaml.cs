@@ -19,7 +19,7 @@ public partial class UsersView : UserControl, IUsersView
     public event EventHandler ViewClosedEvent;
     public bool IsWindow => false;
     public IView ParentView { get; set; }
-
+    private string _title = string.Empty;
     private ObservableCollection<User> _users = new ObservableCollection<User>();
 
     public UsersView()
@@ -114,11 +114,12 @@ public partial class UsersView : UserControl, IUsersView
 
     public void SetTitle(string title)
     {
+        _title = title;
     }
 
-    public string GetTitle(string title)
+    public string GetTitle()
     {
-        return string.Empty;
+        return _title;
     }
 
     public void Show()

@@ -42,7 +42,7 @@ public partial class MainView : Window, IMainView
         Title = title;
     }
 
-    public string GetTitle(string title)
+    public string GetTitle()
     {
         return Title;
     }

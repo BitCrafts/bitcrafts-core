@@ -2,7 +2,7 @@
 
 namespace BitCrafts.Infrastructure.Abstraction.Application.Presenters;
 
-public interface IMainPresenter : IPresenter<IMainView>
+public interface IMainPresenter : IPresenter
 {
     
 }

@@ -7,9 +7,9 @@ using BitCrafts.Infrastructure.Abstraction.Modules;
 
 namespace BitCrafts.Infrastructure.Application.Avalonia;
 
-public class AvaloniaApplicationStartup : IApplicationStartup
+public sealed class AvaloniaApplicationStartup : IApplicationStartup
 {
-    private IPresenter<IStartupView> _startupPresenter;
+    private IStartupPresenter _startupPresenter;
 
     public AvaloniaApplicationStartup(IStartupPresenter startupPresenter)
     {

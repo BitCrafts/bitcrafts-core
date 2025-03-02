@@ -5,6 +5,7 @@ using BitCrafts.Users.Abstraction.Events;
 using BitCrafts.Users.Abstraction.Presenters;
 using BitCrafts.Users.Abstraction.UseCases;
 using BitCrafts.Users.Abstraction.Views;
+using BitCrafts.Users.Views;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace BitCrafts.Users.Presenters;
@@ -31,12 +32,13 @@ public class UsersPresenter : BasePresenter<IUsersView>, IUsersPresenter
         ((IUsersView)View).UpdateClicked += async (_, _) => await UpdateUserAsync();
         ((IUsersView)View).CancelClicked += (_, _) => CancelEditing();
         ((IUsersView)View).CloseClicked += (_, _) =>
-            ServiceProvider.GetRequiredService<IWorkspaceManager>().ClosePresenterAsync(this.GetType());
+            ServiceProvider.GetRequiredService<IWorkspaceManager>().ClosePresenterAsync(this);
     }
 
     public async Task UpdateUserAsync()
     {
-        var user = View.GetUser();
+        var view = View as UsersView;
+        var user = view.GetUser();
         ValidateUser(user);
 
         await ServiceProvider.GetRequiredService<IUpdateUserUseCase>()

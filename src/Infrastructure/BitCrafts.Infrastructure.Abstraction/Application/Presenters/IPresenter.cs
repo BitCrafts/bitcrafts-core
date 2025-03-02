@@ -2,14 +2,12 @@
 
 namespace BitCrafts.Infrastructure.Abstraction.Application.Presenters;
 
-public interface IPresenter<TView> : IDisposable
-    where TView : IView
+public interface IPresenter : IDisposable
 {
-    TView View { get; }
-    string Title { get; }
-    Task ShowAsync();
+    Task ShowAsync(bool isMainWindow = false);
     Task CloseAsync();
-
-    Task CloseAndOpenPresenterAsync<T>();
-    Task OpenPresenterAsync<T>();
+    Task CloseAndOpenPresenterAsync<T>(bool isMainWindow = false);
+    Task OpenPresenterAsync<T>(bool isMainWindow = false);
+    T GetView<T>() where T : IView;
+    void SetView(IView view);
 }

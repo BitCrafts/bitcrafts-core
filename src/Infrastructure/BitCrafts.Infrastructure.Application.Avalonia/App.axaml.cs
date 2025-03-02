@@ -20,7 +20,7 @@ public class App : global::Avalonia.Application
         var desktop = ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
         if (desktop != null)
         {
-            desktop.ShutdownMode = ShutdownMode.OnLastWindowClose;
+            desktop.ShutdownMode = ShutdownMode.OnExplicitShutdown;
             uiManager.SetNativeApplication(desktop);
             await uiManager.StartAsync();
         }

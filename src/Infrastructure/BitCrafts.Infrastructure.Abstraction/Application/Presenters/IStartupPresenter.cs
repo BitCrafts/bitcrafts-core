@@ -2,6 +2,6 @@
 
 namespace BitCrafts.Infrastructure.Abstraction.Application.Presenters;
 
-public interface IStartupPresenter : IPresenter<IStartupView>
+public interface IStartupPresenter : IPresenter
 {
 }

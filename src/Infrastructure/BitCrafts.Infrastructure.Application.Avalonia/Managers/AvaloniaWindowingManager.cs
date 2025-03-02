@@ -18,17 +18,18 @@ public sealed class AvaloniaWindowingManager : IWindowingManager
         _serviceProvider = serviceProvider;
     }
 
-    public void ShowWindow(IView window)
+    public void ShowWindow(IView window, bool setAsMainWindow = false)
     {
         var nativeWindow = (Window)window;
         if (nativeWindow == null) return;
 
         if (!_windows.ContainsKey(window.GetType()))
         {
-            if (_applicationLifetime.MainWindow == null)
+            if (setAsMainWindow)
+            {
                 _applicationLifetime.MainWindow = nativeWindow;
+            }
 
-            _applicationLifetime.MainWindow = nativeWindow;
             _windows.TryAdd(window.GetType(), window);
         }
 
@@ -50,11 +51,6 @@ public sealed class AvaloniaWindowingManager : IWindowingManager
         if (nativeWindow == null) return;
         if (_windows.ContainsKey(window.GetType()))
         {
-            if (Equals(nativeWindow, _applicationLifetime.MainWindow))
-            {
-                _applicationLifetime.MainWindow = null;
-            }
-
             _windows.Remove(window.GetType());
             nativeWindow.Close();
         }

@@ -5,11 +5,11 @@ using Microsoft.Extensions.Logging;
 
 namespace BitCrafts.Infrastructure.Abstraction.Application.Presenters;
 
-public abstract class BasePresenter<TView> : IPresenter<TView>, IDisposable
+public abstract class BasePresenter<TView> : IPresenter
     where TView : IView
 {
     protected IServiceProvider ServiceProvider { get; }
-    public TView View { get; }
+    public IView View { get; private set; }
     public string Title { get; protected set; }
     public IWindowingManager WindowingManager => ServiceProvider.GetRequiredService<IWindowingManager>();
     public IWorkspaceManager WorkspaceManager => ServiceProvider.GetRequiredService<IWorkspaceManager>();
@@ -36,41 +36,49 @@ public abstract class BasePresenter<TView> : IPresenter<TView>, IDisposable
         Logger.LogInformation($"Loaded {this.GetType().Name}");
     }
 
-    public async Task CloseAndOpenPresenterAsync<T>()
+    public async Task CloseAndOpenPresenterAsync<T>(bool isMainWindow = false)
     {
-        await OpenPresenterAsync<T>();
+        await OpenPresenterAsync<T>(isMainWindow);
         await CloseAsync();
     }
 
-    public async Task OpenPresenterAsync<T>()
+    public async Task OpenPresenterAsync<T>(bool isMainWindow = false)
     {
         dynamic presenter = ServiceProvider.GetRequiredService<T>();
-        await presenter.ShowAsync();
+        await presenter.ShowAsync(isMainWindow);
     }
 
-    public async Task ShowAsync()
+    public T GetView<T>() where T : IView
     {
-        Logger.LogInformation($"Showing View {View.GetType().Name}");
+        return (T)View;
+    }
+
+    public void SetView(IView view)
+    {
+        View = view;
+    }
+
+    public async Task ShowAsync(bool isMainWindow = false)
+    {
         if (View.IsWindow)
         {
-            WindowingManager.ShowWindow(View);
+            WindowingManager.ShowWindow(View, isMainWindow);
         }
-        else if (View is IView view)
+        else if (View is { } view)
         {
-            await ServiceProvider.GetService<IWorkspaceManager>().ShowPresenterAsync(this.GetType());
+            await ServiceProvider.GetService<IWorkspaceManager>().ShowPresenterAsync(this);
         }
     }
 
     public async Task CloseAsync()
     {
-        Logger.LogInformation($"Closing View {View.GetType().Name}");
         if (View.IsWindow)
         {
             WindowingManager.CloseWindow(View);
         }
-        else if (View is IView view)
+        else if (View is { } view)
         {
-            await ServiceProvider.GetService<IWorkspaceManager>().ClosePresenterAsync(this.GetType());
+            await ServiceProvider.GetService<IWorkspaceManager>().ClosePresenterAsync(this);
         }
     }
 
