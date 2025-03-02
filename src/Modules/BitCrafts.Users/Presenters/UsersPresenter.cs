@@ -1,4 +1,5 @@
-﻿using BitCrafts.Infrastructure.Abstraction.Application.Presenters;
+﻿using BitCrafts.Infrastructure.Abstraction.Application.Managers;
+using BitCrafts.Infrastructure.Abstraction.Application.Presenters;
 using BitCrafts.Users.Abstraction.Entities;
 using BitCrafts.Users.Abstraction.Events;
 using BitCrafts.Users.Abstraction.Presenters;
@@ -10,16 +11,11 @@ namespace BitCrafts.Users.Presenters;
 
 public class UsersPresenter : BasePresenter<IUsersView>, IUsersPresenter
 {
-   
-
-    public UsersPresenter(IServiceProvider serviceProvider) : base(serviceProvider)
+    public UsersPresenter(IServiceProvider serviceProvider) : base("Users", serviceProvider)
     {
-    }
-    public override async Task InitializeAsync()
-    {
-        await base.InitializeAsync();
         InitializeViewEvents();
     }
+
     public async Task SaveUserAsync()
     {
         var user = ((IUsersView)View).GetUser();
@@ -34,7 +30,8 @@ public class UsersPresenter : BasePresenter<IUsersView>, IUsersPresenter
         ((IUsersView)View).SaveClicked += async (_, _) => await SaveUserAsync();
         ((IUsersView)View).UpdateClicked += async (_, _) => await UpdateUserAsync();
         ((IUsersView)View).CancelClicked += (_, _) => CancelEditing();
-        ((IUsersView)View).CloseClicked += (_, _) => Close();
+        ((IUsersView)View).CloseClicked += (_, _) =>
+            ServiceProvider.GetRequiredService<IWorkspaceManager>().ClosePresenterAsync(this.GetType());
     }
 
     public async Task UpdateUserAsync()
@@ -63,11 +60,8 @@ public class UsersPresenter : BasePresenter<IUsersView>, IUsersPresenter
             throw new ArgumentException("Invalid email.");
     }
 
-    protected override void OnWindowClosed(object sender, EventArgs e)
+    protected override void OnViewLoaded(object sender, EventArgs e)
     {
-    }
-
-    protected override void OnWindowLoaded(object sender, EventArgs e)
-    {
+        base.OnViewLoaded(sender, e);
     }
 }

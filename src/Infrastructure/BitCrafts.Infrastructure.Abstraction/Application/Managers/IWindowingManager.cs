@@ -2,13 +2,11 @@
 
 namespace BitCrafts.Infrastructure.Abstraction.Application.Managers;
 
-public interface IWindowingManager
+public interface IWindowingManager : IDisposable
 {
-    
-    void ShowWindow(IWindow window); 
-    void CloseWindow(IWindow window);
-    void HideWindow(IWindow window); 
-    T GetWindow<T>() where T : IWindow;
-    IReadOnlyCollection<IWindow> GetAllWindows();
-    void SetRootWindow(IWindow rootWindow);
+    void ShowWindow(IView window);
+    void CloseWindow(IView window);
+    void HideWindow(IView window);
+    T GetWindow<T>() where T : IView;
+    IReadOnlyCollection<IView> GetAllWindows(); 
 }

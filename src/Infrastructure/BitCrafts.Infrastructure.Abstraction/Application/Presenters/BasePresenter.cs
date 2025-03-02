@@ -10,55 +10,67 @@ public abstract class BasePresenter<TView> : IPresenter<TView>, IDisposable
 {
     protected IServiceProvider ServiceProvider { get; }
     public TView View { get; }
+    public string Title { get; protected set; }
     public IWindowingManager WindowingManager => ServiceProvider.GetRequiredService<IWindowingManager>();
+    public IWorkspaceManager WorkspaceManager => ServiceProvider.GetRequiredService<IWorkspaceManager>();
     public ILogger<BasePresenter<TView>> Logger => ServiceProvider.GetRequiredService<ILogger<BasePresenter<TView>>>();
 
-    public BasePresenter(IServiceProvider serviceProvider)
+    public BasePresenter(string title, IServiceProvider serviceProvider)
     {
         ServiceProvider = serviceProvider;
+        Title = title;
         View = serviceProvider.GetRequiredService<TView>();
-        if (View is IWindow window)
-        {
-            window.WindowLoaded += OnWindowLoaded;
-            window.WindowClosed += OnWindowClosed;
-        }
-    }
-
-    protected abstract void OnWindowClosed(object sender, EventArgs e);
-    protected abstract void OnWindowLoaded(object sender, EventArgs e);
-
-    public virtual Task InitializeAsync()
-    {
+        View.SetTitle(Title);
+        View.ViewLoadedEvent += OnViewLoaded;
+        View.ViewClosedEvent += OnViewClosed;
         Logger.LogInformation($"Initializing {this.GetType().Name}");
-        View.Initialize();
-        return Task.CompletedTask;
     }
 
-    public virtual void Show()
+    protected virtual void OnViewClosed(object sender, EventArgs e)
     {
-        if (View is IWindow window)
+        Logger.LogInformation($"Closed {this.GetType().Name}");
+    }
+
+    protected virtual void OnViewLoaded(object sender, EventArgs e)
+    {
+        Logger.LogInformation($"Loaded {this.GetType().Name}");
+    }
+
+    public async Task CloseAndOpenPresenterAsync<T>()
+    {
+        await OpenPresenterAsync<T>();
+        await CloseAsync();
+    }
+
+    public async Task OpenPresenterAsync<T>()
+    {
+        dynamic presenter = ServiceProvider.GetRequiredService<T>();
+        await presenter.ShowAsync();
+    }
+
+    public async Task ShowAsync()
+    {
+        Logger.LogInformation($"Showing View {View.GetType().Name}");
+        if (View.IsWindow)
         {
-            Logger.LogInformation($"Showing View {View.GetType().Name}");
-            WindowingManager.ShowWindow(window);
-        }
-    }
-
-    public virtual void Hide()
-    {
-        Logger.LogInformation($"Hiding View {View.GetType().Name}");
-
-        View.Hide();
-    }
-
-    public void Close()
-    {
-        if (View is IWindow window)
-        {
-            WindowingManager.CloseWindow((IWindow)View);
+            WindowingManager.ShowWindow(View);
         }
         else if (View is IView view)
         {
-            ServiceProvider.GetService<IWorkspaceManager>().ClosePresenter("Users");
+            await ServiceProvider.GetService<IWorkspaceManager>().ShowPresenterAsync(this.GetType());
+        }
+    }
+
+    public async Task CloseAsync()
+    {
+        Logger.LogInformation($"Closing View {View.GetType().Name}");
+        if (View.IsWindow)
+        {
+            WindowingManager.CloseWindow(View);
+        }
+        else if (View is IView view)
+        {
+            await ServiceProvider.GetService<IWorkspaceManager>().ClosePresenterAsync(this.GetType());
         }
     }
 
@@ -66,12 +78,8 @@ public abstract class BasePresenter<TView> : IPresenter<TView>, IDisposable
     {
         if (disposing)
         {
-            if (View is IWindow window)
-            {
-                window.WindowLoaded -= OnWindowLoaded;
-                window.WindowClosed -= OnWindowClosed;
-            }
-
+            View.ViewLoadedEvent -= OnViewLoaded;
+            View.ViewClosedEvent -= OnViewClosed;
             View.Dispose();
             Logger.LogInformation($"Disposed {this.GetType().Name}");
         }

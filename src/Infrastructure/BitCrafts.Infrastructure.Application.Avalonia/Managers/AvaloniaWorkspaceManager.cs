@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Avalonia.Controls;
 using BitCrafts.Infrastructure.Abstraction.Application.Managers;
 using BitCrafts.Infrastructure.Abstraction.Application.Presenters;
@@ -11,7 +12,7 @@ public sealed class AvaloniaWorkspaceManager : IWorkspaceManager
 {
     private readonly IServiceProvider _serviceProvider;
     private TabControl _tabControl;
-    private Dictionary<string, dynamic> _views = new();
+    private Dictionary<Type, dynamic> _views = new();
 
     public AvaloniaWorkspaceManager(IServiceProvider serviceProvider)
     {
@@ -23,25 +24,27 @@ public sealed class AvaloniaWorkspaceManager : IWorkspaceManager
         _tabControl = tabControl;
     }
 
-    public async void ShowPresenter(string title, dynamic presenter)
+
+    public async Task ShowPresenterAsync(dynamic presenter)
     {
-        var added = _views.TryAdd(title, presenter);
+        var added = _views.TryAdd(presenter.GetType(), presenter);
         if (!added) return;
 
-        var tabItem = new TabItem { Header = title, Content = presenter.View };
+        var tabItem = new TabItem { Header = presenter.Title, Content = presenter.View };
         _tabControl.Items.Add(tabItem);
-        await presenter.InitializeAsync();
-        presenter.Show();
+        await presenter.ShowAsync();
     }
 
-    public void ClosePresenter(string title)
+    public async Task ClosePresenterAsync(Type presenterType)
     {
-        var content = _views.TryGetValue(title, out var view) ? view : null;
+        var content = _views.TryGetValue(presenterType, out var view) ? view : null;
         if (content == null) return;
         foreach (TabItem tabItem in _tabControl.Items)
         {
             if (Equals(tabItem.Content, content.View))
             {
+                await content.CloseAsync();
+                content.Dispose();
                 _tabControl.Items.Remove(tabItem);
                 break;
             }

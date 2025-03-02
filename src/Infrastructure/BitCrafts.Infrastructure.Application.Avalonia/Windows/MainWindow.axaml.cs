@@ -10,77 +10,81 @@ namespace BitCrafts.Infrastructure.Application.Avalonia.Windows;
 
 public partial class MainView : Window, IMainView
 {
-    private TabControl _tabControl;
     private Dictionary<string, IModule> _loadedModules;
-    private ListBox _menuList;
-    public event EventHandler WindowLoaded;
-    public event EventHandler WindowClosed;
+
     public event EventHandler<string> MenuItemClicked;
-    public IWindow ParentWindow { get; set; }
+    public event EventHandler ViewLoadedEvent;
+    public event EventHandler ViewClosedEvent;
+    public bool IsWindow { get; }
+    public IView ParentView { get; set; }
 
     public MainView()
     {
-        AvaloniaXamlLoader.Load(this);
+        IsWindow = true;
+        _loadedModules = new Dictionary<string, IModule>();
+        InitializeComponent();
         Loaded += OnLoaded;
         Closed += OnClosed;
     }
 
     private void OnClosed(object sender, EventArgs e)
     {
-        WindowClosed?.Invoke(this, EventArgs.Empty);
+        ViewClosedEvent?.Invoke(this, EventArgs.Empty);
     }
 
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
-        WindowLoaded?.Invoke(this, EventArgs.Empty);
+        ViewLoadedEvent?.Invoke(this, EventArgs.Empty);
     }
 
+    public void SetTitle(string title)
+    {
+        Title = title;
+    }
+
+    public string GetTitle(string title)
+    {
+        return Title;
+    }
 
     public void InitializeMenu(IEnumerable<IModule> modules)
     {
         if (modules == null) throw new ArgumentNullException(nameof(modules));
-        _menuList.Items.Clear();
+        ModulesListBox.Items.Clear();
         _loadedModules.Clear();
         foreach (var module in modules)
         {
             if (_loadedModules.TryAdd(module.Name, module))
             {
-                _menuList.Items.Add(new TextBlock { Text = module.Name });
+                ModulesListBox.Items.Add(new TextBlock { Text = module.Name });
             }
         }
     }
 
     private void CreateTabItem()
     {
-        _tabControl.Items.Add(new TabItem { Header = "Main", Content = new TextBlock() { Text = "Main" } });
+        MainTabControl.Items.Add(new TabItem { Header = "Main", Content = new TextBlock() { Text = "Main" } });
     }
 
-    public void Initialize()
-    {
-        _menuList = this.FindControl<ListBox>("ModulesListBox");
-        _tabControl = this.FindControl<TabControl>("MainTabControl");
-        _loadedModules = new Dictionary<string, IModule>();
-        _menuList.SelectionChanged += OnModuleSelected;
-    }
 
     public TabControl GetTabControl()
     {
-        return _tabControl;
-    }
-
-    private void OnModuleSelected(object sender, SelectionChangedEventArgs e)
-    {
-        if (_menuList.SelectedItem is not TextBlock selectedTextBlock || selectedTextBlock.Text == null)
-            return;
-        MenuItemClicked?.Invoke(this, selectedTextBlock.Text);
+        return MainTabControl;
     }
 
     public void Dispose()
     {
         Loaded -= OnLoaded;
         Closed -= OnClosed;
-        _menuList.SelectionChanged -= OnModuleSelected;
-        _menuList.Items.Clear();
+        ModulesListBox.SelectionChanged -= ModulesListBox_OnSelectionChanged;
+        ModulesListBox.Items.Clear();
         _loadedModules.Clear();
+    }
+
+    private void ModulesListBox_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (ModulesListBox.SelectedItem is not TextBlock selectedTextBlock || selectedTextBlock.Text == null)
+            return;
+        MenuItemClicked?.Invoke(this, selectedTextBlock.Text);
     }
 }

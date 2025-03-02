@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using BitCrafts.Infrastructure.Abstraction.Application.Views;
 using BitCrafts.Users.Abstraction.Entities;
 using BitCrafts.Users.Abstraction.Views;
 using BitCrafts.Users.Entities;
@@ -14,8 +15,10 @@ public partial class UsersView : UserControl, IUsersView
     public event EventHandler UpdateClicked;
     public event EventHandler CancelClicked;
     public event EventHandler CloseClicked;
-    public event EventHandler WindowLoaded;
-    public event EventHandler WindowClosed;
+    public event EventHandler ViewLoadedEvent;
+    public event EventHandler ViewClosedEvent;
+    public bool IsWindow => false;
+    public IView ParentView { get; set; }
 
     private ObservableCollection<User> _users = new ObservableCollection<User>();
 
@@ -28,12 +31,12 @@ public partial class UsersView : UserControl, IUsersView
 
     private void OnUnloaded(object sender, RoutedEventArgs e)
     {
-        WindowClosed?.Invoke(this, EventArgs.Empty);
+        ViewClosedEvent?.Invoke(this, EventArgs.Empty);
     }
 
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
-        WindowLoaded?.Invoke(this, EventArgs.Empty);
+        ViewLoadedEvent?.Invoke(this, EventArgs.Empty);
         SetUser(new User()
         {
             FirstName = "John",
@@ -94,6 +97,7 @@ public partial class UsersView : UserControl, IUsersView
         UsersDataGrid.ItemsSource = _users;
     }
 
+
     public void Initialize()
     {
         DataGrid_AddUser(new User()
@@ -106,6 +110,15 @@ public partial class UsersView : UserControl, IUsersView
             Email = "john.doe@example.com",
             PhoneNumber = "123456"
         });
+    }
+
+    public void SetTitle(string title)
+    {
+    }
+
+    public string GetTitle(string title)
+    {
+        return string.Empty;
     }
 
     public void Show()

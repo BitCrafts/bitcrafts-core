@@ -5,6 +5,6 @@ namespace BitCrafts.Infrastructure.Abstraction.Application.Managers;
 
 public interface IWorkspaceManager
 {
-    void ShowPresenter(string title, dynamic presenter);
-    void ClosePresenter(string title);
+    Task ShowPresenterAsync(dynamic presenter);
+    Task ClosePresenterAsync(Type presenterType);
 }

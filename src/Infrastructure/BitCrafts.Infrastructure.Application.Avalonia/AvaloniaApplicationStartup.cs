@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using BitCrafts.Infrastructure.Abstraction.Application;
+using BitCrafts.Infrastructure.Abstraction.Application.Managers;
 using BitCrafts.Infrastructure.Abstraction.Application.Presenters;
 using BitCrafts.Infrastructure.Abstraction.Application.Views;
 using BitCrafts.Infrastructure.Abstraction.Modules;
@@ -22,7 +23,6 @@ public class AvaloniaApplicationStartup : IApplicationStartup
 
     public async Task StartAsync()
     {
-        await _startupPresenter.InitializeAsync();
-        _startupPresenter.Show();
+       await _startupPresenter.ShowAsync(); 
     }
 }

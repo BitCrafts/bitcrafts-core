@@ -30,7 +30,7 @@
             <MenuItem Header="Affichage" />
         </Menu>
         <Expander ExpandDirection="Right" Header="" DockPanel.Dock="Left" Width="200">
-            <ListBox x:Name="ModulesListBox" />
+            <ListBox x:Name="ModulesListBox" SelectionChanged="ModulesListBox_OnSelectionChanged" />
         </Expander>
 
         <TabControl x:Name="MainTabControl" />

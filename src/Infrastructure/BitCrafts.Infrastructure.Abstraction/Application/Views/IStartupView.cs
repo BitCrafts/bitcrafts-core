@@ -1,6 +1,6 @@
 namespace BitCrafts.Infrastructure.Abstraction.Application.Views;
 
-public interface IStartupView : IWindow
+public interface IStartupView : IView
 {
     void SetLoadingText(string text); 
 }

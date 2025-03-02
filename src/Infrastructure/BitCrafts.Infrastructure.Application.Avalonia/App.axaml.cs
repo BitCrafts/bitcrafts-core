@@ -1,3 +1,4 @@
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using BitCrafts.Infrastructure.Abstraction.Application.Managers;
@@ -17,8 +18,12 @@ public class App : global::Avalonia.Application
     {
         var uiManager = (AvaloniaUiManager)AvaloniaApplication.ServiceProvider.GetRequiredService<IUiManager>();
         var desktop = ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
-        uiManager.SetNativeApplication(desktop);
-        await uiManager.StartAsync();
+        if (desktop != null)
+        {
+            desktop.ShutdownMode = ShutdownMode.OnLastWindowClose;
+            uiManager.SetNativeApplication(desktop);
+            await uiManager.StartAsync();
+        }
         base.OnFrameworkInitializationCompleted();
     }
 }

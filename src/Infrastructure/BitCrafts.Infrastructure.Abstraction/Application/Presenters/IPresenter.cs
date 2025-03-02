@@ -6,8 +6,10 @@ public interface IPresenter<TView> : IDisposable
     where TView : IView
 {
     TView View { get; }
-    Task InitializeAsync();
-    void Show();
-    void Hide(); 
-    void Close();
+    string Title { get; }
+    Task ShowAsync();
+    Task CloseAsync();
+
+    Task CloseAndOpenPresenterAsync<T>();
+    Task OpenPresenterAsync<T>();
 }

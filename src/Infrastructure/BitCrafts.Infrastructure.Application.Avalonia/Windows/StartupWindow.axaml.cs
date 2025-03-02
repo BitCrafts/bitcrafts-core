@@ -3,50 +3,63 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using BitCrafts.Infrastructure.Abstraction.Application.Views;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace BitCrafts.Infrastructure.Application.Avalonia.Windows;
 
 public partial class StartupView : Window, IStartupView
 {
-    private TextBlock _loadingTextBlock;
+    private readonly IServiceProvider _serviceProvider;
+    public event EventHandler ViewLoadedEvent;
+    public event EventHandler ViewClosedEvent;
+    public bool IsWindow => true;
+    public IView ParentView { get; set; }
 
-    public StartupView()
+
+    public StartupView(IServiceProvider serviceProvider)
     {
-        AvaloniaXamlLoader.Load(this);
+        _serviceProvider = serviceProvider;
+        InitializeComponent();
+
         Loaded += OnLoaded;
         Closed += OnClosed;
     }
 
+
     private void OnClosed(object sender, EventArgs e)
     {
-        WindowClosed?.Invoke(this, EventArgs.Empty);
+        ViewClosedEvent?.Invoke(this, EventArgs.Empty);
     }
 
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
-        WindowLoaded?.Invoke(this, EventArgs.Empty);
+        ViewLoadedEvent?.Invoke(this, EventArgs.Empty);
     }
 
     public void SetLoadingText(string text)
     {
-        if (_loadingTextBlock != null)
+        if (LoadingTextBlock != null)
         {
-            _loadingTextBlock.Text = text;
+            LoadingTextBlock.Text = text;
         }
     }
 
-    public event EventHandler WindowLoaded;
-    public event EventHandler WindowClosed;
 
-    public void Initialize()
+    public void SetTitle(string title)
     {
-        _loadingTextBlock = this.FindControl<TextBlock>("LoadingTextBlock");
+        Title = title;
+    }
+
+    public string GetTitle(string title)
+    {
+        return Title;
     }
 
     public void Dispose()
     {
-        // TODO release managed resources here
+        _serviceProvider.GetRequiredService<ILogger<StartupView>>().LogInformation($"Disposing {this.GetType()}");
+        Loaded -= OnLoaded;
+        Closed -= OnClosed;
     }
-
-    public IWindow ParentWindow { get; set; }
 }

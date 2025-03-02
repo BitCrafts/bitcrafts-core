@@ -7,83 +7,67 @@ using BitCrafts.Infrastructure.Abstraction.Application.Views;
 
 namespace BitCrafts.Infrastructure.Application.Avalonia.Managers;
 
-public class AvaloniaWindowingManager : IWindowingManager
+public sealed class AvaloniaWindowingManager : IWindowingManager
 {
     private readonly IServiceProvider _serviceProvider;
-    private readonly Dictionary<Type, IWindow> _windows = new();
+    private readonly Dictionary<Type, IView> _windows = new();
     private IClassicDesktopStyleApplicationLifetime _applicationLifetime;
-    private Window _lastVisibleWindow;
 
     public AvaloniaWindowingManager(IServiceProvider serviceProvider)
     {
         _serviceProvider = serviceProvider;
     }
 
-    public void ShowWindow(IWindow window)
+    public void ShowWindow(IView window)
     {
         var nativeWindow = (Window)window;
         if (nativeWindow == null) return;
+
         if (!_windows.ContainsKey(window.GetType()))
         {
+            if (_applicationLifetime.MainWindow == null)
+                _applicationLifetime.MainWindow = nativeWindow;
+
+            _applicationLifetime.MainWindow = nativeWindow;
             _windows.TryAdd(window.GetType(), window);
         }
 
-        if (_lastVisibleWindow != null && _lastVisibleWindow.IsVisible)
-        {
-            window.ParentWindow = (IWindow)_lastVisibleWindow;
-        }
-
-        if (!nativeWindow.IsVisible)
-        {
-            nativeWindow.Show();
-            SetRootWindow(nativeWindow);
-        }
-        else
-        {
-            nativeWindow.Focus();
-        }
-    }
-
-    public void SetRootWindow(IWindow rootWindow)
-    {
-        _lastVisibleWindow = (Window)rootWindow;
+        nativeWindow.Show();
     }
 
 
-    public void HideWindow(IWindow window)
+    public void HideWindow(IView window)
     {
-        if (window is Window wnd)
-        {
-            wnd.Hide();
-        }
+        var nativeWindow = (Window)window;
+        if (nativeWindow == null) return;
+
+        nativeWindow.Hide();
     }
 
-    public void CloseWindow(IWindow window)
+    public void CloseWindow(IView window)
     {
-        if (window != null)
+        var nativeWindow = (Window)window;
+        if (nativeWindow == null) return;
+        if (_windows.ContainsKey(window.GetType()))
         {
-            if (_lastVisibleWindow == window)
+            if (Equals(nativeWindow, _applicationLifetime.MainWindow))
             {
-                _lastVisibleWindow = null;
+                _applicationLifetime.MainWindow = null;
             }
 
-            window.Close();
             _windows.Remove(window.GetType());
+            nativeWindow.Close();
         }
     }
 
-    public void SetRootWindow(Window rootWindow)
-    {
-        _lastVisibleWindow = rootWindow;
-    }
 
-    public T GetWindow<T>() where T : IWindow
+    public T GetWindow<T>() where T : IView
     {
         _windows.TryGetValue(typeof(T), out var window);
         return (T)window;
     }
 
-    public IReadOnlyCollection<IWindow> GetAllWindows()
+    public IReadOnlyCollection<IView> GetAllWindows()
     {
         return _windows.Values;
     }
@@ -91,6 +75,18 @@ public class AvaloniaWindowingManager : IWindowingManager
     public void SetNativeApplication(IClassicDesktopStyleApplicationLifetime applicationLifetime)
     {
         _applicationLifetime = applicationLifetime;
-        _applicationLifetime.ShutdownMode = ShutdownMode.OnMainWindowClose;
+    }
+
+    public void Dispose()
+    {
+        foreach (var window in _windows.Values)
+        {
+            if (window is IDisposable disposableWindow)
+            {
+                disposableWindow.Dispose();
+            }
+        }
+
+        _windows.Clear();
     }
 }

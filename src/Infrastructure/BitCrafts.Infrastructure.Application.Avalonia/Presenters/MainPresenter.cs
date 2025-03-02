@@ -14,43 +14,40 @@ namespace BitCrafts.Infrastructure.Application.Avalonia.Presenters;
 
 public sealed class MainPresenter : BasePresenter<IMainView>, IMainPresenter
 {
-    private IWorkspaceManager _workspaceManager;
+    private AvaloniaWorkspaceManager _workspaceManager;
 
-    public MainPresenter(IServiceProvider serviceProvider) : base(serviceProvider)
+    public MainPresenter(IServiceProvider serviceProvider) : base("Main", serviceProvider)
     {
     }
 
-    public override async Task InitializeAsync()
+
+    private async void ViewOnMenuItemClicked(object sender, string e)
     {
-        await base.InitializeAsync();
-        var workspaceManager = ServiceProvider.GetService<IWorkspaceManager>() as AvaloniaWorkspaceManager;
-        _workspaceManager = workspaceManager;
-        var mainView = View as MainView;
-        workspaceManager.SetControl(mainView.GetTabControl());
+        var module = ServiceProvider.GetServices<IModule>().FirstOrDefault(x => x.Name.Equals(e));
+        var presenterType = module.GetPresenterType();
+        var presenter = ServiceProvider.GetRequiredService(presenterType);
+        dynamic dynamicPresenter = presenter;
+        await _workspaceManager.ShowPresenterAsync(dynamicPresenter);
+    }
+
+    protected override void OnViewLoaded(object sender, EventArgs e)
+    {
+        base.OnViewLoaded(sender, e);
+        _workspaceManager = ServiceProvider.GetService<IWorkspaceManager>() as AvaloniaWorkspaceManager;
+        if (_workspaceManager != null)
+        {
+            _workspaceManager.SetControl((View as MainView)?.GetTabControl());
+        }
+
         View.MenuItemClicked += ViewOnMenuItemClicked;
         var dicModules = ServiceProvider.GetServices<IModule>();
         View.InitializeMenu(dicModules);
     }
 
-    private void ViewOnMenuItemClicked(object sender, string e)
+    protected override async void OnViewClosed(object sender, EventArgs e)
     {
-        var module = ServiceProvider.GetServices<IModule>().FirstOrDefault(x => x.Name.Equals(e));
-        var presenterType = module.GetPresenterType();
-        var presenter = ServiceProvider.GetRequiredService(presenterType);
-        Type presenterInterfaceType = presenter.GetType().GetInterfaces()
-            .FirstOrDefault(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IPresenter<>));
-        dynamic dynamicPresenter = presenter;
-        _workspaceManager.ShowPresenter(module.Name, dynamicPresenter);
-    }
-
-    protected override async void OnWindowClosed(object sender, EventArgs e)
-    {
+        base.OnViewClosed(sender, e);
         Logger.LogInformation($"{this.GetType().Name} closed");
         await ServiceProvider.GetRequiredService<IUiManager>().ShutdownAsync();
-    }
-
-    protected override void OnWindowLoaded(object sender, EventArgs e)
-    {
-        Logger.LogInformation($"{this.GetType().Name} loaded");
     }
 }
