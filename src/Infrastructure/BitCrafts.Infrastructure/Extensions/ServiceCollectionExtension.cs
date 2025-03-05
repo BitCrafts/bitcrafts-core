@@ -1,12 +1,12 @@
 using BitCrafts.Infrastructure.Abstraction.Application;
-using BitCrafts.Infrastructure.Abstraction.Databases;
 using BitCrafts.Infrastructure.Abstraction.Events;
+using BitCrafts.Infrastructure.Abstraction.Repositories;
 using BitCrafts.Infrastructure.Abstraction.Services;
 using BitCrafts.Infrastructure.Abstraction.Threading;
 using BitCrafts.Infrastructure.Application;
-using BitCrafts.Infrastructure.Databases;
 using BitCrafts.Infrastructure.Events;
 using BitCrafts.Infrastructure.Modules;
+using BitCrafts.Infrastructure.Repositories;
 using BitCrafts.Infrastructure.Services;
 using BitCrafts.Infrastructure.Threading;
 using Microsoft.Extensions.Configuration;
@@ -35,16 +35,13 @@ public static class ServiceCollectionExtension
         services.AddLogging(loggingBuilder =>
             loggingBuilder.AddSerilog(dispose: true)
         );
-
-        services.TryAddSingleton<IDbConnectionFactory, DbConnectionFactory>();
+ 
         services.TryAddSingleton<IBackgroundThreadDispatcher, BackgroundThreadDispatcher>();
         services.TryAddSingleton<IParallelism, Parallelism>();
         services.TryAddSingleton<IEventAggregator, EventAggregator>();
-        services.TryAddSingleton<IApplicationFactory, ApplicationFactory>();
-        services.TryAddSingleton<IDapperWrapper, DapperWrapper>();
-        services.TryAddSingleton<IDatabaseManager, DatabaseManager>();
-        services.TryAddSingleton<ISqlDialectFactory, SqlDialectFactory>();
+        services.TryAddSingleton<IApplicationFactory, ApplicationFactory>(); 
         services.TryAddSingleton<IHashingService, HashingService>();
+        services.TryAddScoped<IRepositoryUnitOfWork,RepositoryUnitOfWork>();
         CreateDirectoryDirectory("Modules");
         CreateDirectoryDirectory("Settings");
         CreateDirectoryDirectory("Databases");

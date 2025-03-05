@@ -1,9 +1,8 @@
 using BitCrafts.Infrastructure.Abstraction.Entities;
-using BitCrafts.Users.Abstraction.Entities;
 
-namespace BitCrafts.Users.Entities;
+namespace BitCrafts.Users.Abstraction.Entities;
 
-public class UserAccount : BaseEntity<int>, IUserAccount
+public class UserAccount : BaseEntity, IEntity
 {
     public int UserId { get; set; }
     public string HashedPassword { get; set; }

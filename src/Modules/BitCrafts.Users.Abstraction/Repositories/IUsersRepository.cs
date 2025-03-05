@@ -3,6 +3,6 @@ using BitCrafts.Users.Abstraction.Entities;
 
 namespace BitCrafts.Users.Abstraction.Repositories;
 
-public interface IUsersRepository : IRepository<IUser>
+public interface IUsersRepository : IRepository<User>
 {
 }

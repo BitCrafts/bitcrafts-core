@@ -1,10 +1,8 @@
-using BitCrafts.Infrastructure.Abstraction.Databases;
 using BitCrafts.Infrastructure.Abstraction.Services;
 using BitCrafts.UseCases.Abstraction;
 using BitCrafts.Users.Abstraction.Events;
 using BitCrafts.Users.Abstraction.Repositories;
 using BitCrafts.Users.Abstraction.UseCases;
-using BitCrafts.Users.Entities;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace BitCrafts.Users.UseCases;

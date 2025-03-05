@@ -1,9 +1,8 @@
 using BitCrafts.Infrastructure.Abstraction.Entities;
-using BitCrafts.Users.Abstraction.Entities;
 
-namespace BitCrafts.Users.Entities;
+namespace BitCrafts.Users.Abstraction.Entities;
 
-public class User : BaseEntity<int>, IUser
+public class User : BaseEntity, IEntity
 {
     public string FirstName { get; set; }
     public string LastName { get; set; }

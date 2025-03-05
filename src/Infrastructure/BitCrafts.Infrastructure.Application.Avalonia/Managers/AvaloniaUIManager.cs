@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Avalonia.Controls.ApplicationLifetimes;
 using BitCrafts.Infrastructure.Abstraction.Application.Managers;
 using BitCrafts.Infrastructure.Application.Avalonia.Presenters;
-using BitCrafts.Infrastructure.Application.Avalonia.Views;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 

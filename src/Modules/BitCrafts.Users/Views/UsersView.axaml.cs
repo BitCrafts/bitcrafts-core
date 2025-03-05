@@ -1,7 +1,5 @@
 using System.Collections.ObjectModel;
-using Avalonia.Controls;
 using Avalonia.Interactivity;
-using BitCrafts.Infrastructure.Abstraction.Application.Views;
 using BitCrafts.Infrastructure.Abstraction.Avalonia.Views;
 using BitCrafts.Users.Abstraction.Entities;
 using BitCrafts.Users.Abstraction.Views;
@@ -13,9 +11,9 @@ public partial class UsersView : BaseView, IUsersView
 {
     public event EventHandler SaveClicked;
     public event EventHandler CloseClicked;
-    private ObservableCollection<IUser> _users = new ObservableCollection<IUser>();
+    private ObservableCollection<User> _users = new ObservableCollection<User>();
 
-    public void RefreshUsers(IEnumerable<IUser> users)
+    public void RefreshUsers(IEnumerable<User> users)
     {
         _users.Clear();
         foreach (var user in users)
@@ -33,7 +31,7 @@ public partial class UsersView : BaseView, IUsersView
     }
 
 
-    public void SetUser(IUser user)
+    public void SetUser(User user)
     {
         FirstNameTextBox.Text = user.FirstName;
         LastNameTextBox.Text = user.LastName;
@@ -44,7 +42,7 @@ public partial class UsersView : BaseView, IUsersView
         PassportNumberTextBox.Text = user.PassportNumber;
     }
 
-    public IUser GetUser()
+    public User GetUser()
     {
         return new User
         {

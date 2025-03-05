@@ -1,6 +1,7 @@
-using BitCrafts.Infrastructure.Abstraction.Databases;
+using BitCrafts.Infrastructure.Abstraction.Repositories;
 using BitCrafts.Infrastructure.Abstraction.Services;
 using BitCrafts.UseCases.Abstraction;
+using BitCrafts.Users.Abstraction.Entities;
 using BitCrafts.Users.Abstraction.Events;
 using BitCrafts.Users.Abstraction.Repositories;
 using BitCrafts.Users.Abstraction.UseCases;
@@ -25,23 +26,26 @@ public sealed class CreateUserUseCase : BaseUseCase<UserEventRequest, UserEventR
         try
         {
             string salt = _hashingService.GenerateSalt();
-            string hashedPassword = _hashingService.HashPassword(@event.Password); 
+            string hashedPassword = _hashingService.HashPassword(@event.Password);
             var userAccount = new UserAccount
             {
                 HashedPassword = hashedPassword,
                 PasswordSalt = salt
             };
-            using (var dbContext = ServiceProdiver.GetRequiredService<UsersDbContext>())
+            using (var uow = ServiceProdiver.GetRequiredService<IRepositoryUnitOfWork>())
             {
+                uow.SetDbContext(ServiceProdiver.GetService<UsersDbContext>());
                 var user = @event.User as User;
                 user.UserAccount = userAccount;
-                var userEntity = await dbContext.Users.AddAsync(user);
-                await dbContext.SaveChangesAsync();
+                uow.GetRepository<IUsersRepository>().Add(user);
+                uow.Commit();
             }
         }
         catch
         {
             throw;
         }
+
+        await Task.CompletedTask;
     }
 }

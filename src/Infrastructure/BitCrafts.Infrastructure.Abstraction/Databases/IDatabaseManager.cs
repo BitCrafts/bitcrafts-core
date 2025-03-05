@@ -1,5 +1,4 @@
 using System.Data;
-using System.Data.Common;
 
 namespace BitCrafts.Infrastructure.Abstraction.Databases;
 

@@ -1,6 +1,4 @@
-﻿using Avalonia;
-using BitCrafts.Infrastructure.Abstraction.Application;
-using BitCrafts.Infrastructure.Application.Avalonia;
+﻿using BitCrafts.Infrastructure.Abstraction.Application;
 using BitCrafts.Infrastructure.Application.Avalonia.Extensions;
 using BitCrafts.Infrastructure.Extensions;
 using Microsoft.Extensions.DependencyInjection;

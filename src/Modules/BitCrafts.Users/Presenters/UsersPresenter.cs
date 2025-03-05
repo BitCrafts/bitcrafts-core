@@ -68,7 +68,7 @@ public class UsersPresenter : BasePresenter<IUsersView>, IUsersPresenter
         // Notify or reload the view data (implementation left as is)
     }
 
-    private void ValidateUser(IUser user)
+    private void ValidateUser(User user)
     {
         if (string.IsNullOrWhiteSpace(user.FirstName))
             throw new ArgumentException("First name is required.");
@@ -83,7 +83,7 @@ public class UsersPresenter : BasePresenter<IUsersView>, IUsersPresenter
     protected override void OnViewLoaded(object sender, EventArgs e)
     {
         base.OnViewLoaded(sender, e);
-        var lstUsers = new List<IUser>();
+        var lstUsers = new List<User>();
         for (int i = 1; i <= 10; i++)
         {
             lstUsers.Add(new User()

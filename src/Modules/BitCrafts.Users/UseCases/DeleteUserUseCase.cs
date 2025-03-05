@@ -1,4 +1,3 @@
-using BitCrafts.Infrastructure.Abstraction.Databases;
 using BitCrafts.UseCases.Abstraction;
 using BitCrafts.Users.Abstraction.Events;
 using BitCrafts.Users.Abstraction.Repositories;

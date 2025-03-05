@@ -1,13 +1,15 @@
-using BitCrafts.Infrastructure.Abstraction.Databases;
+using System.Linq.Expressions;
 using BitCrafts.Infrastructure.Abstraction.Entities;
 
 namespace BitCrafts.Infrastructure.Abstraction.Repositories;
 
-public interface IRepository<TEntity> where TEntity : IEntity<int>
+public interface IRepository<T> where T : class, IEntity
 {
-    Task<IEnumerable<TEntity>> GetAllAsync();
-    Task<TEntity> GetByIdAsync(int id);
-    Task<int> AddAsync(TEntity entity);
-    Task<int> UpdateAsync(TEntity entity);
-    Task<int> DeleteAsync(int id);
+    T GetById(int id);
+    IEnumerable<T> GetAll();
+    IEnumerable<T> Find(Expression<Func<T, bool>> predicate);
+    void Add(T entity);
+    void AddRange(IEnumerable<T> entities);
+    void Remove(T entity);
+    void RemoveRange(IEnumerable<T> entities);
 }

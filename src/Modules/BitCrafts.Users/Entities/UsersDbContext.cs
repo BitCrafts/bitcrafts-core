@@ -1,3 +1,4 @@
+using BitCrafts.Users.Abstraction.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -19,7 +20,8 @@ public class UsersDbContext : DbContext
     {
         if (!optionsBuilder.IsConfigured)
         {
-            optionsBuilder.UseMySql(ServerVersion.AutoDetect(_configuration.GetConnectionString("MainDb")));
+            optionsBuilder.UseSqlite(_configuration.GetConnectionString("InternalDb"));
+            //optionsBuilder.UseSqlite(ServerVersion.AutoDetect(_configuration.GetConnectionString("MainDb")));
         }
     }
 }

@@ -7,5 +7,5 @@ public interface IUsersView : IView
 {
     event EventHandler SaveClicked; 
     event EventHandler CloseClicked;  
-    void RefreshUsers(IEnumerable<IUser> users);
+    void RefreshUsers(IEnumerable<User> users);
 }

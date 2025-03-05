@@ -5,5 +5,5 @@ namespace BitCrafts.Users.Abstraction.Events;
 
 public class UserEventResponse : BaseEventResponse, IEventResponse
 {
-    public IUser User { get; set; }
+    public User User { get; set; }
 }

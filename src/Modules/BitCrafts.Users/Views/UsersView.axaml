@@ -11,17 +11,17 @@
                   BorderThickness="1" BorderBrush="Gray"
                   Height="300">
             <DataGrid.Columns>
-                <DataGridTextColumn x:DataType="entities:IUser" Header="Prénom" Binding="{Binding FirstName}" Width="*" />
-                <DataGridTextColumn x:DataType="entities:IUser" Header="Nom" Binding="{Binding LastName}" Width="*" />
-                <DataGridTextColumn x:DataType="entities:IUser" Header="Email" Binding="{Binding Email}" Width="*" />
-                <DataGridTextColumn x:DataType="entities:IUser" Header="Téléphone" Binding="{Binding PhoneNumber}"
+                <DataGridTextColumn x:DataType="entities:User" Header="Prénom" Binding="{Binding FirstName}" Width="*" />
+                <DataGridTextColumn x:DataType="entities:User" Header="Nom" Binding="{Binding LastName}" Width="*" />
+                <DataGridTextColumn x:DataType="entities:User" Header="Email" Binding="{Binding Email}" Width="*" />
+                <DataGridTextColumn x:DataType="entities:User" Header="Téléphone" Binding="{Binding PhoneNumber}"
                                     Width="*" />
-                <DataGridTextColumn x:DataType="entities:IUser" Header="Date de naissance"
+                <DataGridTextColumn x:DataType="entities:User" Header="Date de naissance"
                                     Binding="{Binding BirthDate}"
                                     Width="*" />
-                <DataGridTextColumn x:DataType="entities:IUser" Header="Numéro national"
+                <DataGridTextColumn x:DataType="entities:User" Header="Numéro national"
                                     Binding="{Binding NationalNumber}" Width="*" />
-                <DataGridTextColumn x:DataType="entities:IUser" Header="Numéro de passeport"
+                <DataGridTextColumn x:DataType="entities:User" Header="Numéro de passeport"
                                     Binding="{Binding PassportNumber}" Width="*" />
             </DataGrid.Columns>
         </DataGrid>
