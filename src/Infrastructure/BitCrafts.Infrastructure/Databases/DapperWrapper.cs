@@ -4,7 +4,7 @@ using Dapper;
 
 namespace BitCrafts.Infrastructure.Databases;
 
-public class DapperWrapper : IDapperWrapper
+public sealed class DapperWrapper : IDapperWrapper
 {
     public Task<T> QuerySingleAsync<T>(IDbConnection connection, string sql, object param = null,
         IDbTransaction transaction = null)

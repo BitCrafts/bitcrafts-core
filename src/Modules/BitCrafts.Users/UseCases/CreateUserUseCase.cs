@@ -11,49 +11,37 @@ namespace BitCrafts.Users.UseCases;
 
 public sealed class CreateUserUseCase : BaseUseCase<UserEventRequest, UserEventResponse>, ICreateUserUseCase
 {
-    private readonly IUsersRepository _usersRepository;
     private readonly IHashingService _hashingService;
-    private readonly IUserAccountsRepository _userAccountsRepository;
 
 
     public CreateUserUseCase(IServiceProvider serviceProvider) : base(serviceProvider)
     {
-        _usersRepository = ServiceProdiver.GetRequiredService<IUsersRepository>();
         _hashingService = ServiceProdiver.GetRequiredService<IHashingService>();
-        _userAccountsRepository = ServiceProdiver.GetRequiredService<IUserAccountsRepository>();
     }
 
 
     protected override async Task ExecuteCoreAsync(UserEventRequest @event)
     {
-        using (var transaction =
-               await ServiceProdiver.GetRequiredService<IDatabaseManager>()
-                   .BeginTransactionAsync())
+        try
         {
-            try
+            string salt = _hashingService.GenerateSalt();
+            string hashedPassword = _hashingService.HashPassword(@event.Password); 
+            var userAccount = new UserAccount
             {
-                var addedUser = await _usersRepository.AddAsync(@event.User, transaction);
-
-                string salt = _hashingService.GenerateSalt();
-                string hashedPassword = _hashingService.HashPassword(@event.Password);
-
-                var userAccount = new UserAccount
-                {
-                    UserId = addedUser.Id,
-                    HashedPassword = hashedPassword,
-                    PasswordSalt = salt
-                };
-
-
-                await _userAccountsRepository.AddAsync(userAccount, transaction);
-
-                await transaction.CommitAsync();
-            }
-            catch
+                HashedPassword = hashedPassword,
+                PasswordSalt = salt
+            };
+            using (var dbContext = ServiceProdiver.GetRequiredService<UsersDbContext>())
             {
-                await transaction.RollbackAsync();
-                throw;
+                var user = @event.User as User;
+                user.UserAccount = userAccount;
+                var userEntity = await dbContext.Users.AddAsync(user);
+                await dbContext.SaveChangesAsync();
             }
+        }
+        catch
+        {
+            throw;
         }
     }
 }

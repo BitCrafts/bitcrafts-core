@@ -25,8 +25,7 @@ public sealed class DbConnectionFactory : IDbConnectionFactory
 
     public IDbConnection Create()
     {
-        var connection = GetConnection();
-        connection.Open();
+        var connection = GetConnection(); 
         return connection;
     }
 
@@ -46,7 +45,7 @@ public sealed class DbConnectionFactory : IDbConnectionFactory
                 return new SqliteConnection($"Data Source={database}");
             case "mariadb":
                 IsMariaDbProvider = true;
-                _logger.LogInformation("Using MariaDB/MySQL database.");
+                _logger.LogInformation("Using MariaDB Connection.");
                 return new MySqlConnection(
                     $"Server={server};" +
                     $"Database={database};" +
@@ -55,7 +54,7 @@ public sealed class DbConnectionFactory : IDbConnectionFactory
                 );
             case "mysql":
                 IsMySqlProvider = true;
-                _logger.LogInformation("Using MariaDB/MySQL database.");
+                _logger.LogInformation("Using MySQL Connection.");
                 return new MySqlConnection(
                     $"Server={server};" +
                     $"Database={database};" +

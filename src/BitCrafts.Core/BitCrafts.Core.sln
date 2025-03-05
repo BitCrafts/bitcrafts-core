@@ -32,6 +32,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitCrafts.Users", "..\Modul
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{29AB5B1C-DE08-4A2C-99B3-242035AA8BB8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitCrafts.Infrastructure.Abstraction.Avalonia", "..\Infrastructure\BitCrafts.Infrastructure.Abstraction.Avalonia\BitCrafts.Infrastructure.Abstraction.Avalonia.csproj", "{466EBA8D-5FF2-4786-A331-E13CC37643DC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -78,6 +80,10 @@ Global
 		{268E06D5-20F8-42C8-8D31-C6199AAB7A40}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{268E06D5-20F8-42C8-8D31-C6199AAB7A40}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{268E06D5-20F8-42C8-8D31-C6199AAB7A40}.Release|Any CPU.Build.0 = Release|Any CPU
+		{466EBA8D-5FF2-4786-A331-E13CC37643DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{466EBA8D-5FF2-4786-A331-E13CC37643DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{466EBA8D-5FF2-4786-A331-E13CC37643DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{466EBA8D-5FF2-4786-A331-E13CC37643DC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{29A9FCBF-3901-4BB7-9448-2B9F74CF7A65} = {7460943E-592A-4FFD-86C2-BE9609D97B62}
@@ -93,5 +99,6 @@ Global
 		{268E06D5-20F8-42C8-8D31-C6199AAB7A40} = {34951A38-781D-43EE-8AEE-A13B30A32372}
 		{29AB5B1C-DE08-4A2C-99B3-242035AA8BB8} = {5AD06EF2-71B9-46D9-9ABB-CE544A8DD858}
 		{5E13DFAF-425C-4F9F-94CB-B5C08E87206F} = {29AB5B1C-DE08-4A2C-99B3-242035AA8BB8}
+		{466EBA8D-5FF2-4786-A331-E13CC37643DC} = {5AD06EF2-71B9-46D9-9ABB-CE544A8DD858}
 	EndGlobalSection
 EndGlobal

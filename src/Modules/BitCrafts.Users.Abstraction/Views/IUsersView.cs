@@ -5,10 +5,7 @@ namespace BitCrafts.Users.Abstraction.Views;
 
 public interface IUsersView : IView
 {
-    event EventHandler SaveClicked;
-    event EventHandler CancelClicked;
-    event EventHandler UpdateClicked;
-    event EventHandler CloseClicked;
-    void SetUser(IUser user);
-    IUser GetUser();
+    event EventHandler SaveClicked; 
+    event EventHandler CloseClicked;  
+    void RefreshUsers(IEnumerable<IUser> users);
 }

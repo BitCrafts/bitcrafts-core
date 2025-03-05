@@ -24,37 +24,38 @@ public sealed class UpdateUserUseCase : BaseUseCase<UserEventRequest, UserEventR
         _hashingService = provider.GetRequiredService<IHashingService>();
     }
 
-    protected override async Task ExecuteCoreAsync(UserEventRequest request)
+    protected override Task ExecuteCoreAsync(UserEventRequest request)
     {
-        using (var transaction = await _provider.GetRequiredService<IDatabaseManager>().BeginTransactionAsync())
-        {
-            try
-            {
-                await _usersRepository.UpdateAsync(request.User, transaction);
+        /* using (var transaction = await _provider.GetRequiredService<IDatabaseManager>().BeginTransactionAsync())
+         {
+             try
+             {
+                 await _usersRepository.UpdateAsync(request.User, transaction);
 
-                if (!string.IsNullOrEmpty(request.Password))
-                {
-                    string salt = _hashingService.GenerateSalt();
-                    string hashedPassword =
-                        _hashingService.HashPassword(request.Password);
+                 if (!string.IsNullOrEmpty(request.Password))
+                 {
+                     string salt = _hashingService.GenerateSalt();
+                     string hashedPassword =
+                         _hashingService.HashPassword(request.Password);
 
-                    var userAccount = new UserAccount
-                    {
-                        UserId = request.User.Id,
-                        HashedPassword = hashedPassword,
-                        PasswordSalt = salt
-                    };
+                     var userAccount = new UserAccount
+                     {
+                         UserId = request.User.Id,
+                         HashedPassword = hashedPassword,
+                         PasswordSalt = salt
+                     };
 
-                    await _userAccountsRepository.UpdateAsync(userAccount, transaction);
-                }
+                     await _userAccountsRepository.UpdateAsync(userAccount, transaction);
+                 }
 
-                await transaction.CommitAsync();
-            }
-            catch
-            {
-                await transaction.RollbackAsync();
-                throw;
-            }
-        }
+                 await transaction.CommitAsync();
+             }
+             catch
+             {
+                 await transaction.RollbackAsync();
+                 throw;
+             }*/
+        return Task.CompletedTask;
     }
 }
+ 

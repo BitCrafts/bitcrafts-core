@@ -20,9 +20,9 @@ public sealed class DeleteUserUseCase : BaseUseCase<UserEventRequest, UserEventR
         _userAccountsRepository = provider.GetRequiredService<IUserAccountsRepository>();
     }
 
-    protected override async Task ExecuteCoreAsync(UserEventRequest request)
+    protected override Task ExecuteCoreAsync(UserEventRequest request)
     {
-        using (var transaction = await _provider.GetRequiredService<IDatabaseManager>().BeginTransactionAsync())
+       /* using (var transaction = await _provider.GetRequiredService<IDatabaseManager>().BeginTransactionAsync())
         {
             try
             {
@@ -35,6 +35,7 @@ public sealed class DeleteUserUseCase : BaseUseCase<UserEventRequest, UserEventR
                 await transaction.RollbackAsync();
                 throw;
             }
-        }
+        }*/
+       return Task.CompletedTask;
     }
 }

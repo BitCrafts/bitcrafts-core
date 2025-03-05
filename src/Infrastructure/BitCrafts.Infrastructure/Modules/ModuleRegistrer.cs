@@ -2,7 +2,6 @@ using System.Reflection;
 using System.Runtime.Loader;
 using BitCrafts.Infrastructure.Abstraction.Modules;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Serilog;
 
 namespace BitCrafts.Infrastructure.Modules;

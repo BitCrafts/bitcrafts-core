@@ -34,7 +34,7 @@ public abstract class BaseApplication : IApplication
     {
         if (disposing)
         {
-            _serviceProvider.GetRequiredService<IWorkspaceManager>().Dispose();
+            _serviceProvider.GetRequiredService<IBackgroundThreadDispatcher>().Stop();
         }
 
         Logger.LogInformation("Application disposed");

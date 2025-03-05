@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
+using System.Linq;
 using Avalonia.Controls;
 using BitCrafts.Infrastructure.Abstraction.Application.Managers;
 using BitCrafts.Infrastructure.Abstraction.Application.Presenters;
 using BitCrafts.Infrastructure.Abstraction.Application.Views;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 
 namespace BitCrafts.Infrastructure.Application.Avalonia.Managers;
 
@@ -14,50 +13,42 @@ public sealed class AvaloniaWorkspaceManager : IWorkspaceManager
 {
     private readonly IServiceProvider _serviceProvider;
     private TabControl _tabControl;
-    private Dictionary<Type, IPresenter> _views = new();
+    private Dictionary<IPresenter, TabItem> _presentersToTabItemMap = new Dictionary<IPresenter, TabItem>();
 
     public AvaloniaWorkspaceManager(IServiceProvider serviceProvider)
     {
         _serviceProvider = serviceProvider;
     }
 
-    public void SetControl(TabControl tabControl)
+    public void SetTabControl(TabControl tabControl)
     {
         _tabControl = tabControl;
     }
 
-    public async Task ShowPresenterAsync(IPresenter presenter)
+    public void Dispose()
     {
-        var added = _views.TryAdd(presenter.GetType(), presenter);
-        if (!added) return;
-        var view = presenter.GetView<IView>(); 
-        var tabItem = new TabItem { Header = view.GetTitle(), Content = view };
-        _tabControl.Items.Add(tabItem);
-        await presenter.ShowAsync();
+        // TODO release managed resources here
     }
 
-    public async Task ClosePresenterAsync(IPresenter presenter)
+    public void ShowPresenter(IPresenter presenter)
     {
-        var content = _views.TryGetValue(presenter.GetType(), out var view) ? view : null;
-        if (content == null) return;
-        foreach (TabItem tabItem in _tabControl.Items)
+        if (_presentersToTabItemMap.ContainsKey(presenter))
+            return;
+        var view = presenter.GetView<IView>();
+        var tabItem = new TabItem { Header = view.GetTitle(), Content = (UserControl)view };
+        if (_tabControl.Items.Add(tabItem) != -1)
         {
-            if (Equals(tabItem.Content, content.GetView<IView>()))
-            {
-                await content.CloseAsync();
-                content.Dispose();
-                _tabControl.Items.Remove(tabItem);
-                break;
-            }
+            _presentersToTabItemMap.TryAdd(presenter, tabItem);
         }
     }
 
-    public void Dispose()
+    public void ClosePresenter(IPresenter presenter)
     {
-        foreach (var (presenterType, presenter) in _views)
+        if (_presentersToTabItemMap.TryGetValue(presenter, out TabItem tabItem))
         {
-            _serviceProvider.GetRequiredService<ILogger<AvaloniaWorkspaceManager>>()
-                .LogInformation($"Disposing {presenterType} Presenter");
+            _tabControl.Items.Remove(tabItem);
+            _presentersToTabItemMap.Remove(presenter);
+            presenter.Dispose();
         }
     }
 }

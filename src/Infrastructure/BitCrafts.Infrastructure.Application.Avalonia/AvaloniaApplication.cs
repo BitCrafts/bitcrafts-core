@@ -36,9 +36,10 @@ public sealed class AvaloniaApplication : BaseApplication, IApplication
 
     protected override void Dispose(bool disposing)
     {
+        if (disposing)
+        {
+            UiManager.Dispose();
+        }
         base.Dispose(disposing);
-        UiManager.Dispose();
-        ServiceProvider.GetRequiredService<IBackgroundThreadDispatcher>().Stop();
-        
     }
 }

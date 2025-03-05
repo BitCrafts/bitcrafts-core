@@ -4,62 +4,45 @@ using BitCrafts.Infrastructure.Abstraction.Databases;
 
 namespace BitCrafts.Infrastructure.Databases;
 
-public class DatabaseManager : IDatabaseManager
+public sealed class DatabaseManager : IDatabaseManager
 {
     private readonly IDbConnectionFactory _connectionFactory;
     private readonly IDapperWrapper _dapper;
     private readonly ISqlDialectFactory _dialectFactory;
 
-    public DatabaseManager(IDbConnectionFactory connectionFactory, IDapperWrapper dapper,
-        ISqlDialectFactory dialectFactory)
+    public DatabaseManager(IDbConnectionFactory connectionFactory, IDapperWrapper dapper, ISqlDialectFactory dialectFactory)
     {
         _connectionFactory = connectionFactory;
         _dapper = dapper;
         _dialectFactory = dialectFactory;
     }
 
-    public async Task<T> QuerySingleAsync<T>(string sql, object param = null, IDbTransaction transaction = null)
+    public async Task<IDbConnection> OpenNewConnection()
     {
-        return await UseConnectionAsync((conn, _) => _dapper.QuerySingleAsync<T>(conn, sql, param, transaction));
+        var connection = _connectionFactory.Create() as DbConnection;
+        if (connection != null && connection.State != ConnectionState.Open)
+        {
+            await connection.OpenAsync().ConfigureAwait(false);
+        }
+        return connection;
     }
 
-    public async Task<IEnumerable<T>> QueryAsync<T>(string sql, object param = null, IDbTransaction transaction = null)
+    public async Task<IDbTransaction> BeginTransactionAsync()
     {
-        return await UseConnectionAsync((conn, _) => _dapper.QueryAsync<T>(conn, sql, param, transaction));
-    }
-
-    public async Task<int> ExecuteAsync(string sql, object param = null, IDbTransaction transaction = null)
-    {
-        return await UseConnectionAsync((conn, _) => _dapper.ExecuteAsync(conn, sql, param, transaction));
+        var connection = (DbConnection)await OpenNewConnection().ConfigureAwait(false);
+        var transaction = await connection.BeginTransactionAsync().ConfigureAwait(false);
+        return transaction as DbTransaction;
     }
 
     public async Task<int> GetLastInsertedIdAsync()
     {
-        return await UseConnectionAsync(async (conn, dialect) =>
+        using (var connection = await OpenNewConnection().ConfigureAwait(false))
         {
-            var query = dialect.GetLastInsertedIdQuery();
+            var query = _dialectFactory.Create().GetLastInsertedIdQuery();
             if (string.IsNullOrEmpty(query))
-                throw new NotSupportedException("This database does not support last inserted ID queries directly.");
-
-            return await _dapper.QuerySingleAsync<int>(conn, query);
-        });
+                throw new NotSupportedException("Ce fournisseur de base de données ne prend pas en charge la récupération de l'identifiant inséré.");
+            return await _dapper.QuerySingleAsync<int>(connection, query).ConfigureAwait(false);
+        }
     }
 
-    public async Task<IDatabaseTransaction> BeginTransactionAsync()
-    {
-        var connection = _connectionFactory.Create() as DbConnection;
-        await connection.OpenAsync().ConfigureAwait(false);
-        var transaction = await connection.BeginTransactionAsync().ConfigureAwait(false);
-        return new DatabaseTransaction(transaction as DbTransaction, connection as DbConnection);
-    }
-
-
-    private async Task<TResult> UseConnectionAsync<TResult>(Func<IDbConnection, ISqlDialect, Task<TResult>> operation)
-    {
-        using var connection = _connectionFactory.Create() as DbConnection;
-        await connection.OpenAsync().ConfigureAwait(false);
-
-        var dialect = _dialectFactory.Create();
-        return await operation(connection, dialect);
-    }
 }

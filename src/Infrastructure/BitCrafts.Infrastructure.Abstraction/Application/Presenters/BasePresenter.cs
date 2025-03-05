@@ -11,7 +11,7 @@ public abstract class BasePresenter<TView> : IPresenter
     protected IServiceProvider ServiceProvider { get; }
     public IView View { get; private set; }
     public string Title { get; protected set; }
-    public IWindowingManager WindowingManager => ServiceProvider.GetRequiredService<IWindowingManager>();
+    public IWindowManager WindowManager => ServiceProvider.GetRequiredService<IWindowManager>();
     public IWorkspaceManager WorkspaceManager => ServiceProvider.GetRequiredService<IWorkspaceManager>();
     public ILogger<BasePresenter<TView>> Logger => ServiceProvider.GetRequiredService<ILogger<BasePresenter<TView>>>();
 
@@ -36,50 +36,9 @@ public abstract class BasePresenter<TView> : IPresenter
         Logger.LogInformation($"Loaded {this.GetType().Name}");
     }
 
-    public async Task CloseAndOpenPresenterAsync<T>(bool isMainWindow = false)
-    {
-        await OpenPresenterAsync<T>(isMainWindow);
-        await CloseAsync();
-    }
-
-    public async Task OpenPresenterAsync<T>(bool isMainWindow = false)
-    {
-        dynamic presenter = ServiceProvider.GetRequiredService<T>();
-        await presenter.ShowAsync(isMainWindow);
-    }
-
     public T GetView<T>() where T : IView
     {
         return (T)View;
-    }
-
-    public void SetView(IView view)
-    {
-        View = view;
-    }
-
-    public async Task ShowAsync(bool isMainWindow = false)
-    {
-        if (View.IsWindow)
-        {
-            WindowingManager.ShowWindow(View, isMainWindow);
-        }
-        else if (View is { } view)
-        {
-            await ServiceProvider.GetService<IWorkspaceManager>().ShowPresenterAsync(this);
-        }
-    }
-
-    public async Task CloseAsync()
-    {
-        if (View.IsWindow)
-        {
-            WindowingManager.CloseWindow(View);
-        }
-        else if (View is { } view)
-        {
-            await ServiceProvider.GetService<IWorkspaceManager>().ClosePresenterAsync(this);
-        }
     }
 
     protected virtual void Dispose(bool disposing)

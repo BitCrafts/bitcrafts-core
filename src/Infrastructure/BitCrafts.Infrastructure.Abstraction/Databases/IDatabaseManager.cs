@@ -1,13 +1,13 @@
 using System.Data;
+using System.Data.Common;
 
 namespace BitCrafts.Infrastructure.Abstraction.Databases;
 
 public interface IDatabaseManager
 {
-    Task<T> QuerySingleAsync<T>(string sql, object param = null, IDbTransaction transaction = null);
-    Task<IEnumerable<T>> QueryAsync<T>(string sql, object param = null, IDbTransaction transaction = null);
-    Task<int> ExecuteAsync(string sql, object param = null, IDbTransaction transaction = null);
-
+    Task<IDbConnection> OpenNewConnection();
     Task<int> GetLastInsertedIdAsync();
-    Task<IDatabaseTransaction> BeginTransactionAsync();
+
+    Task<IDbTransaction> BeginTransactionAsync();
+
 }
