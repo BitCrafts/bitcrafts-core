@@ -10,21 +10,19 @@ public sealed class EventAggregator : IEventAggregator
     private readonly ConcurrentDictionary<Type, List<EventHandlerWrapper>> _handlers = new();
     private readonly object _lock = new();
 
-
-    private readonly IParallelism _parallelismService;
-    private readonly LimitedThreadScheduler _taskScheduler;
-
-    public EventAggregator(IParallelism parallelismService)
+    public EventAggregator()
     {
-        _parallelismService = parallelismService;
-        _taskScheduler = new LimitedThreadScheduler(parallelismService);
+      
     }
 
     public void Subscribe<TEvent>(Func<TEvent, Task> handler) where TEvent : IEvent
     {
         lock (_lock)
         {
-            if (!_handlers.ContainsKey(typeof(TEvent))) _handlers[typeof(TEvent)] = new List<EventHandlerWrapper>();
+            if (!_handlers.ContainsKey(typeof(TEvent)))
+            {
+                _handlers[typeof(TEvent)] = new List<EventHandlerWrapper>();
+            }
 
             _handlers[typeof(TEvent)].Add(new EventHandlerWrapper(async e => await handler((TEvent)e)));
         }
@@ -40,11 +38,13 @@ public sealed class EventAggregator : IEventAggregator
                     h.Handler ==
                     (Func<object, Task>)(async e => await handler((TEvent)e)));
 
-                if (handlerToRemove != null) _handlers[typeof(TEvent)].Remove(handlerToRemove);
+                if (handlerToRemove != null)
+                {
+                    _handlers[typeof(TEvent)].Remove(handlerToRemove);
+                }
             }
         }
     }
-
 
     public void Publish<TEvent>(TEvent @event) where TEvent : IEvent
     {
@@ -56,9 +56,11 @@ public sealed class EventAggregator : IEventAggregator
             handlers = _handlers[typeof(TEvent)].ToList();
         }
 
+        // Direct synchronous invocation of handlers
         foreach (var handler in handlers)
-            Task.Factory.StartNew(() => handler.Handler(@event), CancellationToken.None, TaskCreationOptions.None,
-                _taskScheduler);
+        {
+            handler.Handler(@event).GetAwaiter().GetResult();
+        }
     }
 
     private class EventHandlerWrapper

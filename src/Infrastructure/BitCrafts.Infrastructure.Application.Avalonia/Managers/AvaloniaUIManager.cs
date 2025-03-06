@@ -13,6 +13,7 @@ public sealed class AvaloniaUiManager : IUiManager
     private readonly IServiceProvider _serviceProvider;
     private IClassicDesktopStyleApplicationLifetime _applicationLifetime;
     private AvaloniaWindowManager _windowManager;
+    private IMainPresenter _mainPresenter;
 
     public AvaloniaUiManager(IServiceProvider serviceProvider)
     {
@@ -52,7 +53,8 @@ public sealed class AvaloniaUiManager : IUiManager
     {
         _serviceProvider.GetService<ILogger<AvaloniaUiManager>>().LogInformation("ApplicationLifetime Startup");
         _windowManager = (AvaloniaWindowManager)_serviceProvider.GetRequiredService<IWindowManager>();
-        _windowManager.ShowWindow<IMainPresenter>();
+        _mainPresenter = _serviceProvider.GetRequiredService<IMainPresenter>();
+        _windowManager.ShowWindow(_mainPresenter);
         
     }
 

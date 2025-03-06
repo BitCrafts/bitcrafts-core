@@ -32,7 +32,7 @@ public sealed class AvaloniaWorkspaceManager : IWorkspaceManager
     {
         if (_presentersToTabItemMap.ContainsKey(presenter))
             return;
-        var view = presenter.GetView<IView>();
+        var view = presenter.GetView();
         var tabItem = new TabItem { Header = view.GetTitle(), Content = (UserControl)view };
         if (_tabControl.Items.Add(tabItem) != -1)
         {

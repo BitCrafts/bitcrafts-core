@@ -8,5 +8,5 @@ public interface IPresenter : IDisposable
     Task CloseAsync();
     Task CloseAndOpenPresenterAsync<T>(bool isMainWindow = false);
     Task OpenPresenterAsync<T>(bool isMainWindow = false);*/
-    T GetView<T>() where T : IView; 
+    IView GetView();
 }

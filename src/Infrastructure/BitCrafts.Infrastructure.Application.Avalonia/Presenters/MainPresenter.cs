@@ -28,12 +28,8 @@ public sealed class MainPresenter : BasePresenter<IMainView>, IMainPresenter
     protected override void OnViewLoaded(object sender, EventArgs e)
     {
         base.OnViewLoaded(sender, e);
-        var view = View as IMainView;
-        if (view != null)
-        {
-            view.MenuItemClicked += ViewOnMenuItemClicked;
-            view.InitializeModulesMenu(ServiceProvider.GetServices<IModule>());
-        }
+        View.InitializeModulesMenu(ServiceProvider.GetServices<IModule>());
+
 
         if (View is MainView mainView)
         {
@@ -48,15 +44,16 @@ public sealed class MainPresenter : BasePresenter<IMainView>, IMainPresenter
         await ServiceProvider.GetRequiredService<IUiManager>().ShutdownAsync();
     }
 
+    protected override void OnInitialize()
+    {
+        View.MenuItemClicked += ViewOnMenuItemClicked;
+    }
+
     protected override void Dispose(bool disposing)
     {
         if (disposing)
         {
-            var view = View as IMainView;
-            if (view != null)
-            {
-                view.MenuItemClicked -= ViewOnMenuItemClicked;
-            }
+            View.MenuItemClicked -= ViewOnMenuItemClicked;
         }
 
         base.Dispose(disposing);

@@ -9,7 +9,7 @@ public abstract class BasePresenter<TView> : IPresenter
     where TView : IView
 {
     protected IServiceProvider ServiceProvider { get; }
-    public IView View { get; private set; }
+    public TView View { get; private set; }
     public string Title { get; protected set; }
     public IWindowManager WindowManager => ServiceProvider.GetRequiredService<IWindowManager>();
     public IWorkspaceManager WorkspaceManager => ServiceProvider.GetRequiredService<IWorkspaceManager>();
@@ -24,6 +24,7 @@ public abstract class BasePresenter<TView> : IPresenter
         View.ViewLoadedEvent += OnViewLoaded;
         View.ViewClosedEvent += OnViewClosed;
         Logger.LogInformation($"Initializing {this.GetType().Name}");
+        InitializeCore();
     }
 
     protected virtual void OnViewClosed(object sender, EventArgs e)
@@ -36,10 +37,12 @@ public abstract class BasePresenter<TView> : IPresenter
         Logger.LogInformation($"Loaded {this.GetType().Name}");
     }
 
-    public T GetView<T>() where T : IView
+    private void InitializeCore()
     {
-        return (T)View;
+        OnInitialize();
     }
+
+    protected abstract void OnInitialize();
 
     protected virtual void Dispose(bool disposing)
     {
@@ -56,5 +59,10 @@ public abstract class BasePresenter<TView> : IPresenter
     {
         Dispose(true);
         GC.SuppressFinalize(this);
+    }
+
+    public IView GetView()
+    {
+        return View;
     }
 }

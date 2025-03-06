@@ -17,6 +17,7 @@ public sealed class AvaloniaWindowManager : IWindowManager
     private readonly IServiceProvider _serviceProvider;
     private IClassicDesktopStyleApplicationLifetime _applicationLifetime;
     private readonly Stack<Window> _windowStack = new();
+    private Window _activeWindow;
     private readonly Dictionary<Type, Window> _presenterToWindowMap = new();
 
     public AvaloniaWindowManager(IServiceProvider serviceProvider)
@@ -28,7 +29,7 @@ public sealed class AvaloniaWindowManager : IWindowManager
     {
         _applicationLifetime = applicationLifetime;
     }
-
+/*
     public void ShowWindow<TPresenter>(bool isModal = false) where TPresenter : IPresenter
     {
         if (_presenterToWindowMap.ContainsKey(typeof(TPresenter)))
@@ -72,6 +73,63 @@ public sealed class AvaloniaWindowManager : IWindowManager
     public void HideWindow<TPresenter>() where TPresenter : IPresenter
     {
         if (_presenterToWindowMap.TryGetValue(typeof(TPresenter), out Window window))
+        {
+            window.Hide();
+        }
+    }*/
+
+    public void ShowWindow(IPresenter presenter, bool isModal = false)
+    {
+        Type presenterType = presenter.GetType();
+        if (_presenterToWindowMap.ContainsKey(presenterType))
+        {
+            Window existingWindow = _presenterToWindowMap[presenterType];
+            if (existingWindow.IsVisible)
+            {
+                existingWindow.Activate();
+            }
+            else
+            {
+                existingWindow.Show();
+            }
+
+            return;
+        }
+
+        var view = presenter.GetView();
+        Window window = CreateWindow(view as UserControl, view.GetTitle(), isModal);
+        _presenterToWindowMap.TryAdd(presenterType, window);
+        _windowStack.Push(window);
+
+        window.Closed += (s, e) =>
+        {
+            _windowStack.Pop();
+            _presenterToWindowMap.Remove(presenterType);
+        };
+
+
+        if (!isModal)
+        {
+            _activeWindow = window;
+            window.Show();
+        }
+        else
+        {
+            window.ShowDialog(_activeWindow);
+        }
+    }
+
+    public void CloseWindow(IPresenter presenter)
+    {
+        if (_presenterToWindowMap.TryGetValue(presenter.GetType(), out Window window))
+        {
+            window.Close();
+        }
+    }
+
+    public void HideWindow(IPresenter presenter)
+    {
+        if (_presenterToWindowMap.TryGetValue(presenter.GetType(), out Window window))
         {
             window.Hide();
         }
@@ -137,7 +195,7 @@ public sealed class AvaloniaWindowManager : IWindowManager
         if (isModal)
         {
             window.SystemDecorations = SystemDecorations.None;
-            window.ShowInTaskbar = false; 
+            window.ShowInTaskbar = true;
         }
         else
         {

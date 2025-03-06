@@ -15,7 +15,7 @@ public sealed class DisplayUsersUseCase : BaseUseCase<DisplayUsersEventRequest, 
     public DisplayUsersUseCase(IServiceProvider provider) : base(provider)
     {
     }
-    
+
     protected override Task<DisplayUsersEventResponse> ExecuteCoreAsync(DisplayUsersEventRequest createEvent)
     {
         var users = GetUsers();
@@ -25,13 +25,11 @@ public sealed class DisplayUsersUseCase : BaseUseCase<DisplayUsersEventRequest, 
 
     private IEnumerable<User> GetUsers()
     {
-        using (var uow = ServiceProdiver.GetRequiredService<IRepositoryUnitOfWork>())
-        {
-            var db = ServiceProdiver.GetRequiredService<UsersDbContext>();
-            uow.SetDbContext(db);
-            var repository = uow.GetRepository<IUsersRepository>();
-            var result = repository.GetAll();
-            return result;
-        }
+        var uow = ServiceProdiver.GetRequiredService<IRepositoryUnitOfWork>();
+        var db = ServiceProdiver.GetRequiredService<UsersDbContext>();
+        uow.SetDbContext(db);
+        var repository = uow.GetRepository<IUsersRepository>();
+        var result = repository.GetAll();
+        return result;
     }
 }

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BitCrafts.Infrastructure.Repositories;
 
-public class RepositoryUnitOfWork : IRepositoryUnitOfWork
+public sealed class RepositoryUnitOfWork : IRepositoryUnitOfWork
 {
     private readonly IServiceProvider _serviceProvider;
     private DbContext _dbContext;
@@ -17,12 +17,6 @@ public class RepositoryUnitOfWork : IRepositoryUnitOfWork
     {
         _dbContext = dbContext;
     }
-
-    public void Dispose()
-    {
-        _dbContext.Dispose();
-    }
-
     public T GetRepository<T>()
     {
         return (T)_serviceProvider.GetService(typeof(T));

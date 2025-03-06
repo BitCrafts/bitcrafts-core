@@ -1,5 +1,6 @@
 using BitCrafts.Infrastructure.Abstraction.Application.Managers;
 using BitCrafts.Infrastructure.Abstraction.Application.Presenters;
+using BitCrafts.Infrastructure.Abstraction.Events;
 using BitCrafts.Users.Abstraction.Entities;
 using BitCrafts.Users.Abstraction.Events;
 using BitCrafts.Users.Abstraction.Presenters;
@@ -11,26 +12,21 @@ namespace BitCrafts.Users.Presenters;
 
 public class CreateUserPresenter : BasePresenter<ICreateUserView>, ICreateUserPresenter
 {
-    private ICreateUserView _view;
-
     public CreateUserPresenter(IServiceProvider serviceProvider) : base("New User", serviceProvider)
     {
-        Initialize();
     }
-
-    private void Initialize()
+    protected override void OnInitialize()
     {
-        _view = GetView<ICreateUserView>();
-        _view.SaveClicked += OnSaveClicked;
-        _view.CloseClicked += OnCloseClicked;
+        View.SaveClicked += OnSaveClicked;
+        View.CloseClicked += OnCloseClicked;
     }
 
     protected override void Dispose(bool disposing)
     {
         if (disposing)
         {
-            _view.SaveClicked -= OnSaveClicked;
-            _view.CloseClicked -= OnCloseClicked;
+            View.SaveClicked -= OnSaveClicked;
+            View.CloseClicked -= OnCloseClicked;
         }
 
         base.Dispose(disposing);
@@ -38,7 +34,7 @@ public class CreateUserPresenter : BasePresenter<ICreateUserView>, ICreateUserPr
 
     private void OnCloseClicked(object sender, EventArgs e)
     {
-        ServiceProvider.GetRequiredService<IWindowManager>().CloseWindow<ICreateUserPresenter>();
+        ServiceProvider.GetRequiredService<IWindowManager>().CloseWindow(this);
     }
 
     private async void OnSaveClicked(object sender, User e)
@@ -46,8 +42,9 @@ public class CreateUserPresenter : BasePresenter<ICreateUserView>, ICreateUserPr
         var userEvent = new UserEventRequest()
         {
             User = e,
-            Password = _view.GetPassword(),
+            Password = View.GetPassword(),
         };
-        await ServiceProvider.GetRequiredService<ICreateUserUseCase>().ExecuteAsync(userEvent);
+        var response = await ServiceProvider.GetRequiredService<ICreateUserUseCase>().ExecuteAsync(userEvent);
+        ServiceProvider.GetRequiredService<IEventAggregator>().Publish<UserEventResponse>(response);
     }
 }

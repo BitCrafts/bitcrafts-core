@@ -4,7 +4,11 @@ namespace BitCrafts.Infrastructure.Abstraction.Application.Managers;
 
 public interface IWindowManager : IDisposable
 {
-    void ShowWindow<TPresenter>(bool isModal = false) where TPresenter : IPresenter;
-    void CloseWindow<TPresenter>() where TPresenter : IPresenter;
-    void HideWindow<TPresenter>() where TPresenter : IPresenter;
+    /*
+        void ShowWindow<TPresenter>(bool isModal = false) where TPresenter : IPresenter;
+        void CloseWindow<TPresenter>() where TPresenter : IPresenter;
+        void HideWindow<TPresenter>() where TPresenter : IPresenter;*/
+    void ShowWindow(IPresenter presenter, bool isModal = false);
+    void CloseWindow(IPresenter presenter);
+    void HideWindow(IPresenter presenter);
 }

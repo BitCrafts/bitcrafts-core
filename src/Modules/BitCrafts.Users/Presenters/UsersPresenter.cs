@@ -14,52 +14,42 @@ namespace BitCrafts.Users.Presenters;
 
 public sealed class UsersPresenter : BasePresenter<IUsersView>, IUsersPresenter
 {
-    private IUsersView _view;
-
     public UsersPresenter(IServiceProvider serviceProvider) : base("Users", serviceProvider)
     {
-        InitializeViewEvents();
     }
 
     public Task SaveUserAsync()
     {
-        ServiceProvider.GetRequiredService<IWindowManager>().ShowWindow<ICreateUserPresenter>(true);
+        var createUserPresenter = ServiceProvider.GetRequiredService<ICreateUserPresenter>();
+        ServiceProvider.GetRequiredService<IWindowManager>().ShowWindow(createUserPresenter, true);
         return Task.CompletedTask;
-    }
-
-    private void InitializeViewEvents()
-    {
-        _view = GetView<IUsersView>();
-        _view.SaveClicked += async (_, _) => await SaveUserAsync();
-        _view.CloseClicked += (_, _) => ServiceProvider.GetRequiredService<IWorkspaceManager>().ClosePresenter(this);
-        ServiceProvider.GetRequiredService<IEventAggregator>().Subscribe<DisplayUsersEventResponse>(OnDisplay);
-        ServiceProvider.GetRequiredService<IEventAggregator>().Subscribe<UserEventResponse>(OnCreateUser);
     }
 
     private Task OnCreateUser(UserEventResponse arg)
     {
-        _view.AppendUser(arg.User);
+        View.AppendUser(arg.User);
         return Task.CompletedTask;
     }
 
-    private Task OnDisplay(DisplayUsersEventResponse arg)
-    {
-        _view.RefreshUsers(arg.Users);
-        return Task.CompletedTask;
-    }
-
-
-    protected override void OnViewLoaded(object sender, EventArgs e)
+    protected override async void OnViewLoaded(object sender, EventArgs e)
     {
         base.OnViewLoaded(sender, e);
-        ServiceProvider.GetRequiredService<IDisplayUsersUseCase>().ExecuteAsync(new DisplayUsersEventRequest());
+        var response = await ServiceProvider.GetRequiredService<IDisplayUsersUseCase>()
+            .ExecuteAsync(new DisplayUsersEventRequest());
+        View.RefreshUsers(response.Users);
+    }
+
+    protected override void OnInitialize()
+    {
+        View.SaveClicked += async (_, _) => await SaveUserAsync();
+        View.CloseClicked += (_, _) => ServiceProvider.GetRequiredService<IWorkspaceManager>().ClosePresenter(this);
+        ServiceProvider.GetRequiredService<IEventAggregator>().Subscribe<UserEventResponse>(OnCreateUser);
     }
 
     protected override void Dispose(bool disposing)
     {
         if (disposing)
         {
-            ServiceProvider.GetRequiredService<IEventAggregator>().Unsubscribe<DisplayUsersEventResponse>(OnDisplay);
             ServiceProvider.GetRequiredService<IEventAggregator>().Unsubscribe<UserEventResponse>(OnCreateUser);
         }
 

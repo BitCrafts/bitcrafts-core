@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BitCrafts.Infrastructure.Abstraction.Repositories;
 
-public interface IRepositoryUnitOfWork : IDisposable
+public interface IRepositoryUnitOfWork
 {
         void SetDbContext(DbContext dbContext);
 

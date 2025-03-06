@@ -22,15 +22,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitCrafts.UseCases.Tests", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitCrafts.Infrastructure.Application.Avalonia", "..\Infrastructure\BitCrafts.Infrastructure.Application.Avalonia\BitCrafts.Infrastructure.Application.Avalonia.csproj", "{1FE4620C-80F7-4A39-AC8B-C25055D736BA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitCrafts.Infrastructure.Tests", "..\..\tests\BitCrafts.Infrastructure.Tests\BitCrafts.Infrastructure.Tests.csproj", "{5E13DFAF-425C-4F9F-94CB-B5C08E87206F}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Users", "Users", "{34951A38-781D-43EE-8AEE-A13B30A32372}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitCrafts.Users.Abstraction", "..\Modules\BitCrafts.Users.Abstraction\BitCrafts.Users.Abstraction.csproj", "{4C7A595C-4A2C-428C-A457-898246DA06D1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitCrafts.Users", "..\Modules\BitCrafts.Users\BitCrafts.Users.csproj", "{268E06D5-20F8-42C8-8D31-C6199AAB7A40}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{29AB5B1C-DE08-4A2C-99B3-242035AA8BB8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitCrafts.Infrastructure.Abstraction.Avalonia", "..\Infrastructure\BitCrafts.Infrastructure.Abstraction.Avalonia\BitCrafts.Infrastructure.Abstraction.Avalonia.csproj", "{466EBA8D-5FF2-4786-A331-E13CC37643DC}"
 EndProject
@@ -68,10 +64,6 @@ Global
 		{1FE4620C-80F7-4A39-AC8B-C25055D736BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1FE4620C-80F7-4A39-AC8B-C25055D736BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1FE4620C-80F7-4A39-AC8B-C25055D736BA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5E13DFAF-425C-4F9F-94CB-B5C08E87206F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5E13DFAF-425C-4F9F-94CB-B5C08E87206F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5E13DFAF-425C-4F9F-94CB-B5C08E87206F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5E13DFAF-425C-4F9F-94CB-B5C08E87206F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4C7A595C-4A2C-428C-A457-898246DA06D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4C7A595C-4A2C-428C-A457-898246DA06D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4C7A595C-4A2C-428C-A457-898246DA06D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -97,8 +89,6 @@ Global
 		{34951A38-781D-43EE-8AEE-A13B30A32372} = {FB3B7478-EF84-4969-96A9-9CF5D86F65CA}
 		{4C7A595C-4A2C-428C-A457-898246DA06D1} = {34951A38-781D-43EE-8AEE-A13B30A32372}
 		{268E06D5-20F8-42C8-8D31-C6199AAB7A40} = {34951A38-781D-43EE-8AEE-A13B30A32372}
-		{29AB5B1C-DE08-4A2C-99B3-242035AA8BB8} = {5AD06EF2-71B9-46D9-9ABB-CE544A8DD858}
-		{5E13DFAF-425C-4F9F-94CB-B5C08E87206F} = {29AB5B1C-DE08-4A2C-99B3-242035AA8BB8}
 		{466EBA8D-5FF2-4786-A331-E13CC37643DC} = {5AD06EF2-71B9-46D9-9ABB-CE544A8DD858}
 	EndGlobalSection
 EndGlobal

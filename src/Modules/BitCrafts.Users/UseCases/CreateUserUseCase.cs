@@ -13,38 +13,36 @@ namespace BitCrafts.Users.UseCases;
 public sealed class CreateUserUseCase : BaseUseCase<UserEventRequest, UserEventResponse>, ICreateUserUseCase
 {
     private readonly IHashingService _hashingService;
-    
+
     public CreateUserUseCase(IServiceProvider serviceProvider) : base(serviceProvider)
     {
         _hashingService = ServiceProdiver.GetRequiredService<IHashingService>();
     }
 
 
-    protected override Task<UserEventResponse> ExecuteCoreAsync(UserEventRequest @event)
+    protected override Task<UserEventResponse> ExecuteCoreAsync(UserEventRequest @eventRequest)
     {
         var response = new UserEventResponse();
-        response.User = CreateUser(@event);
+        response.User = CreateUser(eventRequest);
         return Task.FromResult(response);
     }
 
-    private User CreateUser(UserEventRequest @event)
+    private User CreateUser(UserEventRequest eventRequest)
     {
         string salt = _hashingService.GenerateSalt();
-        string hashedPassword = _hashingService.HashPassword(@event.Password);
+        string hashedPassword = _hashingService.HashPassword(eventRequest.Password);
         var userAccount = new UserAccount
         {
             HashedPassword = hashedPassword,
             PasswordSalt = salt
         };
-        var user = @event.User;
-        using (var uow = ServiceProdiver.GetRequiredService<IRepositoryUnitOfWork>())
-        {
-            uow.SetDbContext(ServiceProdiver.GetService<UsersDbContext>());
-
-            user.UserAccount = userAccount;
-            user = uow.GetRepository<IUsersRepository>().Add(user);
-            uow.Commit();
-        }
+        var user = eventRequest.User;
+        var dbContext = ServiceProdiver.GetService<UsersDbContext>();
+        var uow = ServiceProdiver.GetRequiredService<IRepositoryUnitOfWork>();
+        uow.SetDbContext(dbContext);
+        user.UserAccount = userAccount;
+        user = uow.GetRepository<IUsersRepository>().Add(user);
+        uow.Commit();
 
         return user;
     }

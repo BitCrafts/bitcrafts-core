@@ -20,4 +20,10 @@
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.2" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Update="Views\CreateUserView.axaml.cs">
+        <DependentUpon>CreateUserView.axaml</DependentUpon>
+      </Compile>
+    </ItemGroup>
+
 </Project>
