@@ -29,7 +29,7 @@ public sealed class AvaloniaWindowManager : IWindowManager
         _applicationLifetime = applicationLifetime;
     }
 
-    public void ShowWindow<TPresenter>() where TPresenter : IPresenter
+    public void ShowWindow<TPresenter>(bool isModal = false) where TPresenter : IPresenter
     {
         if (_presenterToWindowMap.ContainsKey(typeof(TPresenter)))
         {
@@ -48,7 +48,7 @@ public sealed class AvaloniaWindowManager : IWindowManager
 
         var presenter = _serviceProvider.GetRequiredService<TPresenter>();
         var view = presenter.GetView<IView>();
-        Window window = CreateWindow(view as UserControl, view.GetTitle());
+        Window window = CreateWindow(view as UserControl, view.GetTitle(), isModal);
         _presenterToWindowMap.TryAdd(typeof(TPresenter), window);
         _windowStack.Push(window);
 
@@ -57,6 +57,7 @@ public sealed class AvaloniaWindowManager : IWindowManager
             _windowStack.Pop();
             _presenterToWindowMap.Remove(typeof(TPresenter));
         };
+
         window.Show();
     }
 
@@ -81,92 +82,70 @@ public sealed class AvaloniaWindowManager : IWindowManager
         // TODO release managed resources here
     }
 
-    private Window CreateWindow(UserControl control, string title)
+    private Window CreateWindow(UserControl control, string title, bool isModal)
     {
         var window = new Window();
         window.Title = title;
         window.MinWidth = 800;
         window.MinHeight = 600;
-        window.Width = 1024;
-        window.Height = 768;
-        window.WindowState = WindowState.Maximized;
-        window.Content = new Grid()
-        {
-            VerticalAlignment = VerticalAlignment.Stretch,
-            HorizontalAlignment = HorizontalAlignment.Stretch,
-            Children = { control }
-        };
-        window.SystemDecorations = SystemDecorations.Full;
-        window.ShowInTaskbar = true;
-        window.WindowStartupLocation = WindowStartupLocation.CenterScreen; 
-        window.BorderThickness = new Thickness(5, 5,5,5);
+
+        window.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+        window.BorderThickness = new Thickness(5, 5, 5, 5);
         window.BorderBrush = new SolidColorBrush(Colors.Black);
-        
+        if (isModal)
+        {
+            window.MinWidth = window.Width = control.Width;
+            window.MinHeight = window.Height = control.Height;
+        }
+        else
+        {
+            window.Width = 1024;
+            window.Height = 768;
+        }
+
+        window.WindowState = isModal ? WindowState.Normal : WindowState.Maximized;
+        if (isModal)
+        {
+            window.Content = new Grid()
+            {
+                VerticalAlignment = VerticalAlignment.Stretch,
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                Children =
+                {
+                    new Border()
+                    {
+                        BorderBrush = Brushes.Gray,
+                        BorderThickness = new Thickness(2),
+                        Child = control
+                    }
+                }
+            };
+        }
+        else
+        {
+            window.Content = new Grid()
+            {
+                VerticalAlignment = VerticalAlignment.Stretch,
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                Children =
+                {
+                    control
+                }
+            };
+        }
+
+        if (isModal)
+        {
+            window.SystemDecorations = SystemDecorations.None;
+            window.ShowInTaskbar = false; 
+        }
+        else
+        {
+            window.SystemDecorations = SystemDecorations.Full;
+            window.ShowInTaskbar = true;
+        }
+
+
         return window;
     }
-/*
-    public void ShowWindow(IView window, bool setAsMainWindow = false)
-    {
-        var nativeWindow = (Window)window;
-        if (nativeWindow == null) return;
-
-        if (!_windows.ContainsKey(window.GetType()))
-        {
-            if (setAsMainWindow)
-            {
-                _applicationLifetime.MainWindow = nativeWindow;
-            }
-
-            _windows.TryAdd(window.GetType(), window);
-        }
-
-        nativeWindow.Show();
-    }
-
-
-    public void HideWindow(IView window)
-    {
-        var nativeWindow = (Window)window;
-        if (nativeWindow == null) return;
-
-        nativeWindow.Hide();
-    }
-
-    public void CloseWindow(IView window)
-    {
-        var nativeWindow = (Window)window;
-        if (nativeWindow == null) return;
-        if (_windows.ContainsKey(window.GetType()))
-        {
-            _windows.Remove(window.GetType());
-            nativeWindow.Close();
-        }
-    }
-
-
-    public T GetWindow<T>() where T : IView
-    {
-        _windows.TryGetValue(typeof(T), out var window);
-        return (T)window;
-    }
-
-    public IReadOnlyCollection<IView> GetAllWindows()
-    {
-        return _windows.Values;
-    }
-
-
-
-    public void Dispose()
-    {
-        foreach (var window in _windows.Values)
-        {
-            if (window is IDisposable disposableWindow)
-            {
-                disposableWindow.Dispose();
-            }
-        }
-
-        _windows.Clear();
-    }*/
 }

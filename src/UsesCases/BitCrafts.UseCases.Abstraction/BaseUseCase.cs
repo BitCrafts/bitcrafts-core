@@ -25,8 +25,7 @@ public abstract class BaseUseCase<TEventRequest, TEventResponse> : IUseCase<TEve
     {
         try
         {
-            await ExecuteCoreAsync(createEvent);
-            var response = Activator.CreateInstance<TEventResponse>();
+            var response = await ExecuteCoreAsync(createEvent); 
             response.Request = createEvent;
             EventAggregator.Publish<TEventResponse>(response);
         }
@@ -43,7 +42,7 @@ public abstract class BaseUseCase<TEventRequest, TEventResponse> : IUseCase<TEve
         GC.SuppressFinalize(this);
     }
 
-    protected abstract Task ExecuteCoreAsync(TEventRequest createEvent);
+    protected abstract Task<TEventResponse> ExecuteCoreAsync(TEventRequest createEvent);
 
     protected virtual void Dispose(bool disposing)
     {

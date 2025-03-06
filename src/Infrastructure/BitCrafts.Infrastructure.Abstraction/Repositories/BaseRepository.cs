@@ -32,9 +32,9 @@ public abstract class Repository<TContext, TEntity> : IRepository<TEntity> where
         return _dbSet.Where(predicate).ToList();
     }
 
-    public void Add(TEntity entity)
+    public TEntity Add(TEntity entity)
     {
-        _dbSet.Add(entity);
+        return _dbSet.Add(entity).Entity;
     }
 
     public void AddRange(IEnumerable<TEntity> entities)

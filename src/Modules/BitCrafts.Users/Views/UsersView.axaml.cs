@@ -30,7 +30,10 @@ public partial class UsersView : BaseView, IUsersView
         InitializeComponent();
     }
 
-
+    public void AppendUser(User user)
+    {
+        _users.Add(user);
+    }
     public void SetUser(User user)
     {
         FirstNameTextBox.Text = user.FirstName;

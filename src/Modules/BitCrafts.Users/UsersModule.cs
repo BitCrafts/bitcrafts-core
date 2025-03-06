@@ -20,11 +20,11 @@ public class UsersModule : IUsersModule
     public void RegisterServices(IServiceCollection services)
     {
         services.TryAddTransient<ICreateUserUseCase, CreateUserUseCase>();
-        services.TryAddTransient<IDeleteUserUseCase, DeleteUserUseCase>();
-        services.TryAddTransient<IUpdateUserUseCase, UpdateUserUseCase>();
-        services.TryAddTransient<IUpdateUserUseCase, UpdateUserUseCase>();
+        services.TryAddTransient<IDisplayUsersUseCase, DisplayUsersUseCase>();
         services.TryAddTransient<IUsersView, UsersView>();
-        services.TryAddSingleton<IUsersPresenter, UsersPresenter>();
+        services.TryAddTransient<ICreateUserView,CreateUserView>();
+        services.TryAddTransient<ICreateUserPresenter, CreateUserPresenter>();
+        services.TryAddTransient<IUsersPresenter, UsersPresenter>();
         services.AddDbContext<UsersDbContext>();
         services.AddScoped<IUsersRepository, UsersRepository>();
     }

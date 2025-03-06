@@ -1,17 +1,37 @@
+using BitCrafts.Infrastructure.Abstraction.Repositories;
 using BitCrafts.UseCases.Abstraction;
+using BitCrafts.Users.Abstraction.Entities;
 using BitCrafts.Users.Abstraction.Events;
+using BitCrafts.Users.Abstraction.Repositories;
 using BitCrafts.Users.Abstraction.UseCases;
+using BitCrafts.Users.Entities;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace BitCrafts.Users.UseCases;
 
-public sealed class DisplayUsersUseCase : BaseUseCase<UserEventRequest, UserEventResponse>, ICreateUserUseCase
+public sealed class DisplayUsersUseCase : BaseUseCase<DisplayUsersEventRequest, DisplayUsersEventResponse>,
+    IDisplayUsersUseCase
 {
     public DisplayUsersUseCase(IServiceProvider provider) : base(provider)
     {
     }
-
-    protected override async Task ExecuteCoreAsync(UserEventRequest createEvent)
+    
+    protected override Task<DisplayUsersEventResponse> ExecuteCoreAsync(DisplayUsersEventRequest createEvent)
     {
-        await Task.CompletedTask;
+        var users = GetUsers();
+        var response = new DisplayUsersEventResponse(users);
+        return Task.FromResult(response);
+    }
+
+    private IEnumerable<User> GetUsers()
+    {
+        using (var uow = ServiceProdiver.GetRequiredService<IRepositoryUnitOfWork>())
+        {
+            var db = ServiceProdiver.GetRequiredService<UsersDbContext>();
+            uow.SetDbContext(db);
+            var repository = uow.GetRepository<IUsersRepository>();
+            var result = repository.GetAll();
+            return result;
+        }
     }
 }

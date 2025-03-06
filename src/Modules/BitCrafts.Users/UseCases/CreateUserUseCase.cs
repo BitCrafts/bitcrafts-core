@@ -13,39 +13,39 @@ namespace BitCrafts.Users.UseCases;
 public sealed class CreateUserUseCase : BaseUseCase<UserEventRequest, UserEventResponse>, ICreateUserUseCase
 {
     private readonly IHashingService _hashingService;
-
-
+    
     public CreateUserUseCase(IServiceProvider serviceProvider) : base(serviceProvider)
     {
         _hashingService = ServiceProdiver.GetRequiredService<IHashingService>();
     }
 
 
-    protected override async Task ExecuteCoreAsync(UserEventRequest @event)
+    protected override Task<UserEventResponse> ExecuteCoreAsync(UserEventRequest @event)
     {
-        try
+        var response = new UserEventResponse();
+        response.User = CreateUser(@event);
+        return Task.FromResult(response);
+    }
+
+    private User CreateUser(UserEventRequest @event)
+    {
+        string salt = _hashingService.GenerateSalt();
+        string hashedPassword = _hashingService.HashPassword(@event.Password);
+        var userAccount = new UserAccount
         {
-            string salt = _hashingService.GenerateSalt();
-            string hashedPassword = _hashingService.HashPassword(@event.Password);
-            var userAccount = new UserAccount
-            {
-                HashedPassword = hashedPassword,
-                PasswordSalt = salt
-            };
-            using (var uow = ServiceProdiver.GetRequiredService<IRepositoryUnitOfWork>())
-            {
-                uow.SetDbContext(ServiceProdiver.GetService<UsersDbContext>());
-                var user = @event.User as User;
-                user.UserAccount = userAccount;
-                uow.GetRepository<IUsersRepository>().Add(user);
-                uow.Commit();
-            }
-        }
-        catch
+            HashedPassword = hashedPassword,
+            PasswordSalt = salt
+        };
+        var user = @event.User;
+        using (var uow = ServiceProdiver.GetRequiredService<IRepositoryUnitOfWork>())
         {
-            throw;
+            uow.SetDbContext(ServiceProdiver.GetService<UsersDbContext>());
+
+            user.UserAccount = userAccount;
+            user = uow.GetRepository<IUsersRepository>().Add(user);
+            uow.Commit();
         }
 
-        await Task.CompletedTask;
+        return user;
     }
 }
