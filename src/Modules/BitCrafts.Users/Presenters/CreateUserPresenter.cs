@@ -15,6 +15,7 @@ public class CreateUserPresenter : BasePresenter<ICreateUserView>, ICreateUserPr
     public CreateUserPresenter(IServiceProvider serviceProvider) : base("New User", serviceProvider)
     {
     }
+
     protected override void OnInitialize()
     {
         View.SaveClicked += OnSaveClicked;
@@ -37,14 +38,14 @@ public class CreateUserPresenter : BasePresenter<ICreateUserView>, ICreateUserPr
         ServiceProvider.GetRequiredService<IWindowManager>().CloseWindow(this);
     }
 
-    private async void OnSaveClicked(object sender, User e)
+    private void OnSaveClicked(object sender, User e)
     {
         var userEvent = new UserEventRequest()
         {
             User = e,
             Password = View.GetPassword(),
         };
-        var response = await ServiceProvider.GetRequiredService<ICreateUserUseCase>().ExecuteAsync(userEvent);
+        var response = ServiceProvider.GetRequiredService<ICreateUserUseCase>().Execute(userEvent);
         ServiceProvider.GetRequiredService<IEventAggregator>().Publish<UserEventResponse>(response);
     }
 }

@@ -28,8 +28,17 @@ public sealed class AvaloniaApplication : BaseApplication, IApplication
 
     protected override Task OnStartupAsync()
     {
-        Logger.LogInformation("Starting Avalonia Application...");
-        _appbuilder.StartWithClassicDesktopLifetime(Environment.GetCommandLineArgs());
+        try
+        {
+            Logger.LogInformation("Starting Avalonia Application...");
+            _appbuilder.StartWithClassicDesktopLifetime(Environment.GetCommandLineArgs());
+        }
+        catch (Exception exc)
+        {
+            ServiceProvider.GetService<ILogger<AvaloniaApplication>>()
+                .LogCritical(exc, "Failed to start Avalonia Application");
+        }
+
         return Task.CompletedTask;
     }
 
@@ -39,6 +48,7 @@ public sealed class AvaloniaApplication : BaseApplication, IApplication
         {
             UiManager.Dispose();
         }
+
         base.Dispose(disposing);
     }
 }

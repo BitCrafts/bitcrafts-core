@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using BitCrafts.Infrastructure.Abstraction.Application.Managers;
 using BitCrafts.Infrastructure.Abstraction.Application.Presenters;
 using BitCrafts.Infrastructure.Abstraction.Modules;
@@ -29,7 +30,6 @@ public sealed class MainPresenter : BasePresenter<IMainView>, IMainPresenter
     {
         base.OnViewLoaded(sender, e);
         View.InitializeModulesMenu(ServiceProvider.GetServices<IModule>());
-
 
         if (View is MainView mainView)
         {

@@ -2,57 +2,34 @@ using System;
 using System.Collections.Generic;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using BitCrafts.Infrastructure.Abstraction.Avalonia.Views;
 using BitCrafts.Infrastructure.Abstraction.Modules;
 
 namespace BitCrafts.Infrastructure.Application.Avalonia.Views;
 
-public partial class MainView : UserControl, IMainView
+public partial class MainView : BaseView, IMainView
 {
-    public event EventHandler ViewLoadedEvent;
-    public event EventHandler ViewClosedEvent;
+    
     public event EventHandler<string> MenuItemClicked;
-    private string _title;
-
-    public MainView()
+    public MainView(IServiceProvider serviceProvider) : base(serviceProvider)
     {
         InitializeComponent();
-        Loaded += OnLoaded;
-        Unloaded += OnUnloaded;
     }
 
-    private void OnUnloaded(object sender, EventArgs e)
+    protected override void Dispose(bool disposing)
     {
-        ViewClosedEvent?.Invoke(this, EventArgs.Empty);
-    }
-
-    private void OnLoaded(object sender, RoutedEventArgs e)
-    {
-        ViewLoadedEvent?.Invoke(this, EventArgs.Empty);
-    }
-
-
-    public void SetTitle(string title)
-    {
-        _title = title;
-    }
-
-    public string GetTitle()
-    {
-        return _title;
-    }
-
-    public void Dispose()
-    {
-        Loaded -= OnLoaded;
-        Unloaded -= OnUnloaded;
-        foreach (MenuItem menuItem in ModulesMenuItem.Items)
+        if (disposing)
         {
-            menuItem.Click -= MenuItemOnClick;
+            foreach (MenuItem menuItem in ModulesMenuItem.Items)
+            {
+                menuItem.Click -= MenuItemOnClick;
+            }
+
+            ModulesMenuItem.Items.Clear();
         }
 
-        ModulesMenuItem.Items.Clear();
-    }
-
+        base.Dispose(disposing);
+    } 
 
     public void InitializeModulesMenu(IEnumerable<IModule> modules)
     {

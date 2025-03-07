@@ -18,15 +18,6 @@ public sealed class CreateUserUseCase : BaseUseCase<UserEventRequest, UserEventR
     {
         _hashingService = ServiceProdiver.GetRequiredService<IHashingService>();
     }
-
-
-    protected override Task<UserEventResponse> ExecuteCoreAsync(UserEventRequest @eventRequest)
-    {
-        var response = new UserEventResponse();
-        response.User = CreateUser(eventRequest);
-        return Task.FromResult(response);
-    }
-
     private User CreateUser(UserEventRequest eventRequest)
     {
         string salt = _hashingService.GenerateSalt();
@@ -45,5 +36,12 @@ public sealed class CreateUserUseCase : BaseUseCase<UserEventRequest, UserEventR
         uow.Commit();
 
         return user;
+    }
+
+    protected override UserEventResponse ExecuteCore(UserEventRequest eventRequest)
+    {
+        var response = new UserEventResponse();
+        response.User = CreateUser(eventRequest);
+        return response;
     }
 }

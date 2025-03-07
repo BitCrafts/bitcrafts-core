@@ -18,9 +18,9 @@ public abstract class BaseUseCase<TEventRequest, TEventResponse> : IUseCase<TEve
     }
 
 
-    public async Task<TEventResponse> ExecuteAsync(TEventRequest eventRequest)
+    public TEventResponse Execute(TEventRequest eventRequest)
     {
-        var response = await ExecuteCoreAsync(eventRequest);
+        var response = ExecuteCore(eventRequest);
         response.Request = eventRequest;
         return response;
     }
@@ -32,10 +32,9 @@ public abstract class BaseUseCase<TEventRequest, TEventResponse> : IUseCase<TEve
         GC.SuppressFinalize(this);
     }
 
-    protected abstract Task<TEventResponse> ExecuteCoreAsync(TEventRequest eventRequest);
+    protected abstract TEventResponse ExecuteCore(TEventRequest eventRequest);
 
     protected virtual void Dispose(bool disposing)
     {
-        if (disposing) EventAggregator.Unsubscribe<TEventRequest>(ExecuteAsync);
     }
 }

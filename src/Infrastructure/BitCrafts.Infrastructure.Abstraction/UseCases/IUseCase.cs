@@ -6,5 +6,5 @@ public interface IUseCase<TEventRequest, TEventResponse> : IDisposable
     where TEventRequest : IEventRequest
     where TEventResponse : IEventResponse
 {
-    Task<TEventResponse> ExecuteAsync(TEventRequest eventRequest);
+    TEventResponse Execute(TEventRequest eventRequest);
 }

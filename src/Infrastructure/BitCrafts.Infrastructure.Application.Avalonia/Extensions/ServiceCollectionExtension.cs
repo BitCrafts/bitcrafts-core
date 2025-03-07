@@ -15,8 +15,11 @@ public static class ServiceCollectionExtension
         services.AddSingleton<IWindowManager, AvaloniaWindowManager>();
         services.AddSingleton<IWorkspaceManager, AvaloniaWorkspaceManager>();
         services.AddSingleton<IUiManager, AvaloniaUiManager>();
+        services.AddSingleton<IExceptionManager, AvaloniaExceptionManager>();
         services.AddSingleton<IMainPresenter, MainPresenter>();
         services.AddSingleton<IMainView, MainView>();
+        services.AddTransient<IErrorPresenter, ErrorPresenter>();
+        services.AddTransient<IErrorView, ErrorView>();
 
         return services;
     }

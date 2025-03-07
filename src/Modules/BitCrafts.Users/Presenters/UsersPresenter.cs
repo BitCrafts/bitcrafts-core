@@ -25,17 +25,17 @@ public sealed class UsersPresenter : BasePresenter<IUsersView>, IUsersPresenter
         return Task.CompletedTask;
     }
 
-    private Task OnCreateUser(UserEventResponse arg)
+    private void OnCreateUser(UserEventResponse arg)
     {
         View.AppendUser(arg.User);
-        return Task.CompletedTask;
     }
 
     protected override async void OnViewLoaded(object sender, EventArgs e)
     {
         base.OnViewLoaded(sender, e);
-        var response = await ServiceProvider.GetRequiredService<IDisplayUsersUseCase>()
-            .ExecuteAsync(new DisplayUsersEventRequest());
+        var requestEvent = new DisplayUsersEventRequest();
+        var response = ServiceProvider.GetRequiredService<IDisplayUsersUseCase>()
+            .Execute(requestEvent);
         View.RefreshUsers(response.Users);
     }
 

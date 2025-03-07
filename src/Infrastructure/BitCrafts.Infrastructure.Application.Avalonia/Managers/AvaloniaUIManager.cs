@@ -22,14 +22,12 @@ public sealed class AvaloniaUiManager : IUiManager
 
     public Task StartAsync()
     {
-       
         return Task.CompletedTask;
     }
 
     public Task ShutdownAsync()
     {
         _serviceProvider.GetService<ILogger<AvaloniaUiManager>>().LogInformation("Shutting down application...");
-        _applicationLifetime.Shutdown();
         return Task.CompletedTask;
     }
 
@@ -51,11 +49,11 @@ public sealed class AvaloniaUiManager : IUiManager
 
     private void ApplicationLifetimeOnStartup(object sender, ControlledApplicationLifetimeStartupEventArgs e)
     {
-        _serviceProvider.GetService<ILogger<AvaloniaUiManager>>().LogInformation("ApplicationLifetime Startup");
-        _windowManager = (AvaloniaWindowManager)_serviceProvider.GetRequiredService<IWindowManager>();
-        _mainPresenter = _serviceProvider.GetRequiredService<IMainPresenter>();
-        _windowManager.ShowWindow(_mainPresenter);
-        
+            _serviceProvider.GetService<ILogger<AvaloniaUiManager>>().LogInformation("ApplicationLifetime Startup");
+            _serviceProvider.GetRequiredService<IExceptionManager>();
+            _mainPresenter = _serviceProvider.GetRequiredService<IMainPresenter>();
+            _windowManager.ShowWindow(_mainPresenter);
+       
     }
 
     private void ApplicationLifetimeOnExit(object sender, ControlledApplicationLifetimeExitEventArgs e)

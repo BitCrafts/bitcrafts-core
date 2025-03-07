@@ -29,56 +29,7 @@ public sealed class AvaloniaWindowManager : IWindowManager
     {
         _applicationLifetime = applicationLifetime;
     }
-/*
-    public void ShowWindow<TPresenter>(bool isModal = false) where TPresenter : IPresenter
-    {
-        if (_presenterToWindowMap.ContainsKey(typeof(TPresenter)))
-        {
-            Window existingWindow = _presenterToWindowMap[typeof(TPresenter)];
-            if (existingWindow.IsVisible)
-            {
-                existingWindow.Activate();
-            }
-            else
-            {
-                existingWindow.Show();
-            }
-
-            return;
-        }
-
-        var presenter = _serviceProvider.GetRequiredService<TPresenter>();
-        var view = presenter.GetView<IView>();
-        Window window = CreateWindow(view as UserControl, view.GetTitle(), isModal);
-        _presenterToWindowMap.TryAdd(typeof(TPresenter), window);
-        _windowStack.Push(window);
-
-        window.Closed += (s, e) =>
-        {
-            _windowStack.Pop();
-            _presenterToWindowMap.Remove(typeof(TPresenter));
-        };
-
-        window.Show();
-    }
-
-    public void CloseWindow<TPresenter>() where TPresenter : IPresenter
-    {
-        if (_presenterToWindowMap.TryGetValue(typeof(TPresenter), out Window window))
-        {
-            window.Close();
-        }
-    }
-
-    public void HideWindow<TPresenter>() where TPresenter : IPresenter
-    {
-        if (_presenterToWindowMap.TryGetValue(typeof(TPresenter), out Window window))
-        {
-            window.Hide();
-        }
-    }*/
-
-    public void ShowWindow(IPresenter presenter, bool isModal = false)
+    public async void ShowWindow(IPresenter presenter, bool isModal = false)
     {
         Type presenterType = presenter.GetType();
         if (_presenterToWindowMap.ContainsKey(presenterType))
@@ -115,7 +66,7 @@ public sealed class AvaloniaWindowManager : IWindowManager
         }
         else
         {
-            window.ShowDialog(_activeWindow);
+            await window.ShowDialog(_activeWindow);
         }
     }
 

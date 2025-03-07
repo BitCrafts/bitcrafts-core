@@ -11,9 +11,11 @@ public abstract class BasePresenter<TView> : IPresenter
     protected IServiceProvider ServiceProvider { get; }
     public TView View { get; private set; }
     public string Title { get; protected set; }
-    public IWindowManager WindowManager => ServiceProvider.GetRequiredService<IWindowManager>();
-    public IWorkspaceManager WorkspaceManager => ServiceProvider.GetRequiredService<IWorkspaceManager>();
-    public ILogger<BasePresenter<TView>> Logger => ServiceProvider.GetRequiredService<ILogger<BasePresenter<TView>>>();
+    protected IWindowManager WindowManager => ServiceProvider.GetRequiredService<IWindowManager>();
+    protected IWorkspaceManager WorkspaceManager => ServiceProvider.GetRequiredService<IWorkspaceManager>();
+
+    protected ILogger<BasePresenter<TView>> Logger =>
+        ServiceProvider.GetRequiredService<ILogger<BasePresenter<TView>>>();
 
     public BasePresenter(string title, IServiceProvider serviceProvider)
     {
