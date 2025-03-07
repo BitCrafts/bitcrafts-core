@@ -1,7 +1,7 @@
 ﻿using BitCrafts.Infrastructure.Abstraction.Events;
-using Microsoft.Extensions.DependencyInjection; 
+using Microsoft.Extensions.DependencyInjection;
 
-namespace BitCrafts.UseCases.Abstraction;
+namespace BitCrafts.Infrastructure.Abstraction.UseCases;
 
 public abstract class BaseUseCase<TEventRequest, TEventResponse> : IUseCase<TEventRequest, TEventResponse>
     where TEventRequest : IEventRequest

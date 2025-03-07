@@ -8,7 +8,6 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\Infrastructure\BitCrafts.Infrastructure.Abstraction\BitCrafts.Infrastructure.Abstraction.csproj"/>
-        <ProjectReference Include="..\..\UsesCases\BitCrafts.UseCases.Abstraction\BitCrafts.UseCases.Abstraction.csproj"/>
     </ItemGroup>
 
 </Project>

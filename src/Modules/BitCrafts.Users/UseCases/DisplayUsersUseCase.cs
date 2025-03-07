@@ -1,5 +1,5 @@
 using BitCrafts.Infrastructure.Abstraction.Repositories;
-using BitCrafts.UseCases.Abstraction;
+using BitCrafts.Infrastructure.Abstraction.UseCases;
 using BitCrafts.Users.Abstraction.Entities;
 using BitCrafts.Users.Abstraction.Events;
 using BitCrafts.Users.Abstraction.Repositories;

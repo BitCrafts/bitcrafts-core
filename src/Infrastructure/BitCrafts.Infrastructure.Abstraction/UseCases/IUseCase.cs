@@ -1,6 +1,6 @@
 ﻿using BitCrafts.Infrastructure.Abstraction.Events;
 
-namespace BitCrafts.UseCases.Abstraction;
+namespace BitCrafts.Infrastructure.Abstraction.UseCases;
 
 public interface IUseCase<TEventRequest, TEventResponse> : IDisposable
     where TEventRequest : IEventRequest
