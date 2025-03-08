@@ -31,12 +31,12 @@ public sealed class AvaloniaExceptionManager : IExceptionManager
         HandleException((Exception)e.ExceptionObject);
     }
 
-    public void HandleException(Exception exception)
+    public async void HandleException(Exception exception)
     {
-        Dispatcher.UIThread.InvokeAsync(() =>
+        Dispatcher.UIThread.Invoke(() =>
         {
             _presenter.SetException(exception);
-            _windowManager.ShowWindow(_presenter as IPresenter, true);
+            _windowManager.ShowDialogWindowAsync<IErrorPresenter>();
         });
     }
 }

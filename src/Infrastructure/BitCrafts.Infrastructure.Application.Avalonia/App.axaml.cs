@@ -1,3 +1,4 @@
+using System;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
@@ -9,6 +10,8 @@ namespace BitCrafts.Infrastructure.Application.Avalonia;
 
 public class App : global::Avalonia.Application
 {
+    private IServiceScope _rootScope;
+
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
@@ -16,13 +19,14 @@ public class App : global::Avalonia.Application
 
     public override async void OnFrameworkInitializationCompleted()
     {
-        var uiManager = (AvaloniaUiManager)AvaloniaApplication.ServiceProvider.GetRequiredService<IUiManager>();
+        _rootScope = AvaloniaApplication.ServiceProvider.CreateScope();
+        var uiManager = (AvaloniaUiManager)_rootScope.ServiceProvider.GetRequiredService<IUiManager>();
         var desktop = ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
         if (desktop != null)
         {
             desktop.ShutdownMode = ShutdownMode.OnLastWindowClose;
             uiManager.SetNativeApplication(desktop);
-            await uiManager.StartAsync();
+            desktop.Exit += (_, __) => _rootScope.Dispose();
         }
 
         base.OnFrameworkInitializationCompleted();

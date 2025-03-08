@@ -12,8 +12,11 @@ namespace BitCrafts.Users.Presenters;
 
 public class CreateUserPresenter : BasePresenter<ICreateUserView>, ICreateUserPresenter
 {
+    private ICreateUserUseCase _useCase;
+
     public CreateUserPresenter(IServiceProvider serviceProvider) : base("New User", serviceProvider)
     {
+        _useCase = serviceProvider.GetService<ICreateUserUseCase>();
     }
 
     protected override void OnInitialize()
@@ -35,17 +38,20 @@ public class CreateUserPresenter : BasePresenter<ICreateUserView>, ICreateUserPr
 
     private void OnCloseClicked(object sender, EventArgs e)
     {
-        ServiceProvider.GetRequiredService<IWindowManager>().CloseWindow(this);
+        WindowManager.CloseWindow<ICreateUserPresenter>();
     }
 
-    private void OnSaveClicked(object sender, User e)
+    private async void OnSaveClicked(object sender, User e)
     {
         var userEvent = new UserEventRequest()
         {
             User = e,
             Password = View.GetPassword(),
         };
-        var response = ServiceProvider.GetRequiredService<ICreateUserUseCase>().Execute(userEvent);
-        ServiceProvider.GetRequiredService<IEventAggregator>().Publish<UserEventResponse>(response);
+        View.SetBusy("Loading...");
+        await Task.Delay(2000);
+        var response = await _useCase.Execute(userEvent);
+        View.UnsetBusy();
+        ServiceProvider.GetRequiredService<IEventAggregator>().Publish(response);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using BitCrafts.Infrastructure.Abstraction.Events;
+using BitCrafts.Infrastructure.Abstraction.Threading;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace BitCrafts.Infrastructure.Abstraction.UseCases;
@@ -8,19 +9,20 @@ public abstract class BaseUseCase<TEventRequest, TEventResponse> : IUseCase<TEve
     where TEventResponse : IEventResponse
 {
     private readonly IServiceProvider _provider;
-    protected IServiceProvider ServiceProdiver => _provider;
     protected IEventAggregator EventAggregator { get; private set; }
+    private IBackgroundThreadDispatcher BackgroundDispatcher { get; set; }
 
     protected BaseUseCase(IServiceProvider provider)
     {
         _provider = provider;
         EventAggregator = _provider.GetRequiredService<IEventAggregator>();
+        BackgroundDispatcher = _provider.GetService<IBackgroundThreadDispatcher>();
     }
 
 
-    public TEventResponse Execute(TEventRequest eventRequest)
+    public async Task<TEventResponse> Execute(TEventRequest eventRequest)
     {
-        var response = ExecuteCore(eventRequest);
+        var response = await BackgroundDispatcher.InvokeTaskAsync(() => ExecuteCore(eventRequest));
         response.Request = eventRequest;
         return response;
     }
@@ -32,7 +34,7 @@ public abstract class BaseUseCase<TEventRequest, TEventResponse> : IUseCase<TEve
         GC.SuppressFinalize(this);
     }
 
-    protected abstract TEventResponse ExecuteCore(TEventRequest eventRequest);
+    protected abstract Task<TEventResponse> ExecuteCore(TEventRequest eventRequest);
 
     protected virtual void Dispose(bool disposing)
     {

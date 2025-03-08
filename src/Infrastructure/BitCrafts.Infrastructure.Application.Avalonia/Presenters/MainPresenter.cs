@@ -13,17 +13,19 @@ namespace BitCrafts.Infrastructure.Application.Avalonia.Presenters;
 
 public sealed class MainPresenter : BasePresenter<IMainView>, IMainPresenter
 {
+    private IWorkspaceManager _workspaceManager;
+
     public MainPresenter(IServiceProvider serviceProvider)
         : base("Home Manager", serviceProvider)
     {
+        _workspaceManager = ServiceProvider.GetRequiredService<IWorkspaceManager>();
     }
 
     private void ViewOnMenuItemClicked(object sender, string e)
     {
         var module = ServiceProvider.GetServices<IModule>().FirstOrDefault(x => x.Name.Equals(e));
         var presenterType = module.GetPresenterType();
-        var presenter = ServiceProvider.GetRequiredService(presenterType) as IPresenter;
-        ServiceProvider.GetRequiredService<IWorkspaceManager>().ShowPresenter(presenter);
+        _workspaceManager.ShowPresenter(presenterType);
     }
 
     protected override void OnViewLoaded(object sender, EventArgs e)
@@ -33,7 +35,7 @@ public sealed class MainPresenter : BasePresenter<IMainView>, IMainPresenter
 
         if (View is MainView mainView)
         {
-            var workspaceManager = (AvaloniaWorkspaceManager)ServiceProvider.GetRequiredService<IWorkspaceManager>();
+            var workspaceManager = (AvaloniaWorkspaceManager)_workspaceManager;
             workspaceManager.SetTabControl(mainView.MainTabControl);
         }
     }

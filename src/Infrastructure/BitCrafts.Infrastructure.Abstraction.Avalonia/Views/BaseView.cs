@@ -13,17 +13,21 @@ public abstract class BaseView : UserControl, IView
     public event EventHandler ViewClosedEvent;
     protected IEventAggregator EventAggregator { get; private set; }
     protected IServiceProvider ServiceProvider { get; private set; }
-
     private string _title;
+    private bool _isBusy;
+    private string _busyMessage;
+    private Window _window;
 
-    protected BaseView(IServiceProvider serviceProvider)
+    protected BaseView()
     {
-        _serviceProvider = serviceProvider;
-        EventAggregator = serviceProvider.GetRequiredService<IEventAggregator>();
         Loaded += OnLoaded;
         Unloaded += OnUnloaded;
     }
 
+    public void SetParentWindow(Window window)
+    {
+        _window = window;
+    }
     private void OnUnloaded(object sender, RoutedEventArgs e)
     {
         ViewClosedEvent?.Invoke(this, EventArgs.Empty);
@@ -37,6 +41,18 @@ public abstract class BaseView : UserControl, IView
     public void SetTitle(string title)
     {
         _title = title;
+    }
+
+    public virtual void SetBusy(string message)
+    {
+        _isBusy = true;
+        _busyMessage = message;
+    }
+
+    public virtual void UnsetBusy()
+    {
+        _isBusy = false;
+        _busyMessage = null;
     }
 
     public string GetTitle()

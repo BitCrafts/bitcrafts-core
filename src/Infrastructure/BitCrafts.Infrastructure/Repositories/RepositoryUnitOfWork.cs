@@ -22,8 +22,8 @@ public sealed class RepositoryUnitOfWork : IRepositoryUnitOfWork
         return (T)_serviceProvider.GetService(typeof(T));
     }
 
-    public int Commit()
+    public Task<int> CommitAsync()
     {
-        return _dbContext.SaveChanges();
+        return _dbContext.SaveChangesAsync();
     }
 }

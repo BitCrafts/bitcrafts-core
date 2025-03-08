@@ -4,6 +4,8 @@ namespace BitCrafts.Infrastructure.Abstraction.Application.Managers;
 
 public interface IWorkspaceManager : IDisposable
 {
-    void ShowPresenter(IPresenter presenter);
-    void ClosePresenter(IPresenter presenter);
+    void ShowPresenter<TPresenter>() where TPresenter : IPresenter;
+    void ShowPresenter(Type presenterType);
+    void ClosePresenter(Type presenterType);
+    void ClosePresenter<TPresenter>() where TPresenter : IPresenter;
 }

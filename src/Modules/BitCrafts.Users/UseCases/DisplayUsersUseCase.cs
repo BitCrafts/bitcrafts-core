@@ -1,4 +1,6 @@
+using Avalonia.Threading;
 using BitCrafts.Infrastructure.Abstraction.Repositories;
+using BitCrafts.Infrastructure.Abstraction.Threading;
 using BitCrafts.Infrastructure.Abstraction.UseCases;
 using BitCrafts.Users.Abstraction.Entities;
 using BitCrafts.Users.Abstraction.Events;
@@ -12,24 +14,29 @@ namespace BitCrafts.Users.UseCases;
 public sealed class DisplayUsersUseCase : BaseUseCase<DisplayUsersEventRequest, DisplayUsersEventResponse>,
     IDisplayUsersUseCase
 {
-    public DisplayUsersUseCase(IServiceProvider provider) : base(provider)
+    private readonly IRepositoryUnitOfWork _repositoryUnitOfWork;
+    private readonly UsersDbContext _usersDbContext;
+
+    public DisplayUsersUseCase(IServiceProvider provider,
+        IRepositoryUnitOfWork repositoryUnitOfWork,
+        UsersDbContext usersDbContext) : base(provider)
     {
+        _repositoryUnitOfWork = repositoryUnitOfWork;
+        _usersDbContext = usersDbContext;
+        _repositoryUnitOfWork.SetDbContext(_usersDbContext);
     }
- 
-    private IEnumerable<User> GetUsers()
+
+    private async Task<IEnumerable<User>> GetUsers()
     {
-        var uow = ServiceProdiver.GetRequiredService<IRepositoryUnitOfWork>();
-        var db = ServiceProdiver.GetRequiredService<UsersDbContext>();
-        uow.SetDbContext(db);
-        var repository = uow.GetRepository<IUsersRepository>();
-        var result = repository.GetAll();
+        var repository = _repositoryUnitOfWork.GetRepository<IUsersRepository>();
+        var result = await repository.GetAllAsync();
         return result;
     }
 
-    protected override DisplayUsersEventResponse ExecuteCore(DisplayUsersEventRequest eventRequest)
+    protected override async Task<DisplayUsersEventResponse> ExecuteCore(DisplayUsersEventRequest eventRequest)
     {
-        var users = GetUsers();
-        var response = new DisplayUsersEventResponse(users);
+        var result = await GetUsers();
+        var response = new DisplayUsersEventResponse(result);
         return response;
     }
 }

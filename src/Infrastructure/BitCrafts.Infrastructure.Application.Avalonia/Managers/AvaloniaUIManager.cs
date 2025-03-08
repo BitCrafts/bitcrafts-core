@@ -12,17 +12,10 @@ public sealed class AvaloniaUiManager : IUiManager
 {
     private readonly IServiceProvider _serviceProvider;
     private IClassicDesktopStyleApplicationLifetime _applicationLifetime;
-    private AvaloniaWindowManager _windowManager;
-    private IMainPresenter _mainPresenter;
 
     public AvaloniaUiManager(IServiceProvider serviceProvider)
     {
         _serviceProvider = serviceProvider;
-    }
-
-    public Task StartAsync()
-    {
-        return Task.CompletedTask;
     }
 
     public Task ShutdownAsync()
@@ -35,6 +28,7 @@ public sealed class AvaloniaUiManager : IUiManager
     public void Dispose()
     {
         _serviceProvider.GetService<ILogger<AvaloniaUiManager>>().LogInformation("Disposing AvaloniaUIManager");
+        _serviceProvider.GetService<IWorkspaceManager>().Dispose();
     }
 
     public void SetNativeApplication(IClassicDesktopStyleApplicationLifetime applicationLifetime)
@@ -43,23 +37,19 @@ public sealed class AvaloniaUiManager : IUiManager
         _applicationLifetime.ShutdownRequested += ApplicationLifetimeOnShutdownRequested;
         _applicationLifetime.Exit += ApplicationLifetimeOnExit;
         _applicationLifetime.Startup += ApplicationLifetimeOnStartup;
-        _windowManager = _serviceProvider.GetService<IWindowManager>() as AvaloniaWindowManager;
-        if (_windowManager != null) _windowManager.SetNativeApplication(_applicationLifetime);
     }
 
     private void ApplicationLifetimeOnStartup(object sender, ControlledApplicationLifetimeStartupEventArgs e)
     {
-            _serviceProvider.GetService<ILogger<AvaloniaUiManager>>().LogInformation("ApplicationLifetime Startup");
-            _serviceProvider.GetRequiredService<IExceptionManager>();
-            _mainPresenter = _serviceProvider.GetRequiredService<IMainPresenter>();
-            _windowManager.ShowWindow(_mainPresenter);
-       
+        _serviceProvider.GetService<ILogger<AvaloniaUiManager>>().LogInformation("ApplicationLifetime Startup");
+        _serviceProvider.GetRequiredService<IExceptionManager>();
+        _serviceProvider.GetRequiredService<IWindowManager>().ShowWindow<IMainPresenter>();
     }
 
     private void ApplicationLifetimeOnExit(object sender, ControlledApplicationLifetimeExitEventArgs e)
     {
         _serviceProvider.GetService<ILogger<AvaloniaUiManager>>().LogInformation("ApplicationLifetime Exit");
-        _windowManager.Dispose();
+        _serviceProvider.GetRequiredService<IWindowManager>().Dispose();
     }
 
     private void ApplicationLifetimeOnShutdownRequested(object sender, ShutdownRequestedEventArgs e)

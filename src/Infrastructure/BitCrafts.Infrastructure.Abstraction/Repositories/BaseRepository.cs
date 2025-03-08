@@ -17,29 +17,32 @@ public abstract class Repository<TContext, TEntity> : IRepository<TEntity> where
         _dbSet = _context.Set<TEntity>();
     }
 
-    public TEntity GetById(int id)
+    public async Task<TEntity> GetByIdAsync(int id)
     {
-        return _dbSet.Find(id);
+        var result = await _dbSet.FindAsync(id).ConfigureAwait(false);
+        return result;
     }
 
-    public IEnumerable<TEntity> GetAll()
+    public async Task<IEnumerable<TEntity>> GetAllAsync()
     {
-        return _dbSet.ToList();
+        return await _dbSet.ToListAsync().ConfigureAwait(false);
     }
 
-    public IEnumerable<TEntity> Find(Expression<Func<TEntity, bool>> predicate)
+    public async Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate)
     {
-        return _dbSet.Where(predicate).ToList();
+        var result = await _dbSet.Where(predicate).ToListAsync().ConfigureAwait(false);
+        return result;
     }
 
-    public TEntity Add(TEntity entity)
+    public async Task<TEntity> AddAsync(TEntity entity)
     {
-        return _dbSet.Add(entity).Entity;
+        var result = await _dbSet.AddAsync(entity).ConfigureAwait(false);
+        return result.Entity;
     }
 
-    public void AddRange(IEnumerable<TEntity> entities)
+    public async Task AddRangeAsync(IEnumerable<TEntity> entities)
     {
-        _dbSet.AddRange(entities);
+        await _dbSet.AddRangeAsync(entities).ConfigureAwait(false);
     }
 
     public void Remove(TEntity entity)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -15,146 +16,171 @@ namespace BitCrafts.Infrastructure.Application.Avalonia.Managers;
 public sealed class AvaloniaWindowManager : IWindowManager
 {
     private readonly IServiceProvider _serviceProvider;
-    private IClassicDesktopStyleApplicationLifetime _applicationLifetime;
     private readonly Stack<Window> _windowStack = new();
+    private readonly Dictionary<IPresenter, Window> _presenterToWindowMap = new();
+    private readonly Dictionary<IPresenter, IServiceScope> _presenterToScopeMap = new(); 
     private Window _activeWindow;
-    private readonly Dictionary<Type, Window> _presenterToWindowMap = new();
 
     public AvaloniaWindowManager(IServiceProvider serviceProvider)
     {
         _serviceProvider = serviceProvider;
     }
 
-    public void SetNativeApplication(IClassicDesktopStyleApplicationLifetime applicationLifetime)
+    public void ShowWindow<TPresenter>() where TPresenter : IPresenter
     {
-        _applicationLifetime = applicationLifetime;
-    }
-    public async void ShowWindow(IPresenter presenter, bool isModal = false)
-    {
-        Type presenterType = presenter.GetType();
-        if (_presenterToWindowMap.ContainsKey(presenterType))
+        Type presenterType = typeof(TPresenter);
+        var scope = _serviceProvider.CreateScope();
+        var presenter = scope.ServiceProvider.GetRequiredService<TPresenter>();
+        if (_presenterToWindowMap.ContainsKey(presenter))
         {
-            Window existingWindow = _presenterToWindowMap[presenterType];
-            if (existingWindow.IsVisible)
-            {
-                existingWindow.Activate();
-            }
-            else
-            {
-                existingWindow.Show();
-            }
-
+            HandleExistingWindow(_presenterToWindowMap[presenter]);
             return;
         }
 
-        var view = presenter.GetView();
-        Window window = CreateWindow(view as UserControl, view.GetTitle(), isModal);
-        _presenterToWindowMap.TryAdd(presenterType, window);
-        _windowStack.Push(window);
-
-        window.Closed += (s, e) =>
+        var view = presenter.GetView() as UserControl;
+        if (view == null)
         {
-            _windowStack.Pop();
-            _presenterToWindowMap.Remove(presenterType);
-        };
-
-
-        if (!isModal)
-        {
-            _activeWindow = window;
-            window.Show();
+            scope.Dispose();
+            throw new InvalidOperationException("The view associated with the presenter is not a UserControl.");
         }
-        else
-        {
-            await window.ShowDialog(_activeWindow);
-        }
+
+        var window = CreateWindow(view, ((IView)view).GetTitle());
+        AddWindowToCollections(presenter, window, scope);
+        window.Show();
+        _activeWindow = window;
     }
 
-    public void CloseWindow(IPresenter presenter)
+    public async Task ShowDialogWindowAsync<TPresenter>() where TPresenter : IPresenter
     {
-        if (_presenterToWindowMap.TryGetValue(presenter.GetType(), out Window window))
+        var scope = _serviceProvider.CreateScope();
+        var presenter = scope.ServiceProvider.GetRequiredService<TPresenter>();
+
+        var view = presenter.GetView() as UserControl;
+        if (view == null)
+        {
+            scope.Dispose();
+            throw new InvalidOperationException(
+                "The view associated with the presenter is not a UserControl or is null.");
+        }
+
+        var window = CreateWindow(view, ((IView)view).GetTitle());
+
+        AddWindowToCollections(presenter, window, scope);
+
+        if (_activeWindow == null)
+        {
+            throw new InvalidOperationException("Application lifetime or active window not set.");
+        }
+
+        await window.ShowDialog(_activeWindow);
+    }
+
+    public void CloseWindow<TPresenter>() where TPresenter : IPresenter
+    {
+        var presenter = GetPresenterFromAnyScope<TPresenter>();
+        if (presenter != null && _presenterToWindowMap.TryGetValue(presenter, out Window window))
         {
             window.Close();
         }
     }
 
-    public void HideWindow(IPresenter presenter)
+    public void HideWindow<TPresenter>() where TPresenter : IPresenter
     {
-        if (_presenterToWindowMap.TryGetValue(presenter.GetType(), out Window window))
+        var presenter = GetPresenterFromAnyScope<TPresenter>();
+        if (presenter != null && _presenterToWindowMap.TryGetValue(presenter, out Window window))
         {
             window.Hide();
         }
     }
 
-    public void Dispose()
+    private TPresenter GetPresenterFromAnyScope<TPresenter>() where TPresenter : IPresenter
     {
-        // TODO release managed resources here
+        foreach (var scope in _presenterToScopeMap.Values)
+        {
+            var presenter =
+                scope.ServiceProvider.GetService<TPresenter>();
+            if (presenter != null)
+            {
+                return presenter;
+            }
+        }
+
+        return default;
     }
 
-    private Window CreateWindow(UserControl control, string title, bool isModal)
+    public void Dispose()
     {
-        var window = new Window();
-        window.Title = title;
-        window.MinWidth = 800;
-        window.MinHeight = 600;
-
-        window.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-        window.BorderThickness = new Thickness(5, 5, 5, 5);
-        window.BorderBrush = new SolidColorBrush(Colors.Black);
-        if (isModal)
+        while (_windowStack.TryPop(out var window))
         {
-            window.MinWidth = window.Width = control.Width;
-            window.MinHeight = window.Height = control.Height;
+            window.Close();
+        }
+
+        foreach (var scope in _presenterToScopeMap.Values)
+        {
+            scope.Dispose();
+        }
+
+        _presenterToScopeMap.Clear();
+        _presenterToWindowMap.Clear();
+    }
+
+    private void AddWindowToCollections(IPresenter presenter, Window window, IServiceScope scope)
+    {
+        _presenterToWindowMap[presenter] = window;
+        _presenterToScopeMap[presenter] = scope;
+        _windowStack.Push(window);
+
+        window.Closed += (s, e) =>
+        {
+            _windowStack.Pop();
+            _presenterToWindowMap.Remove(presenter);
+            if (_presenterToScopeMap.TryGetValue(presenter, out var scopeToDispose))
+            {
+                scopeToDispose.Dispose();
+                _presenterToScopeMap.Remove(presenter);
+            }
+
+            if (presenter is IDisposable disposablePresenter)
+            {
+                disposablePresenter.Dispose();
+            }
+        };
+    }
+
+    private void HandleExistingWindow(Window window)
+    {
+        if (window.IsVisible)
+        {
+            window.Activate();
         }
         else
         {
-            window.Width = 1024;
-            window.Height = 768;
+            window.Show();
         }
+    }
 
-        window.WindowState = isModal ? WindowState.Normal : WindowState.Maximized;
-        if (isModal)
+    private Window CreateWindow(UserControl control, string title)
+    {
+        var window = new Window
         {
-            window.Content = new Grid()
+            Title = title,
+            MinWidth = 800,
+            MinHeight = 600,
+            WindowStartupLocation = WindowStartupLocation.CenterScreen,
+            BorderThickness = new Thickness(5),
+            BorderBrush = new SolidColorBrush(Colors.Black),
+            Width = 1024,
+            Height = 768,
+            WindowState = WindowState.Maximized,
+            Content = new Grid
             {
                 VerticalAlignment = VerticalAlignment.Stretch,
                 HorizontalAlignment = HorizontalAlignment.Stretch,
-                Children =
-                {
-                    new Border()
-                    {
-                        BorderBrush = Brushes.Gray,
-                        BorderThickness = new Thickness(2),
-                        Child = control
-                    }
-                }
-            };
-        }
-        else
-        {
-            window.Content = new Grid()
-            {
-                VerticalAlignment = VerticalAlignment.Stretch,
-                HorizontalAlignment = HorizontalAlignment.Stretch,
-                Children =
-                {
-                    control
-                }
-            };
-        }
-
-        if (isModal)
-        {
-            window.SystemDecorations = SystemDecorations.None;
-            window.ShowInTaskbar = true;
-        }
-        else
-        {
-            window.SystemDecorations = SystemDecorations.Full;
-            window.ShowInTaskbar = true;
-        }
-
-
+                Children = { control }
+            },
+            SystemDecorations = SystemDecorations.Full,
+            ShowInTaskbar = true
+        };
         return window;
     }
 }

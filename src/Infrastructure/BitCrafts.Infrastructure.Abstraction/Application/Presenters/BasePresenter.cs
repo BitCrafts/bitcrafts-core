@@ -1,5 +1,7 @@
 ﻿using BitCrafts.Infrastructure.Abstraction.Application.Managers;
 using BitCrafts.Infrastructure.Abstraction.Application.Views;
+using BitCrafts.Infrastructure.Abstraction.Events;
+using BitCrafts.Infrastructure.Abstraction.Threading;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -13,6 +15,10 @@ public abstract class BasePresenter<TView> : IPresenter
     public string Title { get; protected set; }
     protected IWindowManager WindowManager => ServiceProvider.GetRequiredService<IWindowManager>();
     protected IWorkspaceManager WorkspaceManager => ServiceProvider.GetRequiredService<IWorkspaceManager>();
+    protected IEventAggregator EventAggregator => ServiceProvider.GetRequiredService<IEventAggregator>();
+
+    protected IBackgroundThreadDispatcher BackgroundThreadDispatcher =>
+        ServiceProvider.GetRequiredService<IBackgroundThreadDispatcher>();
 
     protected ILogger<BasePresenter<TView>> Logger =>
         ServiceProvider.GetRequiredService<ILogger<BasePresenter<TView>>>();
@@ -27,6 +33,7 @@ public abstract class BasePresenter<TView> : IPresenter
         View.ViewClosedEvent += OnViewClosed;
         Logger.LogInformation($"Initializing {this.GetType().Name}");
         InitializeCore();
+        
     }
 
     protected virtual void OnViewClosed(object sender, EventArgs e)

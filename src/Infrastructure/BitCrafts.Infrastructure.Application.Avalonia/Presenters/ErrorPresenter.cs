@@ -29,7 +29,7 @@ public sealed class ErrorPresenter : BasePresenter<IErrorView>, IErrorPresenter
 
     private void ViewOnCloseEvent(object sender, EventArgs e)
     {
-        ServiceProvider.GetRequiredService<IWindowManager>().CloseWindow(this);
+        ServiceProvider.GetRequiredService<IWindowManager>().CloseWindow<IErrorPresenter>();
     }
 
     public void SetException(Exception exception)

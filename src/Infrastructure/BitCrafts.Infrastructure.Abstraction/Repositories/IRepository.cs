@@ -5,11 +5,11 @@ namespace BitCrafts.Infrastructure.Abstraction.Repositories;
 
 public interface IRepository<T> where T : class, IEntity
 {
-    T GetById(int id);
-    IEnumerable<T> GetAll();
-    IEnumerable<T> Find(Expression<Func<T, bool>> predicate);
-    T Add(T entity);
-    void AddRange(IEnumerable<T> entities);
+    Task<T> GetByIdAsync(int id);
+    Task<IEnumerable<T>> GetAllAsync();
+    Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate);
+    Task<T> AddAsync(T entity);
+    Task AddRangeAsync(IEnumerable<T> entities);
     void Remove(T entity);
     void RemoveRange(IEnumerable<T> entities);
 }

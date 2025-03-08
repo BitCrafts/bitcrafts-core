@@ -7,4 +7,5 @@ public interface IThreadDispatcher
     void Invoke(Action action);
     Task InvokeAsync(Action action);
     Task<T> InvokeAsync<T>(Func<T> func);
+    Task<T> InvokeTaskAsync<T>(Func<Task<T>> taskFunc);
 }

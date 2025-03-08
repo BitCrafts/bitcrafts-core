@@ -13,8 +13,7 @@ public partial class CreateUserView : BaseView, ICreateUserView
     public event EventHandler<User> SaveClicked;
     public event EventHandler CloseClicked;
 
-    public CreateUserView(IServiceProvider serviceProvider)
-        : base(serviceProvider)
+    public CreateUserView()
     {
         InitializeComponent();
         AddButton.Click += AddButtonOnClick;
@@ -61,5 +60,17 @@ public partial class CreateUserView : BaseView, ICreateUserView
         }
 
         base.Dispose(disposing);
+    }
+
+    public override void UnsetBusy()
+    {
+        LoadingOverlay.IsVisible = false;
+        base.UnsetBusy();
+    }
+
+    public override void SetBusy(string message)
+    {
+        LoadingOverlay.IsVisible = true;
+        base.SetBusy(message);
     }
 }

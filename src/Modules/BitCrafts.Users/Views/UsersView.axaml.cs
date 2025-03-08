@@ -24,8 +24,7 @@ public partial class UsersView : BaseView, IUsersView
         UsersDataGrid.ItemsSource = _users;
     }
 
-    public UsersView(IServiceProvider serviceProvider)
-        : base(serviceProvider)
+    public UsersView()
     {
         InitializeComponent();
         UsersDataGrid.ItemsSource = _users;
@@ -45,5 +44,17 @@ public partial class UsersView : BaseView, IUsersView
     private void Closebutton_OnClick(object sender, RoutedEventArgs e)
     {
         CloseClicked?.Invoke(this, EventArgs.Empty);
+    }
+
+    public override void SetBusy(string message)
+    {
+        LoadingOverlay.IsVisible = true;
+        base.SetBusy(message);
+    }
+
+    public override void UnsetBusy()
+    {
+        LoadingOverlay.IsVisible = false;
+        base.UnsetBusy();
     }
 }

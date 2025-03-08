@@ -19,14 +19,15 @@ public class UsersModule : IUsersModule
 
     public void RegisterServices(IServiceCollection services)
     {
-        services.TryAddTransient<ICreateUserUseCase, CreateUserUseCase>();
-        services.TryAddTransient<IDisplayUsersUseCase, DisplayUsersUseCase>();
-        services.TryAddTransient<IUsersView, UsersView>();
-        services.TryAddTransient<ICreateUserView,CreateUserView>();
-        services.TryAddTransient<ICreateUserPresenter, CreateUserPresenter>();
-        services.TryAddTransient<IUsersPresenter, UsersPresenter>();
-        services.AddDbContext<UsersDbContext>();
+        services.AddTransient<ICreateUserUseCase, CreateUserUseCase>();
+        services.AddTransient<IDisplayUsersUseCase, DisplayUsersUseCase>();
+        services.AddTransient<ICreateUserView, CreateUserView>();
+        services.AddScoped<ICreateUserPresenter, CreateUserPresenter>();
+        services.AddTransient<IUsersView, UsersView>();
+        services.AddScoped<IUsersPresenter, UsersPresenter>();
+
         services.AddScoped<IUsersRepository, UsersRepository>();
+        services.AddDbContext<UsersDbContext>();
     }
 
     public Type GetViewType()

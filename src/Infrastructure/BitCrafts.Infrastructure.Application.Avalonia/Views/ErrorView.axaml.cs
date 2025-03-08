@@ -12,7 +12,7 @@ namespace BitCrafts.Infrastructure.Application.Avalonia.Views;
 
 public partial class ErrorView : BaseView, IErrorView
 {
-    public ErrorView(IServiceProvider serviceProvider) : base(serviceProvider)
+    public ErrorView()
     {
         InitializeComponent();
     }

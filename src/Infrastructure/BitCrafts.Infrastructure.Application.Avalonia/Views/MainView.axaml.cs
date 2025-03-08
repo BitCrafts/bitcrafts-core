@@ -9,9 +9,9 @@ namespace BitCrafts.Infrastructure.Application.Avalonia.Views;
 
 public partial class MainView : BaseView, IMainView
 {
-    
     public event EventHandler<string> MenuItemClicked;
-    public MainView(IServiceProvider serviceProvider) : base(serviceProvider)
+
+    public MainView()
     {
         InitializeComponent();
     }
@@ -29,7 +29,7 @@ public partial class MainView : BaseView, IMainView
         }
 
         base.Dispose(disposing);
-    } 
+    }
 
     public void InitializeModulesMenu(IEnumerable<IModule> modules)
     {

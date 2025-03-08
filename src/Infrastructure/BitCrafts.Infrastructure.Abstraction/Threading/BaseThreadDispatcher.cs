@@ -105,6 +105,27 @@ public abstract class BaseThreadDispatcher : IThreadDispatcher, IDisposable
         return tcs.Task;
     }
 
+    public async Task<T> InvokeTaskAsync<T>(Func<Task<T>> taskFunc)
+    {
+        ObjectDisposedException.ThrowIf(_isDisposed, GetType());
+
+        var tcs = new TaskCompletionSource<T>();
+        _taskQueue.Add(async void () =>
+        {
+            try
+            {
+                var result = await taskFunc();
+                tcs.SetResult(result);
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        });
+
+        return await tcs.Task;
+    }
+
     private void DispatcherThreadStart()
     {
         try
