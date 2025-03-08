@@ -7,23 +7,30 @@ using BitCrafts.Infrastructure.Abstraction.Modules;
 using BitCrafts.Infrastructure.Application.Avalonia.Managers;
 using BitCrafts.Infrastructure.Application.Avalonia.Views;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using MainView = BitCrafts.Infrastructure.Application.Avalonia.Views.MainView;
 
 namespace BitCrafts.Infrastructure.Application.Avalonia.Presenters;
 
 public sealed class MainPresenter : BasePresenter<IMainView>, IMainPresenter
 {
+    private readonly IServiceProvider _serviceProvider;
+    private readonly IUiManager _uiManager;
     private IWorkspaceManager _workspaceManager;
 
-    public MainPresenter(IServiceProvider serviceProvider)
-        : base("Home Manager", serviceProvider)
+    public MainPresenter(IServiceProvider serviceProvider, IMainView view, IUiManager uiManager,
+        IWorkspaceManager workspaceManager,
+        ILogger<MainPresenter> logger)
+        : base("Home Manager", view, logger)
     {
-        _workspaceManager = ServiceProvider.GetRequiredService<IWorkspaceManager>();
+        _serviceProvider = serviceProvider;
+        _uiManager = uiManager;
+        _workspaceManager = workspaceManager;
     }
 
     private void ViewOnMenuItemClicked(object sender, string e)
     {
-        var module = ServiceProvider.GetServices<IModule>().FirstOrDefault(x => x.Name.Equals(e));
+        var module = _serviceProvider.GetServices<IModule>().FirstOrDefault(x => x.Name.Equals(e));
         var presenterType = module.GetPresenterType();
         _workspaceManager.ShowPresenter(presenterType);
     }
@@ -31,7 +38,7 @@ public sealed class MainPresenter : BasePresenter<IMainView>, IMainPresenter
     protected override void OnViewLoaded(object sender, EventArgs e)
     {
         base.OnViewLoaded(sender, e);
-        View.InitializeModulesMenu(ServiceProvider.GetServices<IModule>());
+        View.InitializeModulesMenu(_serviceProvider.GetServices<IModule>());
 
         if (View is MainView mainView)
         {
@@ -43,7 +50,7 @@ public sealed class MainPresenter : BasePresenter<IMainView>, IMainPresenter
     protected override async void OnViewClosed(object sender, EventArgs e)
     {
         base.OnViewClosed(sender, e);
-        await ServiceProvider.GetRequiredService<IUiManager>().ShutdownAsync();
+        await _uiManager.ShutdownAsync();
     }
 
     protected override void OnInitialize()

@@ -4,18 +4,19 @@ using Avalonia.Threading;
 using BitCrafts.Infrastructure.Abstraction.Application.Managers;
 using BitCrafts.Infrastructure.Abstraction.Application.Presenters;
 using BitCrafts.Infrastructure.Application.Avalonia.Presenters;
+using Microsoft.Extensions.Logging;
 
 namespace BitCrafts.Infrastructure.Application.Avalonia.Managers;
 
 public sealed class AvaloniaExceptionManager : IExceptionManager
 {
     private readonly IWindowManager _windowManager;
-    private readonly IErrorPresenter _presenter;
+    private readonly ILogger<AvaloniaExceptionManager> _logger;
 
-    public AvaloniaExceptionManager(IWindowManager windowManager, IErrorPresenter presenter)
+    public AvaloniaExceptionManager(IWindowManager windowManager, ILogger<AvaloniaExceptionManager> logger)
     {
         _windowManager = windowManager;
-        _presenter = presenter;
+        _logger = logger;
         AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
         TaskScheduler.UnobservedTaskException += TaskSchedulerOnUnobservedTaskException;
     }
@@ -31,12 +32,8 @@ public sealed class AvaloniaExceptionManager : IExceptionManager
         HandleException((Exception)e.ExceptionObject);
     }
 
-    public async void HandleException(Exception exception)
+    public void HandleException(Exception exception)
     {
-        Dispatcher.UIThread.Invoke(() =>
-        {
-            _presenter.SetException(exception);
-            _windowManager.ShowDialogWindowAsync<IErrorPresenter>();
-        });
+        _logger.LogCritical(exception, "Unhandled exception");
     }
 }

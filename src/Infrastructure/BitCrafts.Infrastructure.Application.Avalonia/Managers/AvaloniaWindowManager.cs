@@ -18,7 +18,6 @@ public sealed class AvaloniaWindowManager : IWindowManager
     private readonly IServiceProvider _serviceProvider;
     private readonly Stack<Window> _windowStack = new();
     private readonly Dictionary<IPresenter, Window> _presenterToWindowMap = new();
-    private readonly Dictionary<IPresenter, IServiceScope> _presenterToScopeMap = new(); 
     private Window _activeWindow;
 
     public AvaloniaWindowManager(IServiceProvider serviceProvider)
@@ -29,8 +28,7 @@ public sealed class AvaloniaWindowManager : IWindowManager
     public void ShowWindow<TPresenter>() where TPresenter : IPresenter
     {
         Type presenterType = typeof(TPresenter);
-        var scope = _serviceProvider.CreateScope();
-        var presenter = scope.ServiceProvider.GetRequiredService<TPresenter>();
+        var presenter = _serviceProvider.GetRequiredService(presenterType) as IPresenter;
         if (_presenterToWindowMap.ContainsKey(presenter))
         {
             HandleExistingWindow(_presenterToWindowMap[presenter]);
@@ -40,32 +38,30 @@ public sealed class AvaloniaWindowManager : IWindowManager
         var view = presenter.GetView() as UserControl;
         if (view == null)
         {
-            scope.Dispose();
             throw new InvalidOperationException("The view associated with the presenter is not a UserControl.");
         }
 
         var window = CreateWindow(view, ((IView)view).GetTitle());
-        AddWindowToCollections(presenter, window, scope);
+        AddWindowToCollections(presenter, window);
         window.Show();
         _activeWindow = window;
     }
 
     public async Task ShowDialogWindowAsync<TPresenter>() where TPresenter : IPresenter
     {
-        var scope = _serviceProvider.CreateScope();
-        var presenter = scope.ServiceProvider.GetRequiredService<TPresenter>();
+        Type presenterType = typeof(TPresenter);
+        var presenter = _serviceProvider.GetRequiredService(presenterType) as IPresenter;
 
         var view = presenter.GetView() as UserControl;
         if (view == null)
         {
-            scope.Dispose();
             throw new InvalidOperationException(
                 "The view associated with the presenter is not a UserControl or is null.");
         }
 
         var window = CreateWindow(view, ((IView)view).GetTitle());
 
-        AddWindowToCollections(presenter, window, scope);
+        AddWindowToCollections(presenter, window);
 
         if (_activeWindow == null)
         {
@@ -95,17 +91,10 @@ public sealed class AvaloniaWindowManager : IWindowManager
 
     private TPresenter GetPresenterFromAnyScope<TPresenter>() where TPresenter : IPresenter
     {
-        foreach (var scope in _presenterToScopeMap.Values)
-        {
-            var presenter =
-                scope.ServiceProvider.GetService<TPresenter>();
-            if (presenter != null)
-            {
-                return presenter;
-            }
-        }
+        var presenter =
+            _serviceProvider.GetService<TPresenter>();
 
-        return default;
+        return presenter;
     }
 
     public void Dispose()
@@ -115,31 +104,19 @@ public sealed class AvaloniaWindowManager : IWindowManager
             window.Close();
         }
 
-        foreach (var scope in _presenterToScopeMap.Values)
-        {
-            scope.Dispose();
-        }
-
-        _presenterToScopeMap.Clear();
         _presenterToWindowMap.Clear();
     }
 
-    private void AddWindowToCollections(IPresenter presenter, Window window, IServiceScope scope)
+    private void AddWindowToCollections(IPresenter presenter, Window window)
     {
         _presenterToWindowMap[presenter] = window;
-        _presenterToScopeMap[presenter] = scope;
         _windowStack.Push(window);
 
         window.Closed += (s, e) =>
         {
             _windowStack.Pop();
             _presenterToWindowMap.Remove(presenter);
-            if (_presenterToScopeMap.TryGetValue(presenter, out var scopeToDispose))
-            {
-                scopeToDispose.Dispose();
-                _presenterToScopeMap.Remove(presenter);
-            }
-
+            
             if (presenter is IDisposable disposablePresenter)
             {
                 disposablePresenter.Dispose();

@@ -1,3 +1,4 @@
+using BitCrafts.Infrastructure.Abstraction.Application.Managers;
 using BitCrafts.Infrastructure.Abstraction.Threading;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -6,18 +7,19 @@ namespace BitCrafts.Infrastructure.Abstraction.Application;
 
 public abstract class BaseApplication : IApplication
 {
-    private readonly IServiceProvider _serviceProvider;
     protected readonly ILogger<BaseApplication> Logger;
+    private readonly IBackgroundThreadDispatcher _backgroundThreadDispatcher;
+    public IServiceProvider ServiceProvider { get; set; }
 
-    protected BaseApplication(ILogger<BaseApplication> logger, IServiceProvider serviceProvider)
+    protected BaseApplication(ILogger<BaseApplication> logger, IBackgroundThreadDispatcher backgroundThreadDispatcher)
     {
         Logger = logger;
-        _serviceProvider = serviceProvider;
+        _backgroundThreadDispatcher = backgroundThreadDispatcher;
     }
 
     public async Task StartAsync()
     {
-        _serviceProvider.GetRequiredService<IBackgroundThreadDispatcher>().Start();
+        _backgroundThreadDispatcher.Start();
         await OnStartupAsync();
     }
 
@@ -33,7 +35,7 @@ public abstract class BaseApplication : IApplication
     {
         if (disposing)
         {
-            _serviceProvider.GetRequiredService<IBackgroundThreadDispatcher>().Stop();
+            _backgroundThreadDispatcher.Stop();
         }
 
         Logger.LogInformation("Application disposed");

@@ -10,25 +10,22 @@ namespace BitCrafts.Infrastructure.Application.Avalonia;
 
 public class App : global::Avalonia.Application
 {
-    private IServiceScope _rootScope;
+    public static IServiceProvider ServiceProvider { get; set; }
 
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
     }
 
-    public override async void OnFrameworkInitializationCompleted()
+    public override void OnFrameworkInitializationCompleted()
     {
-        _rootScope = AvaloniaApplication.ServiceProvider.CreateScope();
-        var uiManager = (AvaloniaUiManager)_rootScope.ServiceProvider.GetRequiredService<IUiManager>();
+        base.OnFrameworkInitializationCompleted();
+        var uiManager = (AvaloniaUiManager)ServiceProvider.GetRequiredService<IUiManager>();
         var desktop = ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
         if (desktop != null)
         {
             desktop.ShutdownMode = ShutdownMode.OnLastWindowClose;
             uiManager.SetNativeApplication(desktop);
-            desktop.Exit += (_, __) => _rootScope.Dispose();
         }
-
-        base.OnFrameworkInitializationCompleted();
     }
 }

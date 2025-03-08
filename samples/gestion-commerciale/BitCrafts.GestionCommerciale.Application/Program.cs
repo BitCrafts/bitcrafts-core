@@ -28,9 +28,9 @@ internal class Program
             .AddBitCraftsAvaloniaApplication();
 
         var serviceProvider = serviceCollection.BuildServiceProvider();
-
         var factory = serviceProvider.GetRequiredService<IApplicationFactory>();
-        using var app = factory.CreateApplication();
+        var app = factory.CreateApplication();
         await app.StartAsync();
+        app.Dispose();
     }
 }

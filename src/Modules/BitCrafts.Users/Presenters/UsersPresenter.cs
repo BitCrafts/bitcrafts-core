@@ -10,21 +10,30 @@ using BitCrafts.Users.Abstraction.Views;
 using BitCrafts.Users.Entities;
 using BitCrafts.Users.Views;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace BitCrafts.Users.Presenters;
 
 public sealed class UsersPresenter : BasePresenter<IUsersView>, IUsersPresenter
 {
-    private IDisplayUsersUseCase _displayUsersUseCase;
+    private readonly IWindowManager _windowManager;
+    private readonly IWorkspaceManager _workspaceManager;
+    private readonly IEventAggregator _eventAggregator;
+    private readonly IDisplayUsersUseCase _displayUsersUseCase;
 
-    public UsersPresenter(IServiceProvider serviceProvider) : base("Users", serviceProvider)
+    public UsersPresenter(IDisplayUsersUseCase displayUsersUseCase, IWindowManager windowManager, IUsersView view
+        , ILogger<UsersPresenter> logger, IWorkspaceManager workspaceManager,
+        IEventAggregator eventAggregator) : base("Users", view, logger)
     {
-        _displayUsersUseCase = ServiceProvider.GetRequiredService<IDisplayUsersUseCase>();
+        _windowManager = windowManager;
+        _workspaceManager = workspaceManager;
+        _eventAggregator = eventAggregator;
+        _displayUsersUseCase = displayUsersUseCase;
     }
 
     public async Task SaveUserAsync()
     {
-        await WindowManager.ShowDialogWindowAsync<ICreateUserPresenter>();
+        await _windowManager.ShowDialogWindowAsync<ICreateUserPresenter>();
     }
 
     private void OnCreateUser(UserEventResponse arg)
@@ -46,15 +55,15 @@ public sealed class UsersPresenter : BasePresenter<IUsersView>, IUsersPresenter
     {
         View.SaveClicked += async (_, _) => await SaveUserAsync();
         View.CloseClicked += (_, _) =>
-            ServiceProvider.GetRequiredService<IWorkspaceManager>().ClosePresenter<IUsersPresenter>();
-        ServiceProvider.GetRequiredService<IEventAggregator>().Subscribe<UserEventResponse>(OnCreateUser);
+            _workspaceManager.ClosePresenter<IUsersPresenter>();
+        _eventAggregator.Subscribe<UserEventResponse>(OnCreateUser);
     }
 
     protected override void Dispose(bool disposing)
     {
         if (disposing)
         {
-            ServiceProvider.GetRequiredService<IEventAggregator>().Unsubscribe<UserEventResponse>(OnCreateUser);
+            _eventAggregator.Unsubscribe<UserEventResponse>(OnCreateUser);
         }
 
         base.Dispose(disposing);

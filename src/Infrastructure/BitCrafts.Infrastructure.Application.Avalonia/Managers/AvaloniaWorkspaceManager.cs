@@ -15,7 +15,6 @@ public sealed class AvaloniaWorkspaceManager : IWorkspaceManager
     private readonly IServiceProvider _serviceProvider;
     private TabControl _tabControl;
     private readonly Dictionary<IPresenter, TabItem> _presenterToTabItemMap = new();
-    private readonly Dictionary<IPresenter, IServiceScope> _presenterToScopeMap = new();
 
     private ILogger<AvaloniaWorkspaceManager> _logger;
 
@@ -38,8 +37,7 @@ public sealed class AvaloniaWorkspaceManager : IWorkspaceManager
 
     public void ShowPresenter(Type presenterType)
     {
-        var scope = _serviceProvider.CreateScope();
-        var presenter = scope.ServiceProvider.GetRequiredService(presenterType) as IPresenter;
+        var presenter = _serviceProvider.GetRequiredService(presenterType) as IPresenter;
         if (_presenterToTabItemMap.ContainsKey(presenter))
         {
             _tabControl.SelectedItem = _presenterToTabItemMap[presenter];
@@ -49,14 +47,12 @@ public sealed class AvaloniaWorkspaceManager : IWorkspaceManager
         var view = presenter.GetView() as UserControl; // Cast en UserControl
         if (view == null)
         {
-            scope.Dispose();
             throw new InvalidOperationException("The view associated with the presenter is not a UserControl.");
         }
 
         var tabItem = new TabItem { Header = ((IView)view).GetTitle(), Content = view };
 
         _presenterToTabItemMap[presenter] = tabItem;
-        _presenterToScopeMap[presenter] = scope;
         _tabControl.Items.Add(tabItem);
         _tabControl.SelectedItem = tabItem;
     }
@@ -72,12 +68,6 @@ public sealed class AvaloniaWorkspaceManager : IWorkspaceManager
             _presenterToTabItemMap.Remove(presenter);
 
 
-            if (_presenterToScopeMap.TryGetValue(presenter, out var scopeToDispose))
-            {
-                scopeToDispose.Dispose();
-                _presenterToScopeMap.Remove(presenter);
-            }
-
             if (presenter is IDisposable disposablePresenter)
             {
                 disposablePresenter.Dispose();
@@ -92,16 +82,9 @@ public sealed class AvaloniaWorkspaceManager : IWorkspaceManager
 
     private IPresenter GetPresenterFromAnyScope(Type presenterType)
     {
-        foreach (var scope in _presenterToScopeMap.Values)
-        {
-            var presenter = scope.ServiceProvider.GetService(presenterType) as IPresenter;
-            if (presenter != null)
-            {
-                return presenter;
-            }
-        }
+        var presenter = _serviceProvider.GetService(presenterType) as IPresenter;
 
-        return default;
+        return presenter;
     }
 
     public void Dispose()
@@ -113,12 +96,6 @@ public sealed class AvaloniaWorkspaceManager : IWorkspaceManager
             ClosePresenterByInstance(presenter);
         }
 
-        foreach (var scope in _presenterToScopeMap.Values)
-        {
-            scope.Dispose();
-        }
-
-        _presenterToScopeMap.Clear();
         _presenterToTabItemMap.Clear();
 
         _logger.LogInformation("Disposed AvaloniaWorkspaceManager.");
@@ -130,12 +107,6 @@ public sealed class AvaloniaWorkspaceManager : IWorkspaceManager
         {
             _tabControl.Items.Remove(tabItem);
             _presenterToTabItemMap.Remove(presenter);
-
-            if (_presenterToScopeMap.TryGetValue(presenter, out var scopeToDispose))
-            {
-                scopeToDispose.Dispose();
-                _presenterToScopeMap.Remove(presenter);
-            }
 
             if (presenter is IDisposable disposablePresenter)
             {

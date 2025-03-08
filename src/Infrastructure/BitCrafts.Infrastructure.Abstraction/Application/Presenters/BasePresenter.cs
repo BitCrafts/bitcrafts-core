@@ -10,30 +10,20 @@ namespace BitCrafts.Infrastructure.Abstraction.Application.Presenters;
 public abstract class BasePresenter<TView> : IPresenter
     where TView : IView
 {
-    protected IServiceProvider ServiceProvider { get; }
+    private readonly ILogger<BasePresenter<TView>> _logger;
     public TView View { get; private set; }
     public string Title { get; protected set; }
-    protected IWindowManager WindowManager => ServiceProvider.GetRequiredService<IWindowManager>();
-    protected IWorkspaceManager WorkspaceManager => ServiceProvider.GetRequiredService<IWorkspaceManager>();
-    protected IEventAggregator EventAggregator => ServiceProvider.GetRequiredService<IEventAggregator>();
+    protected ILogger<BasePresenter<TView>> Logger => _logger;
 
-    protected IBackgroundThreadDispatcher BackgroundThreadDispatcher =>
-        ServiceProvider.GetRequiredService<IBackgroundThreadDispatcher>();
-
-    protected ILogger<BasePresenter<TView>> Logger =>
-        ServiceProvider.GetRequiredService<ILogger<BasePresenter<TView>>>();
-
-    public BasePresenter(string title, IServiceProvider serviceProvider)
+    public BasePresenter(string title, TView view, ILogger<BasePresenter<TView>> logger)
     {
-        ServiceProvider = serviceProvider;
+        _logger = logger;
         Title = title;
-        View = serviceProvider.GetRequiredService<TView>();
+        View = view;
         View.SetTitle(Title);
         View.ViewLoadedEvent += OnViewLoaded;
         View.ViewClosedEvent += OnViewClosed;
         Logger.LogInformation($"Initializing {this.GetType().Name}");
-        InitializeCore();
-        
     }
 
     protected virtual void OnViewClosed(object sender, EventArgs e)
@@ -44,10 +34,6 @@ public abstract class BasePresenter<TView> : IPresenter
     protected virtual void OnViewLoaded(object sender, EventArgs e)
     {
         Logger.LogInformation($"Loaded {this.GetType().Name}");
-    }
-
-    private void InitializeCore()
-    {
         OnInitialize();
     }
 

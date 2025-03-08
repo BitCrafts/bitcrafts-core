@@ -26,7 +26,14 @@ public sealed class ApplicationFactory : IApplicationFactory
         switch (applicationType)
         {
             default:
-                return _serviceProvider.GetRequiredKeyedService<IApplication>("Avalonia");
+                return CreateAndSetServiceProvider();
         }
+    }
+
+    private IApplication CreateAndSetServiceProvider()
+    {
+        var app = _serviceProvider.GetRequiredKeyedService<IApplication>("Avalonia");
+        app.ServiceProvider = _serviceProvider;
+        return app;
     }
 }

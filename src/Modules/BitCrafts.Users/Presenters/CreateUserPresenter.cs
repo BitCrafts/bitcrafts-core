@@ -7,16 +7,24 @@ using BitCrafts.Users.Abstraction.Presenters;
 using BitCrafts.Users.Abstraction.UseCases;
 using BitCrafts.Users.Abstraction.Views;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace BitCrafts.Users.Presenters;
 
 public class CreateUserPresenter : BasePresenter<ICreateUserView>, ICreateUserPresenter
 {
-    private ICreateUserUseCase _useCase;
+    private readonly ICreateUserUseCase _createUserUseCase;
+    private readonly IEventAggregator _eventAggregator;
+    private readonly IWindowManager _windowManager;
 
-    public CreateUserPresenter(IServiceProvider serviceProvider) : base("New User", serviceProvider)
+    public CreateUserPresenter(ICreateUserView view, ICreateUserUseCase createUserUseCase,
+        IEventAggregator eventAggregator, IWindowManager windowManager,
+        ILogger<CreateUserPresenter> logger) : base("New User", view,
+        logger)
     {
-        _useCase = serviceProvider.GetService<ICreateUserUseCase>();
+        _createUserUseCase = createUserUseCase;
+        _eventAggregator = eventAggregator;
+        _windowManager = windowManager;
     }
 
     protected override void OnInitialize()
@@ -38,7 +46,7 @@ public class CreateUserPresenter : BasePresenter<ICreateUserView>, ICreateUserPr
 
     private void OnCloseClicked(object sender, EventArgs e)
     {
-        WindowManager.CloseWindow<ICreateUserPresenter>();
+        _windowManager.CloseWindow<ICreateUserPresenter>();
     }
 
     private async void OnSaveClicked(object sender, User e)
@@ -50,8 +58,8 @@ public class CreateUserPresenter : BasePresenter<ICreateUserView>, ICreateUserPr
         };
         View.SetBusy("Loading...");
         await Task.Delay(2000);
-        var response = await _useCase.Execute(userEvent);
+        var response = await _createUserUseCase.Execute(userEvent);
         View.UnsetBusy();
-        ServiceProvider.GetRequiredService<IEventAggregator>().Publish(response);
+        _eventAggregator.Publish(response);
     }
 }
