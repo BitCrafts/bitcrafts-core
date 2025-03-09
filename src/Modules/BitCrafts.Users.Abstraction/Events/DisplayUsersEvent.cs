@@ -3,9 +3,9 @@ using BitCrafts.Users.Abstraction.Entities;
 
 namespace BitCrafts.Users.Abstraction.Events;
 
-public class DisplayUsersEventResponse : BaseEventResponse
+public class DisplayUsersEvent : BaseEvent
 {
-    public DisplayUsersEventResponse(IEnumerable<User> users)
+    public DisplayUsersEvent(IEnumerable<User> users)
     {
         Users = users;
     }

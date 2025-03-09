@@ -7,7 +7,7 @@ namespace BitCrafts.Infrastructure.Abstraction.Avalonia.Views;
 public abstract class BaseView : UserControl, IView
 {
     private string _title;
-    
+
 
     protected BaseView()
     {
@@ -50,12 +50,12 @@ public abstract class BaseView : UserControl, IView
         GC.SuppressFinalize(this);
     }
 
-    private void OnUnloaded(object sender, RoutedEventArgs e)
+    protected virtual void OnUnloaded(object sender, RoutedEventArgs e)
     {
         ViewClosedEvent?.Invoke(this, EventArgs.Empty);
     }
 
-    private void OnLoaded(object sender, RoutedEventArgs e)
+    protected virtual void OnLoaded(object sender, RoutedEventArgs e)
     {
         ViewLoadedEvent?.Invoke(this, EventArgs.Empty);
     }

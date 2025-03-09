@@ -8,6 +8,5 @@ public class UsersRepository : Repository<UsersDbContext, User>, IUsersRepositor
 {
     public UsersRepository(UsersDbContext context) : base(context)
     {
-        
     }
 }

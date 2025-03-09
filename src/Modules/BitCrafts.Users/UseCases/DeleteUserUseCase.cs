@@ -1,30 +1,30 @@
+using BitCrafts.Infrastructure.Abstraction.Events;
 using BitCrafts.Infrastructure.Abstraction.Repositories;
 using BitCrafts.Infrastructure.Abstraction.UseCases;
+using BitCrafts.Users.Abstraction.Entities;
 using BitCrafts.Users.Abstraction.Events;
 using BitCrafts.Users.Abstraction.Repositories;
 using BitCrafts.Users.Abstraction.UseCases;
 
 namespace BitCrafts.Users.UseCases;
 
-public sealed class DeleteUserUseCase : BaseUseCase<DeleteUserEvent, bool>, IDeleteUserUseCase
+public sealed class DeleteUserUseCase : BaseUseCase<DeleteUserUseCaseInput>, IDeleteUserUseCase
 {
+    private readonly IEventAggregator _eventAggregator;
     private readonly IRepositoryUnitOfWork _repositoryUnitOfWork;
 
-    public DeleteUserUseCase(IRepositoryUnitOfWork repositoryUnitOfWork)
+    public DeleteUserUseCase(IRepositoryUnitOfWork repositoryUnitOfWork, UsersDbContext dbContext
+        , IEventAggregator eventAggregator)
     {
         _repositoryUnitOfWork = repositoryUnitOfWork;
+        _eventAggregator = eventAggregator;
+        _repositoryUnitOfWork.SetDbContext(dbContext);
     }
 
-    private async Task<bool> DeleteUser(DeleteUserEvent input)
+    protected override async Task ExecuteCore(DeleteUserUseCaseInput input)
     {
         _repositoryUnitOfWork.GetRepository<IUsersRepository>().Remove(input.User);
         var result = await _repositoryUnitOfWork.CommitAsync().ConfigureAwait(false);
-
-        return result > 0;
-    }
-    protected override async Task<bool> ExecuteCore(DeleteUserEvent eventRequest)
-    {
-        var result = await DeleteUser(eventRequest);
-        return result;
+        _eventAggregator.Publish(new DeleteUserEvent(input.User.Id, result > 0));
     }
 }

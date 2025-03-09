@@ -1,14 +1,15 @@
 using BitCrafts.Infrastructure.Abstraction.Events;
-using BitCrafts.Users.Abstraction.Entities;
 
 namespace BitCrafts.Users.Abstraction.Events;
 
 public class DeleteUserEvent : BaseEvent
 {
-    public User User { get; set; }
-
-    public DeleteUserEvent(User user)
+    public DeleteUserEvent(int userId, bool deleted)
     {
-        User = user;
+        UserId = userId;
+        Deleted = deleted;
     }
+
+    public int UserId { get; set; }
+    public bool Deleted { get; set; }
 }

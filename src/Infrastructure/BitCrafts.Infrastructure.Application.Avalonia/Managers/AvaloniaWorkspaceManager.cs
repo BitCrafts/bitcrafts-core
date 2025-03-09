@@ -37,9 +37,7 @@ public sealed class AvaloniaWorkspaceManager : IWorkspaceManager
         if (existingPresenter != null)
         {
             if (_presenterToTabItemMap.TryGetValue(existingPresenter, out var existingTabItem))
-            {
                 _tabControl.SelectedItem = existingTabItem;
-            }
 
             return;
         }
@@ -97,11 +95,8 @@ public sealed class AvaloniaWorkspaceManager : IWorkspaceManager
     {
         foreach (var (presenter, _) in _presenterToTabItemMap)
         {
-            Type[] interfaces = presenter.GetType().GetInterfaces();
-            if (interfaces.Contains(presenterType) || presenter.GetType() == presenterType)
-            {
-                return presenter;
-            }
+            var interfaces = presenter.GetType().GetInterfaces();
+            if (interfaces.Contains(presenterType) || presenter.GetType() == presenterType) return presenter;
         }
 
         return null;

@@ -14,9 +14,7 @@ namespace BitCrafts.Users;
 
 public sealed class UsersModule : IUsersModule
 {
-    private readonly string _name = "Users";
-
-    public string Name => _name;
+    public string Name { get; } = "Users";
 
     public void RegisterServices(IServiceCollection services)
     {
@@ -36,6 +34,7 @@ public sealed class UsersModule : IUsersModule
     {
         return typeof(IUsersView);
     }
+
     public Type GetViewImplementationType()
     {
         return typeof(UsersView);
@@ -45,7 +44,7 @@ public sealed class UsersModule : IUsersModule
     {
         return typeof(IUsersPresenter);
     }
-    
+
     public Type GetPresenterImplementationType()
     {
         return typeof(UsersPresenter);

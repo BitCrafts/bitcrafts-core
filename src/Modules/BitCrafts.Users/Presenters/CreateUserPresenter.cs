@@ -1,7 +1,6 @@
 using BitCrafts.Infrastructure.Abstraction.Application.Managers;
 using BitCrafts.Infrastructure.Abstraction.Application.Presenters;
 using BitCrafts.Infrastructure.Abstraction.Events;
-using BitCrafts.Users.Abstraction.Entities;
 using BitCrafts.Users.Abstraction.Events;
 using BitCrafts.Users.Abstraction.Presenters;
 using BitCrafts.Users.Abstraction.UseCases;
@@ -28,37 +27,35 @@ public class CreateUserPresenter : BasePresenter<ICreateUserView>, ICreateUserPr
 
     protected override void OnInitialize()
     {
-        View.SaveClicked += OnSaveClicked;
-        View.CloseClicked += OnCloseClicked;
+        _eventAggregator.Subscribe<CreateUserClickEvent>(OnCreateUserClick);
+        _eventAggregator.Subscribe<CreateUserPresenterCloseEvent>(OnClose);
+    }
+
+    private void OnClose(CreateUserPresenterCloseEvent obj)
+    {
+        _windowManager.CloseWindow<CreateUserPresenter>();
+    }
+
+    private async void OnCreateUserClick(CreateUserClickEvent obj)
+    {
+        var useCaseInput = new CreateUserUseCaseInput
+        {
+            User = obj.User,
+            Password = obj.Password
+        };
+        View.SetBusy("Loading...");
+        await _createUserUseCase.Execute(useCaseInput);
+        View.UnsetBusy();
     }
 
     protected override void Dispose(bool disposing)
     {
         if (disposing)
         {
-            View.SaveClicked -= OnSaveClicked;
-            View.CloseClicked -= OnCloseClicked;
+            _eventAggregator.Unsubscribe<CreateUserClickEvent>(OnCreateUserClick);
+            _eventAggregator.Unsubscribe<CreateUserPresenterCloseEvent>(OnClose);
         }
 
         base.Dispose(disposing);
-    }
-
-    private void OnCloseClicked(object sender, EventArgs e)
-    {
-        _windowManager.CloseWindow<CreateUserPresenter>();
-    }
-
-    private async void OnSaveClicked(object sender, User e)
-    {
-        var userEvent = new CreateUserEventRequest
-        {
-            User = e,
-            Password = View.GetPassword()
-        };
-        View.SetBusy("Loading...");
-        await Task.Delay(1000);
-        var response = await _createUserUseCase.Execute(userEvent);
-        View.UnsetBusy();
-        _eventAggregator.Publish(response);
     }
 }

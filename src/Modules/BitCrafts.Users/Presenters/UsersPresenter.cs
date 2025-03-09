@@ -11,10 +11,10 @@ namespace BitCrafts.Users.Presenters;
 
 public sealed class UsersPresenter : BasePresenter<IUsersView>, IUsersPresenter
 {
-    private readonly IDisplayUsersUseCase _displayUsersUseCase;
-    private readonly IUpdateUserUseCase _updateUserUseCase;
     private readonly IDeleteUserUseCase _deleteUserUseCase;
+    private readonly IDisplayUsersUseCase _displayUsersUseCase;
     private readonly IEventAggregator _eventAggregator;
+    private readonly IUpdateUserUseCase _updateUserUseCase;
     private readonly IWindowManager _windowManager;
     private readonly IWorkspaceManager _workspaceManager;
 
@@ -32,66 +32,50 @@ public sealed class UsersPresenter : BasePresenter<IUsersView>, IUsersPresenter
         _deleteUserUseCase = deleteUserUseCase;
     }
 
-    public async Task SaveUserAsync()
-    {
-        await _windowManager.ShowDialogWindowAsync<ICreateUserPresenter>();
-    }
-
-    private void OnCreateUser(CreateUserEventResponse arg)
-    {
-        View.AppendUser(arg.User);
-    }
-
     protected override async void OnViewLoaded(object sender, EventArgs e)
     {
         base.OnViewLoaded(sender, e);
         View.SetBusy("Loading users...");
-        var requestEvent = new DisplayUsersEventRequest();
-        var response = await _displayUsersUseCase.Execute(requestEvent);
+        await _displayUsersUseCase.Execute();
         View.UnsetBusy();
-        View.RefreshUsers(response.Users);
     }
 
     protected override void OnInitialize()
     {
-        View.SaveClicked += async (_, _) => await SaveUserAsync();
-        View.CloseClicked += (_, _) =>
-            _workspaceManager.ClosePresenter<UsersPresenter>();
-        _eventAggregator.Subscribe<CreateUserEventResponse>(OnCreateUser);
-        _eventAggregator.Subscribe<UpdateUserEvent>(OnUpdateUser);
-        _eventAggregator.Subscribe<DeleteUserEvent>(OnDeleteUser);
-        //_eventAggregator.Subscribe<UsersRefreshEvent>(OnUsersRefresh);
+        _eventAggregator.Subscribe<AddUserClickEvent>(OnAddUserClicked);
+        _eventAggregator.Subscribe<DeleteUserClickEvent>(OnDeleteUserClicked);
+        _eventAggregator.Subscribe<UpdateUserClickEvent>(OnUpdateUserClicked);
+        _eventAggregator.Subscribe<UsersPresenterCloseEvent>(OnUsersPresenterClosed);
     }
 
-   /* private void OnUsersRefresh(UsersRefreshEvent obj)
+    private void OnUsersPresenterClosed(UsersPresenterCloseEvent obj)
     {
-        if (obj != null)
-        {
-            
-        }
-    }*/
-
-    private void OnDeleteUser(DeleteUserEvent obj)
-    {
-        if (obj != null && obj.User != null)
-        {
-            _deleteUserUseCase.Execute(obj);
-        }
+        _workspaceManager.ClosePresenter<UsersPresenter>();
     }
 
-    private void OnUpdateUser(UpdateUserEvent obj)
+    private async void OnUpdateUserClicked(UpdateUserClickEvent obj)
     {
-        if (obj != null && obj.User != null)
-            _updateUserUseCase.Execute(obj);
+        await _updateUserUseCase.Execute(new UpdateUserUseCaseInput(obj.User));
+    }
+
+    private async void OnDeleteUserClicked(DeleteUserClickEvent obj)
+    {
+        await _deleteUserUseCase.Execute(new DeleteUserUseCaseInput(obj.User));
+    }
+
+    private async void OnAddUserClicked(AddUserClickEvent obj)
+    {
+        await _windowManager.ShowDialogWindowAsync<ICreateUserPresenter>();
     }
 
     protected override void Dispose(bool disposing)
     {
         if (disposing)
         {
-            _eventAggregator.Unsubscribe<CreateUserEventResponse>(OnCreateUser);
-            _eventAggregator.Unsubscribe<UpdateUserEvent>(OnUpdateUser);
-            _eventAggregator.Unsubscribe<DeleteUserEvent>(OnDeleteUser);
+            _eventAggregator.Unsubscribe<AddUserClickEvent>(OnAddUserClicked);
+            _eventAggregator.Unsubscribe<DeleteUserClickEvent>(OnDeleteUserClicked);
+            _eventAggregator.Unsubscribe<UpdateUserClickEvent>(OnUpdateUserClicked);
+            _eventAggregator.Unsubscribe<UsersPresenterCloseEvent>(OnUsersPresenterClosed);
         }
 
         base.Dispose(disposing);

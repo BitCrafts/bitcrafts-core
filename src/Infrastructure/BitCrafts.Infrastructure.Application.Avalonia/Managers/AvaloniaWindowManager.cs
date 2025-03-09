@@ -96,10 +96,8 @@ public sealed class AvaloniaWindowManager : IWindowManager
     private TPresenter GetPresenterFromAnyScope<TPresenter>() where TPresenter : IPresenter
     {
         foreach (var presenter in _presenterToWindowMap.Keys)
-        {
             if (presenter is TPresenter presenterToWindow)
                 return presenterToWindow;
-        }
 
         return default;
     }
@@ -107,10 +105,8 @@ public sealed class AvaloniaWindowManager : IWindowManager
     private bool HasExistingPresenter(Type presenterType)
     {
         foreach (var presenter in _presenterToWindowMap.Keys)
-        {
             if (presenter.GetType() == presenterType)
                 return true;
-        }
 
         return false;
     }

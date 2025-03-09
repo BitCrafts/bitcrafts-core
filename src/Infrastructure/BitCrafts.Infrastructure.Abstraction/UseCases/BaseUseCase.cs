@@ -1,13 +1,10 @@
-﻿using BitCrafts.Infrastructure.Abstraction.Events;
+﻿namespace BitCrafts.Infrastructure.Abstraction.UseCases;
 
-namespace BitCrafts.Infrastructure.Abstraction.UseCases;
-
-public abstract class BaseUseCase<TInput, TOutput> : IUseCase<TInput, TOutput>
+public abstract class BaseUseCase<TInput> : IUseCase<TInput>
 {
-    public async Task<TOutput> Execute(TInput eventRequest)
+    public async Task Execute(TInput eventRequest)
     {
-        var response = await ExecuteCore(eventRequest);
-        return response;
+        await ExecuteCore(eventRequest);
     }
 
     public void Dispose()
@@ -16,7 +13,27 @@ public abstract class BaseUseCase<TInput, TOutput> : IUseCase<TInput, TOutput>
         GC.SuppressFinalize(this);
     }
 
-    protected abstract Task<TOutput> ExecuteCore(TInput eventRequest);
+    protected abstract Task ExecuteCore(TInput eventRequest);
+
+    protected virtual void Dispose(bool disposing)
+    {
+    }
+}
+
+public abstract class BaseUseCase : IUseCase
+{
+    public async Task Execute()
+    {
+        await ExecuteCore();
+    }
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    protected abstract Task ExecuteCore();
 
     protected virtual void Dispose(bool disposing)
     {

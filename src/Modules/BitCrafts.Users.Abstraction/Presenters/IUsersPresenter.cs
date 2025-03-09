@@ -4,5 +4,4 @@ namespace BitCrafts.Users.Abstraction.Presenters;
 
 public interface IUsersPresenter : IPresenter
 {
-    Task SaveUserAsync();
 }

@@ -1,8 +1,11 @@
-﻿using BitCrafts.Infrastructure.Abstraction.Events;
+﻿namespace BitCrafts.Infrastructure.Abstraction.UseCases;
 
-namespace BitCrafts.Infrastructure.Abstraction.UseCases;
-
-public interface IUseCase<TInput, TOutput> : IDisposable
+public interface IUseCase<TInput> : IDisposable
 {
-    Task<TOutput> Execute(TInput eventRequest);
+    Task Execute(TInput eventRequest);
+}
+
+public interface IUseCase : IDisposable
+{
+    Task Execute();
 }
