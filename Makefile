@@ -22,5 +22,6 @@ clean:
 	dotnet clean src/BitCrafts.Core/BitCrafts.Core.sln
 
 demo:
-	cp src/BitCrafts.Core/BitCrafts.Modules.Users/bin/$(CONFIGURATION)/$(TARGET_FRAMEWORK)/BitCrafts.Modules.Users.dll samples/BitCrafts.ConsoleDemo/bin/$(CONFIGURATION)/$(TARGET_FRAMEWORK)/Modules
+	cp src/Modules/BitCrafts.Users/bin/$(CONFIGURATION)/$(TARGET_FRAMEWORK)/BitCrafts.Users.dll samples/gestion-commerciale/BitCrafts.GestionCommerciale.Application/bin/$(CONFIGURATION)/$(TARGET_FRAMEWORK)/Modules
+	cp src/Modules/BitCrafts.Users/bin/$(CONFIGURATION)/$(TARGET_FRAMEWORK)/BitCrafts.Users.Abstraction.dll samples/gestion-commerciale/BitCrafts.GestionCommerciale.Application/bin/$(CONFIGURATION)/$(TARGET_FRAMEWORK)/Modules
 

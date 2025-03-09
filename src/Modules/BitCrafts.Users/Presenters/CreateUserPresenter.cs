@@ -56,6 +56,7 @@ public class CreateUserPresenter : BasePresenter<ICreateUserView>, ICreateUserPr
             Password = View.GetPassword()
         };
         View.SetBusy("Loading...");
+        await Task.Delay(1000);
         var response = await _createUserUseCase.Execute(userEvent);
         View.UnsetBusy();
         _eventAggregator.Publish(response);

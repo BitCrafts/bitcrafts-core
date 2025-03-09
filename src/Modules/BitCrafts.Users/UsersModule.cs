@@ -1,9 +1,9 @@
 using BitCrafts.Users.Abstraction;
+using BitCrafts.Users.Abstraction.Entities;
 using BitCrafts.Users.Abstraction.Presenters;
 using BitCrafts.Users.Abstraction.Repositories;
 using BitCrafts.Users.Abstraction.UseCases;
 using BitCrafts.Users.Abstraction.Views;
-using BitCrafts.Users.Entities;
 using BitCrafts.Users.Presenters;
 using BitCrafts.Users.Repositories;
 using BitCrafts.Users.UseCases;
@@ -12,7 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace BitCrafts.Users;
 
-public class UsersModule : IUsersModule
+public sealed class UsersModule : IUsersModule
 {
     private readonly string _name = "Users";
 
@@ -35,9 +35,18 @@ public class UsersModule : IUsersModule
     {
         return typeof(IUsersView);
     }
+    public Type GetViewImplementationType()
+    {
+        return typeof(UsersView);
+    }
 
     public Type GetPresenterType()
     {
         return typeof(IUsersPresenter);
+    }
+    
+    public Type GetPresenterImplementationType()
+    {
+        return typeof(UsersPresenter);
     }
 }

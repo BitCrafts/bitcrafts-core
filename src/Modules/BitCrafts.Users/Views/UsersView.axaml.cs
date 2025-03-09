@@ -14,11 +14,15 @@ public partial class UsersView : BaseView, IUsersView
     private readonly IEventAggregator _eventAggregator;
     private readonly ObservableCollection<User> _users;
 
-    public UsersView(IEventAggregator eventAggregator)
+    public UsersView()
+    {
+        InitializeComponent();
+    }
+
+    public UsersView(IEventAggregator eventAggregator) : this()
     {
         _eventAggregator = eventAggregator;
-        _users = new ObservableCollection<User>();
-        InitializeComponent();
+        _users = new ObservableCollection<User>(); 
         UsersDataGrid.ItemsSource = _users;
     }
 

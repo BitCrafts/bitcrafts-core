@@ -1,10 +1,9 @@
-using BitCrafts.Users.Abstraction.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
-namespace BitCrafts.Users.Entities;
+namespace BitCrafts.Users.Abstraction.Entities;
 
-public class UsersDbContext : DbContext
+public sealed class UsersDbContext : DbContext
 {
     private readonly IConfiguration _configuration;
 
@@ -20,6 +19,5 @@ public class UsersDbContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         if (!optionsBuilder.IsConfigured) optionsBuilder.UseSqlite(_configuration.GetConnectionString("InternalDb"));
-        //optionsBuilder.UseSqlite(ServerVersion.AutoDetect(_configuration.GetConnectionString("MainDb")));
     }
 }

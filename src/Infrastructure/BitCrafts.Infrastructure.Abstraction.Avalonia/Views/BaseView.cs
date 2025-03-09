@@ -7,6 +7,7 @@ namespace BitCrafts.Infrastructure.Abstraction.Avalonia.Views;
 public abstract class BaseView : UserControl, IView
 {
     private string _title;
+    
 
     protected BaseView()
     {
@@ -23,6 +24,8 @@ public abstract class BaseView : UserControl, IView
     {
         _title = title;
     }
+
+    public bool IsModal { get; protected set; }
 
     public virtual void SetBusy(string message)
     {

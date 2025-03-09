@@ -4,7 +4,6 @@ using BitCrafts.Users.Abstraction.Entities;
 using BitCrafts.Users.Abstraction.Events;
 using BitCrafts.Users.Abstraction.Repositories;
 using BitCrafts.Users.Abstraction.UseCases;
-using BitCrafts.Users.Entities;
 
 namespace BitCrafts.Users.UseCases;
 

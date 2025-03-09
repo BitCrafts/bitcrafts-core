@@ -9,6 +9,7 @@ public partial class CreateUserView : BaseView, ICreateUserView
 {
     public CreateUserView()
     {
+        IsModal = true;
         InitializeComponent();
         AddButton.Click += AddButtonOnClick;
         CloseButton.Click += CloseButtonOnClick;

@@ -25,27 +25,25 @@ public sealed class AvaloniaWorkspaceManager : IWorkspaceManager
     }
 
 
-    public void ShowPresenter<TPresenter>() where TPresenter : class,IPresenter
+    public void ShowPresenter<TPresenter>() where TPresenter : class, IPresenter
     {
         ShowPresenter(typeof(TPresenter));
-    }
-
-    private bool HasExistingPresenter(Type presenterType)
-    {
-        foreach (var presenter in _presenterToTabItemMap.Keys)
-        {
-            if (presenter.GetType() == presenterType)
-                return true;
-        }
-
-        return false;
     }
 
     public void ShowPresenter(Type presenterType)
     {
         if (presenterType == null) return;
-        if (HasExistingPresenter(presenterType))
+        var existingPresenter = GetExistingPresenter(presenterType);
+        if (existingPresenter != null)
+        {
+            if (_presenterToTabItemMap.TryGetValue(existingPresenter, out var existingTabItem))
+            {
+                _tabControl.SelectedItem = existingTabItem;
+            }
+
             return;
+        }
+
         var presenter = _serviceProvider.GetRequiredService(presenterType) as IPresenter;
         if (presenter != null)
         {
@@ -63,7 +61,7 @@ public sealed class AvaloniaWorkspaceManager : IWorkspaceManager
 
     public void ClosePresenter(Type presenterType)
     {
-        var presenter = GetPresenterFromAnyScope(presenterType);
+        var presenter = GetExistingPresenter(presenterType);
         if (presenter == null) return;
 
         if (_presenterToTabItemMap.TryGetValue(presenter, out var tabItem))
@@ -74,7 +72,7 @@ public sealed class AvaloniaWorkspaceManager : IWorkspaceManager
         }
     }
 
-    public void ClosePresenter<TPresenter>() where TPresenter : class,IPresenter
+    public void ClosePresenter<TPresenter>() where TPresenter : class, IPresenter
     {
         ClosePresenter(typeof(TPresenter));
     }
@@ -95,11 +93,12 @@ public sealed class AvaloniaWorkspaceManager : IWorkspaceManager
         _tabControl = tabControl ?? throw new ArgumentNullException(nameof(tabControl));
     }
 
-    private IPresenter GetPresenterFromAnyScope(Type presenterType)
+    private IPresenter GetExistingPresenter(Type presenterType)
     {
         foreach (var (presenter, _) in _presenterToTabItemMap)
         {
-            if (presenter.GetType() == presenterType)
+            Type[] interfaces = presenter.GetType().GetInterfaces();
+            if (interfaces.Contains(presenterType) || presenter.GetType() == presenterType)
             {
                 return presenter;
             }
