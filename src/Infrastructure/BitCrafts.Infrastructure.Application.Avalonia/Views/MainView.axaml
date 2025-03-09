@@ -31,6 +31,6 @@
             <MenuItem Header="Edition" />
             <MenuItem Header="Affichage" />
         </Menu>
-        <TabControl x:Name="MainTabControl"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
+        <TabControl x:Name="MainTabControl" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
     </DockPanel>
 </UserControl>

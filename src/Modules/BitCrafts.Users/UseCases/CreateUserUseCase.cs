@@ -6,29 +6,26 @@ using BitCrafts.Users.Abstraction.Events;
 using BitCrafts.Users.Abstraction.Repositories;
 using BitCrafts.Users.Abstraction.UseCases;
 using BitCrafts.Users.Entities;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace BitCrafts.Users.UseCases;
 
-public sealed class CreateUserUseCase : BaseUseCase<UserEventRequest, UserEventResponse>, ICreateUserUseCase
+public sealed class CreateUserUseCase : BaseUseCase<CreateUserEventRequest, CreateUserEventResponse>, ICreateUserUseCase
 {
     private readonly IHashingService _hashingService;
-    private readonly UsersDbContext _dbContext;
     private readonly IRepositoryUnitOfWork _repositoryUnitOfWork;
 
-    public CreateUserUseCase(IServiceProvider serviceProvider, IHashingService hashingService,
-        UsersDbContext dbContext, IRepositoryUnitOfWork repositoryUnitOfWork) : base(serviceProvider)
+    public CreateUserUseCase(IHashingService hashingService,
+        UsersDbContext dbContext, IRepositoryUnitOfWork repositoryUnitOfWork)
     {
         _hashingService = hashingService;
-        _dbContext = dbContext;
         _repositoryUnitOfWork = repositoryUnitOfWork;
         _repositoryUnitOfWork.SetDbContext(dbContext);
     }
 
-    private async Task<User> CreateUser(UserEventRequest eventRequest)
+    private async Task<User> CreateUser(CreateUserEventRequest eventRequest)
     {
-        string salt = _hashingService.GenerateSalt();
-        string hashedPassword = _hashingService.HashPassword(eventRequest.Password);
+        var salt = _hashingService.GenerateSalt();
+        var hashedPassword = _hashingService.HashPassword(eventRequest.Password);
         var userAccount = new UserAccount
         {
             HashedPassword = hashedPassword,
@@ -42,9 +39,9 @@ public sealed class CreateUserUseCase : BaseUseCase<UserEventRequest, UserEventR
         return user;
     }
 
-    protected override async Task<UserEventResponse> ExecuteCore(UserEventRequest eventRequest)
+    protected override async Task<CreateUserEventResponse> ExecuteCore(CreateUserEventRequest eventRequest)
     {
-        var response = new UserEventResponse();
+        var response = new CreateUserEventResponse();
         response.User = await CreateUser(eventRequest);
         return response;
     }

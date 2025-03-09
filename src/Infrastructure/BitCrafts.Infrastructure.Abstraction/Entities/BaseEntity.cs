@@ -9,5 +9,5 @@ public abstract class BaseEntity<T> : IEntity<T>
 
 public abstract class BaseEntity : IEntity
 {
-     [Key] public int Id { get; set; }
+    [Key] public int Id { get; set; }
 }

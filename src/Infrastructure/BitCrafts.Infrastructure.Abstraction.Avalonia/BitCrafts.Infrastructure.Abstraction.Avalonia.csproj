@@ -7,16 +7,16 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="ActiproSoftware.Controls.Avalonia" Version="25.1.1" />
-      <PackageReference Include="ActiproSoftware.Controls.Avalonia.Bars.Mvvm" Version="25.1.1" />
-      <PackageReference Include="ActiproSoftware.Controls.Avalonia.Pro" Version="25.1.1" />
-      <PackageReference Include="ActiproSoftware.Controls.Avalonia.Themes.ColorPicker" Version="25.1.1" />
-      <PackageReference Include="Avalonia.Desktop" Version="11.2.5" />
-      <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.2" />
+        <PackageReference Include="ActiproSoftware.Controls.Avalonia" Version="25.1.1"/>
+        <PackageReference Include="ActiproSoftware.Controls.Avalonia.Bars.Mvvm" Version="25.1.1"/>
+        <PackageReference Include="ActiproSoftware.Controls.Avalonia.Pro" Version="25.1.1"/>
+        <PackageReference Include="ActiproSoftware.Controls.Avalonia.Themes.ColorPicker" Version="25.1.1"/>
+        <PackageReference Include="Avalonia.Desktop" Version="11.2.5"/>
+        <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.2"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\BitCrafts.Infrastructure.Abstraction\BitCrafts.Infrastructure.Abstraction.csproj" />
+        <ProjectReference Include="..\BitCrafts.Infrastructure.Abstraction\BitCrafts.Infrastructure.Abstraction.csproj"/>
     </ItemGroup>
 
 </Project>

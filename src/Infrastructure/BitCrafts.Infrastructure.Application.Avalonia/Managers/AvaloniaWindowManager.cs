@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Layout;
 using Avalonia.Media;
 using BitCrafts.Infrastructure.Abstraction.Application.Managers;
@@ -15,9 +14,9 @@ namespace BitCrafts.Infrastructure.Application.Avalonia.Managers;
 
 public sealed class AvaloniaWindowManager : IWindowManager
 {
+    private readonly Dictionary<IPresenter, Window> _presenterToWindowMap = new();
     private readonly IServiceProvider _serviceProvider;
     private readonly Stack<Window> _windowStack = new();
-    private readonly Dictionary<IPresenter, Window> _presenterToWindowMap = new();
     private Window _activeWindow;
 
     public AvaloniaWindowManager(IServiceProvider serviceProvider)
@@ -27,66 +26,67 @@ public sealed class AvaloniaWindowManager : IWindowManager
 
     public void ShowWindow<TPresenter>() where TPresenter : IPresenter
     {
-        Type presenterType = typeof(TPresenter);
+        var presenterType = typeof(TPresenter);
         var presenter = _serviceProvider.GetRequiredService(presenterType) as IPresenter;
-        if (_presenterToWindowMap.ContainsKey(presenter))
+        if (presenter != null && _presenterToWindowMap.ContainsKey(presenter))
         {
             HandleExistingWindow(_presenterToWindowMap[presenter]);
             return;
         }
 
-        var view = presenter.GetView() as UserControl;
-        if (view == null)
+        if (presenter != null)
         {
-            throw new InvalidOperationException("The view associated with the presenter is not a UserControl.");
-        }
+            var view = presenter.GetView() as UserControl;
+            if (view == null)
+                throw new InvalidOperationException("The view associated with the presenter is not a UserControl.");
 
-        var window = CreateWindow(view, ((IView)view).GetTitle());
-        AddWindowToCollections(presenter, window);
-        window.Show();
-        _activeWindow = window;
+            var window = CreateWindow(view, ((IView)view).GetTitle());
+            AddWindowToCollections(presenter, window);
+            window.Show();
+            _activeWindow = window;
+        }
     }
 
     public async Task ShowDialogWindowAsync<TPresenter>() where TPresenter : IPresenter
     {
-        Type presenterType = typeof(TPresenter);
+        var presenterType = typeof(TPresenter);
         var presenter = _serviceProvider.GetRequiredService(presenterType) as IPresenter;
 
-        var view = presenter.GetView() as UserControl;
-        if (view == null)
+        if (presenter != null)
         {
-            throw new InvalidOperationException(
-                "The view associated with the presenter is not a UserControl or is null.");
+            var view = presenter.GetView() as UserControl;
+            if (view == null)
+                throw new InvalidOperationException(
+                    "The view associated with the presenter is not a UserControl or is null.");
+
+            var window = CreateWindow(view, ((IView)view).GetTitle());
+
+            AddWindowToCollections(presenter, window);
+
+            if (_activeWindow == null)
+                throw new InvalidOperationException("Application lifetime or active window not set.");
+
+            await window.ShowDialog(_activeWindow);
         }
-
-        var window = CreateWindow(view, ((IView)view).GetTitle());
-
-        AddWindowToCollections(presenter, window);
-
-        if (_activeWindow == null)
-        {
-            throw new InvalidOperationException("Application lifetime or active window not set.");
-        }
-
-        await window.ShowDialog(_activeWindow);
     }
 
     public void CloseWindow<TPresenter>() where TPresenter : IPresenter
     {
         var presenter = GetPresenterFromAnyScope<TPresenter>();
-        if (presenter != null && _presenterToWindowMap.TryGetValue(presenter, out Window window))
-        {
-            window.Close();
-        }
+        if (presenter != null && _presenterToWindowMap.TryGetValue(presenter, out var window)) window.Close();
     }
 
     public void HideWindow<TPresenter>() where TPresenter : IPresenter
     {
         var presenter = GetPresenterFromAnyScope<TPresenter>();
-        if (presenter != null && _presenterToWindowMap.TryGetValue(presenter, out Window window))
-        {
-            window.Hide();
-        }
+        if (presenter != null && _presenterToWindowMap.TryGetValue(presenter, out var window)) window.Hide();
+    }
+
+    public void Dispose()
+    {
+        while (_windowStack.TryPop(out var window)) window.Close();
+
+        _presenterToWindowMap.Clear();
     }
 
     private TPresenter GetPresenterFromAnyScope<TPresenter>() where TPresenter : IPresenter
@@ -97,43 +97,26 @@ public sealed class AvaloniaWindowManager : IWindowManager
         return presenter;
     }
 
-    public void Dispose()
-    {
-        while (_windowStack.TryPop(out var window))
-        {
-            window.Close();
-        }
-
-        _presenterToWindowMap.Clear();
-    }
-
     private void AddWindowToCollections(IPresenter presenter, Window window)
     {
         _presenterToWindowMap[presenter] = window;
         _windowStack.Push(window);
 
-        window.Closed += (s, e) =>
+        window.Closed += (_, _) =>
         {
             _windowStack.Pop();
             _presenterToWindowMap.Remove(presenter);
-            
-            if (presenter is IDisposable disposablePresenter)
-            {
-                disposablePresenter.Dispose();
-            }
+
+            if (presenter is IDisposable disposablePresenter) disposablePresenter.Dispose();
         };
     }
 
     private void HandleExistingWindow(Window window)
     {
         if (window.IsVisible)
-        {
             window.Activate();
-        }
         else
-        {
             window.Show();
-        }
     }
 
     private Window CreateWindow(UserControl control, string title)

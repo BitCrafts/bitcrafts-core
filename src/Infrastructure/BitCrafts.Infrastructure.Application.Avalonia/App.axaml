@@ -2,11 +2,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="BitCrafts.Infrastructure.Application.Avalonia.App"
              xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui"
-             RequestedThemeVariant="Default"> 
+             RequestedThemeVariant="Default">
 
     <Application.Styles>
         <FluentTheme />
-        <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
+        <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml" />
         <actipro:ModernTheme Includes="All" />
     </Application.Styles>
 </Application>

@@ -17,6 +17,7 @@ public sealed class RepositoryUnitOfWork : IRepositoryUnitOfWork
     {
         _dbContext = dbContext;
     }
+
     public T GetRepository<T>()
     {
         return (T)_serviceProvider.GetService(typeof(T));

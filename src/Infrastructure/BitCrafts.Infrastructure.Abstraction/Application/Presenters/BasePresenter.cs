@@ -1,8 +1,4 @@
-﻿using BitCrafts.Infrastructure.Abstraction.Application.Managers;
-using BitCrafts.Infrastructure.Abstraction.Application.Views;
-using BitCrafts.Infrastructure.Abstraction.Events;
-using BitCrafts.Infrastructure.Abstraction.Threading;
-using Microsoft.Extensions.DependencyInjection;
+﻿using BitCrafts.Infrastructure.Abstraction.Application.Views;
 using Microsoft.Extensions.Logging;
 
 namespace BitCrafts.Infrastructure.Abstraction.Application.Presenters;
@@ -10,30 +6,40 @@ namespace BitCrafts.Infrastructure.Abstraction.Application.Presenters;
 public abstract class BasePresenter<TView> : IPresenter
     where TView : IView
 {
-    private readonly ILogger<BasePresenter<TView>> _logger;
-    public TView View { get; private set; }
-    public string Title { get; protected set; }
-    protected ILogger<BasePresenter<TView>> Logger => _logger;
-
     public BasePresenter(string title, TView view, ILogger<BasePresenter<TView>> logger)
     {
-        _logger = logger;
+        Logger = logger;
         Title = title;
         View = view;
         View.SetTitle(Title);
         View.ViewLoadedEvent += OnViewLoaded;
         View.ViewClosedEvent += OnViewClosed;
-        Logger.LogInformation($"Initializing {this.GetType().Name}");
+        Logger.LogInformation($"Initializing {GetType().Name}");
+    }
+
+    public TView View { get; }
+    public string Title { get; protected set; }
+    protected ILogger<BasePresenter<TView>> Logger { get; }
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    public IView GetView()
+    {
+        return View;
     }
 
     protected virtual void OnViewClosed(object sender, EventArgs e)
     {
-        Logger.LogInformation($"Closed {this.GetType().Name}");
+        Logger.LogInformation($"Closed {GetType().Name}");
     }
 
     protected virtual void OnViewLoaded(object sender, EventArgs e)
     {
-        Logger.LogInformation($"Loaded {this.GetType().Name}");
+        Logger.LogInformation($"Loaded {GetType().Name}");
         OnInitialize();
     }
 
@@ -46,18 +52,7 @@ public abstract class BasePresenter<TView> : IPresenter
             View.ViewLoadedEvent -= OnViewLoaded;
             View.ViewClosedEvent -= OnViewClosed;
             View.Dispose();
-            Logger.LogInformation($"Disposed {this.GetType().Name}");
+            Logger.LogInformation($"Disposed {GetType().Name}");
         }
-    }
-
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
-
-    public IView GetView()
-    {
-        return View;
     }
 }

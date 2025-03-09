@@ -3,17 +3,17 @@ using System.Threading.Tasks;
 using Avalonia.Controls.ApplicationLifetimes;
 using BitCrafts.Infrastructure.Abstraction.Application.Managers;
 using BitCrafts.Infrastructure.Application.Avalonia.Presenters;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace BitCrafts.Infrastructure.Application.Avalonia.Managers;
 
 public sealed class AvaloniaUiManager : IUiManager
 {
-    private readonly ILogger<AvaloniaUiManager> _logger;
-    private readonly IWorkspaceManager _workspaceManager;
+    // ReSharper disable once NotAccessedField.Local
     private readonly IExceptionManager _exceptionManager;
-    private readonly IWindowManager _windowManager; 
+    private readonly ILogger<AvaloniaUiManager> _logger;
+    private readonly IWindowManager _windowManager;
+    private readonly IWorkspaceManager _workspaceManager;
     private IClassicDesktopStyleApplicationLifetime _applicationLifetime;
 
     public AvaloniaUiManager(ILogger<AvaloniaUiManager> logger, IWorkspaceManager workspaceManager,

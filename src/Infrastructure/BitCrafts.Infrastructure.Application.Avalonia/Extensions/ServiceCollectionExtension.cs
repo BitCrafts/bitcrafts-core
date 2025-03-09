@@ -17,8 +17,8 @@ public static class ServiceCollectionExtension
         services.TryAddSingleton<IWorkspaceManager, AvaloniaWorkspaceManager>();
         services.TryAddSingleton<IUiManager, AvaloniaUiManager>();
         services.TryAddSingleton<IExceptionManager, AvaloniaExceptionManager>();
-        services.TryAddScoped<IMainPresenter, MainPresenter>();                
-        services.TryAddTransient<IMainView, MainView>();     
+        services.TryAddScoped<IMainPresenter, MainPresenter>();
+        services.TryAddTransient<IMainView, MainView>();
 
         return services;
     }

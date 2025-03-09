@@ -21,11 +21,9 @@ public class App : global::Avalonia.Application
     {
         base.OnFrameworkInitializationCompleted();
         var uiManager = (AvaloniaUiManager)ServiceProvider.GetRequiredService<IUiManager>();
-        var desktop = ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
-        if (desktop != null)
-        {
-            desktop.ShutdownMode = ShutdownMode.OnLastWindowClose;
-            uiManager.SetNativeApplication(desktop);
-        }
+        var desktop = (IClassicDesktopStyleApplicationLifetime)ApplicationLifetime;
+        if (desktop == null) return;
+        desktop.ShutdownMode = ShutdownMode.OnLastWindowClose;
+        uiManager.SetNativeApplication(desktop);
     }
 }

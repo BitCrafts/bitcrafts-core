@@ -7,6 +7,6 @@ public interface ICreateUserView : IView
 {
     event EventHandler<User> SaveClicked;
     event EventHandler CloseClicked;
-    
+
     string GetPassword();
 }

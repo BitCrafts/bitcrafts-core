@@ -22,7 +22,7 @@ public sealed class ModuleRegistrer : IModuleRegistrer
         var modulesPath = GetModulesPath();
         if (string.IsNullOrEmpty(modulesPath)) return;
         var allFiles = Directory.GetFiles(modulesPath, "*.dll");
-        
+
         foreach (var dll in allFiles.Where(x => x.Contains("Abstraction")))
         {
             var dllName = Path.GetFileName(dll);
@@ -58,10 +58,7 @@ public sealed class ModuleRegistrer : IModuleRegistrer
     {
         var assembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(dll);
         _loadedAssemblies.Add(assembly);
-        if (registerAsModule)
-        {
-            RegisterModules(assembly, services);
-        }
+        if (registerAsModule) RegisterModules(assembly, services);
     }
 
     private void RegisterModules(Assembly assembly, IServiceCollection services)
@@ -70,13 +67,11 @@ public sealed class ModuleRegistrer : IModuleRegistrer
         {
             var moduleTypes = assembly.GetTypes().Where(IsValidModule);
             foreach (var type in moduleTypes)
-            {
                 if (Activator.CreateInstance(type) is IModule moduleInstance)
                 {
                     moduleInstance.RegisterServices(services);
                     services.AddSingleton(moduleInstance);
                 }
-            }
         }
         catch (Exception ex)
         {

@@ -6,7 +6,7 @@ public sealed class HashingService : IHashingService
 {
     public string HashPassword(string password)
     {
-        string salt = BCrypt.Net.BCrypt.GenerateSalt();
+        var salt = BCrypt.Net.BCrypt.GenerateSalt();
         return BCrypt.Net.BCrypt.HashPassword(password, salt);
     }
 

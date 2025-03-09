@@ -5,10 +5,10 @@ using BitCrafts.Users.Entities;
 
 namespace BitCrafts.Users.Repositories;
 
-public class UsersRepository : Repository<UsersDbContext,User> , IUsersRepository
+public class UsersRepository : Repository<UsersDbContext, User>, IUsersRepository
 {
     public UsersRepository(UsersDbContext context) : base(context)
     {
-        _context.Database.EnsureCreated();
+        Context.Database.EnsureCreated();
     }
 }

@@ -9,13 +9,14 @@ using BitCrafts.Users.Repositories;
 using BitCrafts.Users.UseCases;
 using BitCrafts.Users.Views;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace BitCrafts.Users;
 
 public class UsersModule : IUsersModule
 {
-    public string Name { get; } = "Users";
+    private readonly string _name = "Users";
+
+    public string Name => _name;
 
     public void RegisterServices(IServiceCollection services)
     {
@@ -24,7 +25,7 @@ public class UsersModule : IUsersModule
         services.AddTransient<ICreateUserView, CreateUserView>();
         services.AddTransient<ICreateUserPresenter, CreateUserPresenter>();
         services.AddTransient<IUsersView, UsersView>();
-        services.AddTransient<IUsersPresenter, UsersPresenter>(); 
+        services.AddTransient<IUsersPresenter, UsersPresenter>();
         services.AddTransient<IUsersRepository, UsersRepository>();
         services.AddDbContext<UsersDbContext>();
     }

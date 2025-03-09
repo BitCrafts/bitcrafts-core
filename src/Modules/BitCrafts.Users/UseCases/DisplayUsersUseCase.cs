@@ -1,13 +1,10 @@
-using Avalonia.Threading;
 using BitCrafts.Infrastructure.Abstraction.Repositories;
-using BitCrafts.Infrastructure.Abstraction.Threading;
 using BitCrafts.Infrastructure.Abstraction.UseCases;
 using BitCrafts.Users.Abstraction.Entities;
 using BitCrafts.Users.Abstraction.Events;
 using BitCrafts.Users.Abstraction.Repositories;
 using BitCrafts.Users.Abstraction.UseCases;
 using BitCrafts.Users.Entities;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace BitCrafts.Users.UseCases;
 
@@ -15,15 +12,12 @@ public sealed class DisplayUsersUseCase : BaseUseCase<DisplayUsersEventRequest, 
     IDisplayUsersUseCase
 {
     private readonly IRepositoryUnitOfWork _repositoryUnitOfWork;
-    private readonly UsersDbContext _usersDbContext;
 
-    public DisplayUsersUseCase(IServiceProvider provider,
-        IRepositoryUnitOfWork repositoryUnitOfWork,
-        UsersDbContext usersDbContext) : base(provider)
+    public DisplayUsersUseCase(IRepositoryUnitOfWork repositoryUnitOfWork,
+        UsersDbContext usersDbContext)
     {
         _repositoryUnitOfWork = repositoryUnitOfWork;
-        _usersDbContext = usersDbContext;
-        _repositoryUnitOfWork.SetDbContext(_usersDbContext);
+        _repositoryUnitOfWork.SetDbContext(usersDbContext);
     }
 
     private async Task<IEnumerable<User>> GetUsers()

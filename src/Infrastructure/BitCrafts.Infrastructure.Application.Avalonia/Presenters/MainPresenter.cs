@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
 using BitCrafts.Infrastructure.Abstraction.Application.Managers;
 using BitCrafts.Infrastructure.Abstraction.Application.Presenters;
 using BitCrafts.Infrastructure.Abstraction.Modules;
@@ -16,7 +14,7 @@ public sealed class MainPresenter : BasePresenter<IMainView>, IMainPresenter
 {
     private readonly IServiceProvider _serviceProvider;
     private readonly IUiManager _uiManager;
-    private IWorkspaceManager _workspaceManager;
+    private readonly IWorkspaceManager _workspaceManager;
 
     public MainPresenter(IServiceProvider serviceProvider, IMainView view, IUiManager uiManager,
         IWorkspaceManager workspaceManager,
@@ -30,9 +28,19 @@ public sealed class MainPresenter : BasePresenter<IMainView>, IMainPresenter
 
     private void ViewOnMenuItemClicked(object sender, string e)
     {
-        var module = _serviceProvider.GetServices<IModule>().FirstOrDefault(x => x.Name.Equals(e));
-        var presenterType = module.GetPresenterType();
-        _workspaceManager.ShowPresenter(presenterType);
+        IModule module = null;
+        foreach (var x in _serviceProvider.GetServices<IModule>())
+            if (x.Name.Equals(e))
+            {
+                module = x;
+                break;
+            }
+
+        if (module != null)
+        {
+            var presenterType = module.GetPresenterType();
+            _workspaceManager.ShowPresenter(presenterType);
+        }
     }
 
     protected override void OnViewLoaded(object sender, EventArgs e)
@@ -40,11 +48,9 @@ public sealed class MainPresenter : BasePresenter<IMainView>, IMainPresenter
         base.OnViewLoaded(sender, e);
         View.InitializeModulesMenu(_serviceProvider.GetServices<IModule>());
 
-        if (View is MainView mainView)
-        {
-            var workspaceManager = (AvaloniaWorkspaceManager)_workspaceManager;
-            workspaceManager.SetTabControl(mainView.MainTabControl);
-        }
+        if (View is not MainView mainView) return;
+        var workspaceManager = (AvaloniaWorkspaceManager)_workspaceManager;
+        workspaceManager.SetTabControl(mainView.MainTabControl);
     }
 
     protected override async void OnViewClosed(object sender, EventArgs e)
@@ -60,10 +66,7 @@ public sealed class MainPresenter : BasePresenter<IMainView>, IMainPresenter
 
     protected override void Dispose(bool disposing)
     {
-        if (disposing)
-        {
-            View.MenuItemClicked -= ViewOnMenuItemClicked;
-        }
+        if (disposing) View.MenuItemClicked -= ViewOnMenuItemClicked;
 
         base.Dispose(disposing);
     }

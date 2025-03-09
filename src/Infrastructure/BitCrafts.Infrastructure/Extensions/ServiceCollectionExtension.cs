@@ -35,19 +35,19 @@ public static class ServiceCollectionExtension
         services.AddLogging(loggingBuilder =>
             loggingBuilder.AddSerilog(dispose: true)
         );
- 
+
         services.TryAddSingleton<IBackgroundThreadDispatcher, BackgroundThreadDispatcher>();
         services.TryAddSingleton<IParallelism, Parallelism>();
         services.TryAddSingleton<IEventAggregator, EventAggregator>();
-        services.TryAddSingleton<IApplicationFactory, ApplicationFactory>(); 
+        services.TryAddSingleton<IApplicationFactory, ApplicationFactory>();
         services.TryAddSingleton<IHashingService, HashingService>();
-        services.TryAddScoped<IRepositoryUnitOfWork,RepositoryUnitOfWork>();
+        services.TryAddScoped<IRepositoryUnitOfWork, RepositoryUnitOfWork>();
         CreateDirectoryDirectory("Modules");
         CreateDirectoryDirectory("Settings");
         CreateDirectoryDirectory("Databases");
         CreateDirectoryDirectory("Files");
         CreateDirectoryDirectory("Temporary");
-        ModuleRegistrer moduleRegistrer = new ModuleRegistrer(Log.Logger);
+        var moduleRegistrer = new ModuleRegistrer(Log.Logger);
         moduleRegistrer.RegisterModules(services);
         return services;
     }

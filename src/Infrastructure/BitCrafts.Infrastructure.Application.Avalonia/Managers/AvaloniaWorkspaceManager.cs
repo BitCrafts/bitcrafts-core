@@ -12,21 +12,16 @@ namespace BitCrafts.Infrastructure.Application.Avalonia.Managers;
 
 public sealed class AvaloniaWorkspaceManager : IWorkspaceManager
 {
+    private readonly ILogger<AvaloniaWorkspaceManager> _logger;
+    private readonly Dictionary<IPresenter, TabItem> _presenterToTabItemMap;
     private readonly IServiceProvider _serviceProvider;
     private TabControl _tabControl;
-    private readonly Dictionary<IPresenter, TabItem> _presenterToTabItemMap = new();
-
-    private ILogger<AvaloniaWorkspaceManager> _logger;
 
     public AvaloniaWorkspaceManager(IServiceProvider serviceProvider)
     {
         _serviceProvider = serviceProvider;
+        _presenterToTabItemMap = new Dictionary<IPresenter, TabItem>();
         _logger = _serviceProvider.GetRequiredService<ILogger<AvaloniaWorkspaceManager>>();
-    }
-
-    public void SetTabControl(TabControl tabControl)
-    {
-        _tabControl = tabControl ?? throw new ArgumentNullException(nameof(tabControl));
     }
 
 
@@ -37,24 +32,26 @@ public sealed class AvaloniaWorkspaceManager : IWorkspaceManager
 
     public void ShowPresenter(Type presenterType)
     {
+        if (presenterType == null) return;
         var presenter = _serviceProvider.GetRequiredService(presenterType) as IPresenter;
-        if (_presenterToTabItemMap.ContainsKey(presenter))
+        if (presenter != null && _presenterToTabItemMap.ContainsKey(presenter))
         {
             _tabControl.SelectedItem = _presenterToTabItemMap[presenter];
             return;
         }
 
-        var view = presenter.GetView() as UserControl; // Cast en UserControl
-        if (view == null)
+        if (presenter != null)
         {
-            throw new InvalidOperationException("The view associated with the presenter is not a UserControl.");
+            var view = presenter.GetView() as UserControl; // Cast en UserControl
+            if (view == null)
+                throw new InvalidOperationException("The view associated with the presenter is not a UserControl.");
+
+            var tabItem = new TabItem { Header = ((IView)view).GetTitle(), Content = view };
+
+            _presenterToTabItemMap[presenter] = tabItem;
+            _tabControl.Items.Add(tabItem);
+            _tabControl.SelectedItem = tabItem;
         }
-
-        var tabItem = new TabItem { Header = ((IView)view).GetTitle(), Content = view };
-
-        _presenterToTabItemMap[presenter] = tabItem;
-        _tabControl.Items.Add(tabItem);
-        _tabControl.SelectedItem = tabItem;
     }
 
     public void ClosePresenter(Type presenterType)
@@ -62,22 +59,35 @@ public sealed class AvaloniaWorkspaceManager : IWorkspaceManager
         var presenter = GetPresenterFromAnyScope(presenterType);
         if (presenter == null) return;
 
-        if (_presenterToTabItemMap.TryGetValue(presenter, out TabItem tabItem))
+        if (_presenterToTabItemMap.TryGetValue(presenter, out var tabItem))
         {
             _tabControl.Items.Remove(tabItem);
             _presenterToTabItemMap.Remove(presenter);
 
 
-            if (presenter is IDisposable disposablePresenter)
-            {
-                disposablePresenter.Dispose();
-            }
+            if (presenter is IDisposable disposablePresenter) disposablePresenter.Dispose();
         }
     }
 
     public void ClosePresenter<TPresenter>() where TPresenter : IPresenter
     {
         ClosePresenter(typeof(TPresenter));
+    }
+
+    public void Dispose()
+    {
+        _logger.LogInformation("Disposing AvaloniaWorkspaceManager...");
+        var presenters = _presenterToTabItemMap.Keys.ToArray();
+        foreach (var presenter in presenters) ClosePresenterByInstance(presenter);
+
+        _presenterToTabItemMap.Clear();
+
+        _logger.LogInformation("Disposed AvaloniaWorkspaceManager.");
+    }
+
+    public void SetTabControl(TabControl tabControl)
+    {
+        _tabControl = tabControl ?? throw new ArgumentNullException(nameof(tabControl));
     }
 
     private IPresenter GetPresenterFromAnyScope(Type presenterType)
@@ -87,31 +97,14 @@ public sealed class AvaloniaWorkspaceManager : IWorkspaceManager
         return presenter;
     }
 
-    public void Dispose()
-    {
-        _logger.LogInformation("Disposing AvaloniaWorkspaceManager...");
-        var presenters = _presenterToTabItemMap.Keys.ToArray();
-        foreach (var presenter in presenters)
-        {
-            ClosePresenterByInstance(presenter);
-        }
-
-        _presenterToTabItemMap.Clear();
-
-        _logger.LogInformation("Disposed AvaloniaWorkspaceManager.");
-    }
-
     private void ClosePresenterByInstance(IPresenter presenter)
     {
-        if (_presenterToTabItemMap.TryGetValue(presenter, out TabItem tabItem))
+        if (_presenterToTabItemMap.TryGetValue(presenter, out var tabItem))
         {
             _tabControl.Items.Remove(tabItem);
             _presenterToTabItemMap.Remove(presenter);
 
-            if (presenter is IDisposable disposablePresenter)
-            {
-                disposablePresenter.Dispose();
-            }
+            if (presenter is IDisposable disposablePresenter) disposablePresenter.Dispose();
         }
     }
 }

@@ -1,26 +1,18 @@
 using System.Collections.Concurrent;
 using BitCrafts.Infrastructure.Abstraction.Events;
-using BitCrafts.Infrastructure.Abstraction.Threading;
-using BitCrafts.Infrastructure.Threading;
 
 namespace BitCrafts.Infrastructure.Events;
+
 public sealed class EventAggregator : IEventAggregator
 {
     private readonly ConcurrentDictionary<Type, List<EventHandlerWrapper>> _handlers = new();
     private readonly object _lock = new();
 
-    public EventAggregator()
-    {
-    }
-
     public void Subscribe<TEvent>(Action<TEvent> handler) where TEvent : IEvent
     {
         lock (_lock)
         {
-            if (!_handlers.ContainsKey(typeof(TEvent)))
-            {
-                _handlers[typeof(TEvent)] = new List<EventHandlerWrapper>();
-            }
+            if (!_handlers.ContainsKey(typeof(TEvent))) _handlers[typeof(TEvent)] = new List<EventHandlerWrapper>();
 
             _handlers[typeof(TEvent)].Add(new EventHandlerWrapper(e => handler((TEvent)e)));
         }
@@ -35,10 +27,7 @@ public sealed class EventAggregator : IEventAggregator
                 var handlerToRemove = _handlers[typeof(TEvent)].FirstOrDefault(h =>
                     h.Handler == (Action<object>)(e => handler((TEvent)e)));
 
-                if (handlerToRemove != null)
-                {
-                    _handlers[typeof(TEvent)].Remove(handlerToRemove);
-                }
+                if (handlerToRemove != null) _handlers[typeof(TEvent)].Remove(handlerToRemove);
             }
         }
     }
@@ -53,10 +42,7 @@ public sealed class EventAggregator : IEventAggregator
             handlers = _handlers[typeof(TEvent)].ToList();
         }
 
-        foreach (var handler in handlers)
-        {
-            handler.Handler(@event);
-        }
+        foreach (var handler in handlers) handler.Handler(@event);
     }
 
     private class EventHandlerWrapper

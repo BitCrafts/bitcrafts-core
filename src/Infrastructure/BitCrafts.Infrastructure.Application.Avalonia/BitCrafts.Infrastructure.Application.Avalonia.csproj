@@ -8,16 +8,16 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="ActiproSoftware.Controls.Avalonia" Version="25.1.1" />
-        <PackageReference Include="ActiproSoftware.Controls.Avalonia.Pro" Version="25.1.1" />
-        <PackageReference Include="ActiproSoftware.Controls.Avalonia.Themes.ColorPicker" Version="25.1.1" />
-        <PackageReference Include="ActiproSoftware.Controls.Avalonia.Themes.DataGrid" Version="25.1.1" />
-        <PackageReference Include="Avalonia" Version="11.2.5" />
-        <PackageReference Include="Avalonia.Controls.ColorPicker" Version="11.2.5" />
-        <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.2.5" />
-        <PackageReference Include="Avalonia.Desktop" Version="11.2.5" />
-        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.2.5" />
-        <PackageReference Include="Avalonia.Fonts.Inter" Version="11.2.5" />
+        <PackageReference Include="ActiproSoftware.Controls.Avalonia" Version="25.1.1"/>
+        <PackageReference Include="ActiproSoftware.Controls.Avalonia.Pro" Version="25.1.1"/>
+        <PackageReference Include="ActiproSoftware.Controls.Avalonia.Themes.ColorPicker" Version="25.1.1"/>
+        <PackageReference Include="ActiproSoftware.Controls.Avalonia.Themes.DataGrid" Version="25.1.1"/>
+        <PackageReference Include="Avalonia" Version="11.2.5"/>
+        <PackageReference Include="Avalonia.Controls.ColorPicker" Version="11.2.5"/>
+        <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.2.5"/>
+        <PackageReference Include="Avalonia.Desktop" Version="11.2.5"/>
+        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.2.5"/>
+        <PackageReference Include="Avalonia.Fonts.Inter" Version="11.2.5"/>
         <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
         <PackageReference Include="Avalonia.Diagnostics" Version="11.2.5">
             <IncludeAssets Condition="'$(Configuration)' != 'Debug'">None</IncludeAssets>
@@ -26,14 +26,14 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\BitCrafts.Infrastructure.Abstraction.Avalonia\BitCrafts.Infrastructure.Abstraction.Avalonia.csproj" />
+        <ProjectReference Include="..\BitCrafts.Infrastructure.Abstraction.Avalonia\BitCrafts.Infrastructure.Abstraction.Avalonia.csproj"/>
         <ProjectReference Include="..\BitCrafts.Infrastructure.Abstraction\BitCrafts.Infrastructure.Abstraction.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Update="Views\MainView.axaml.cs">
-        <DependentUpon>MainView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
+        <Compile Update="Views\MainView.axaml.cs">
+            <DependentUpon>MainView.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
     </ItemGroup>
 </Project>

@@ -4,5 +4,4 @@ namespace BitCrafts.Users.Abstraction.Presenters;
 
 public interface ICreateUserPresenter : IPresenter
 {
-    
 }

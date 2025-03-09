@@ -5,10 +5,10 @@ namespace BitCrafts.Infrastructure.Abstraction.Threading;
 
 public abstract class BaseThreadDispatcher : IThreadDispatcher, IDisposable
 {
-    private readonly ILogger<BaseThreadDispatcher> _logger;
-    private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+    private readonly CancellationTokenSource _cancellationTokenSource = new();
     private readonly Thread _dispatcherThread;
-    private readonly BlockingCollection<Action> _taskQueue = new BlockingCollection<Action>();
+    private readonly ILogger<BaseThreadDispatcher> _logger;
+    private readonly BlockingCollection<Action> _taskQueue = new();
     private bool _isDisposed;
 
     protected BaseThreadDispatcher(ILogger<BaseThreadDispatcher> logger, string threadName)
@@ -144,10 +144,7 @@ public abstract class BaseThreadDispatcher : IThreadDispatcher, IDisposable
     {
         if (_isDisposed) return;
 
-        if (disposing)
-        {
-            Stop();
-        }
+        if (disposing) Stop();
 
         _isDisposed = true;
         _logger.LogInformation($"{_dispatcherThread.Name} Disposed");

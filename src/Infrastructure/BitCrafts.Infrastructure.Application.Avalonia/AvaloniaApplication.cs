@@ -2,13 +2,12 @@ using System;
 using System.Threading.Tasks;
 using Avalonia;
 using BitCrafts.Infrastructure.Abstraction.Application;
-using BitCrafts.Infrastructure.Abstraction.Application.Managers;
 using BitCrafts.Infrastructure.Abstraction.Threading;
 using Microsoft.Extensions.Logging;
 
 namespace BitCrafts.Infrastructure.Application.Avalonia;
 
-public sealed class AvaloniaApplication : BaseApplication, IApplication
+public sealed class AvaloniaApplication : BaseApplication
 {
     private readonly AppBuilder _appbuilder;
 

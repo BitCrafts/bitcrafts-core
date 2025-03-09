@@ -9,37 +9,34 @@ namespace BitCrafts.Infrastructure.Application.Avalonia.Views;
 
 public partial class MainView : BaseView, IMainView
 {
-    public event EventHandler<string> MenuItemClicked;
-
     public MainView()
     {
         InitializeComponent();
     }
 
-    protected override void Dispose(bool disposing)
-    {
-        if (disposing)
-        {
-            foreach (MenuItem menuItem in ModulesMenuItem.Items)
-            {
-                menuItem.Click -= MenuItemOnClick;
-            }
-
-            ModulesMenuItem.Items.Clear();
-        }
-
-        base.Dispose(disposing);
-    }
+    public event EventHandler<string> MenuItemClicked;
 
     public void InitializeModulesMenu(IEnumerable<IModule> modules)
     {
         if (modules == null) throw new ArgumentNullException(nameof(modules));
         foreach (var module in modules)
         {
-            var menuItem = new MenuItem() { Header = module.Name };
+            var menuItem = new MenuItem { Header = module.Name };
             menuItem.Click += MenuItemOnClick;
             ModulesMenuItem.Items.Add(menuItem);
         }
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            foreach (MenuItem menuItem in ModulesMenuItem.Items) menuItem.Click -= MenuItemOnClick;
+
+            ModulesMenuItem.Items.Clear();
+        }
+
+        base.Dispose(disposing);
     }
 
     private void MenuItemOnClick(object sender, RoutedEventArgs e)

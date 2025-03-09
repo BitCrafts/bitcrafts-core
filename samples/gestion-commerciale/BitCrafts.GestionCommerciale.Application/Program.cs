@@ -20,9 +20,9 @@ internal class Program
 
 
     [STAThread]
-    private static async Task Main(string[] args)
+    private static async Task Main()
     {
-        var serviceCollection = new ServiceCollection();
+        ServiceCollection serviceCollection = [];
         serviceCollection
             .AddBitCraftsInfrastructure()
             .AddBitCraftsAvaloniaApplication();

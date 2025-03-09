@@ -1,7 +1,4 @@
-using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
 using BitCrafts.Infrastructure.Abstraction.Avalonia.Views;
 using BitCrafts.Users.Abstraction.Entities;
 using BitCrafts.Users.Abstraction.Views;
@@ -10,14 +7,31 @@ namespace BitCrafts.Users.Views;
 
 public partial class CreateUserView : BaseView, ICreateUserView
 {
-    public event EventHandler<User> SaveClicked;
-    public event EventHandler CloseClicked;
-
     public CreateUserView()
     {
         InitializeComponent();
         AddButton.Click += AddButtonOnClick;
         CloseButton.Click += CloseButtonOnClick;
+    }
+
+    public event EventHandler<User> SaveClicked;
+    public event EventHandler CloseClicked;
+
+    public string GetPassword()
+    {
+        return PasswordTextBox.Text != null ? PasswordTextBox.Text.Trim() : string.Empty;
+    }
+
+    public override void UnsetBusy()
+    {
+        LoadingOverlay.IsVisible = false;
+        base.UnsetBusy();
+    }
+
+    public override void SetBusy(string message)
+    {
+        LoadingOverlay.IsVisible = true;
+        base.SetBusy(message);
     }
 
     private void CloseButtonOnClick(object sender, RoutedEventArgs e)
@@ -46,11 +60,6 @@ public partial class CreateUserView : BaseView, ICreateUserView
         return user;
     }
 
-    public string GetPassword()
-    {
-        return PasswordTextBox.Text.Trim();
-    }
-
     protected override void Dispose(bool disposing)
     {
         if (disposing)
@@ -60,17 +69,5 @@ public partial class CreateUserView : BaseView, ICreateUserView
         }
 
         base.Dispose(disposing);
-    }
-
-    public override void UnsetBusy()
-    {
-        LoadingOverlay.IsVisible = false;
-        base.UnsetBusy();
-    }
-
-    public override void SetBusy(string message)
-    {
-        LoadingOverlay.IsVisible = true;
-        base.SetBusy(message);
     }
 }

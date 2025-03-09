@@ -5,5 +5,4 @@ namespace BitCrafts.Users.Abstraction.UseCases;
 
 public interface IDisplayUsersUseCase : IUseCase<DisplayUsersEventRequest, DisplayUsersEventResponse>
 {
-    
 }

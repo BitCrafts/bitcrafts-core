@@ -8,5 +8,4 @@ public interface IDatabaseManager
     Task<int> GetLastInsertedIdAsync();
 
     Task<IDbTransaction> BeginTransactionAsync();
-
 }

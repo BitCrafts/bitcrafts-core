@@ -4,5 +4,4 @@ namespace BitCrafts.Infrastructure.Application.Avalonia.Presenters;
 
 public interface IMainPresenter : IPresenter
 {
-    
 }

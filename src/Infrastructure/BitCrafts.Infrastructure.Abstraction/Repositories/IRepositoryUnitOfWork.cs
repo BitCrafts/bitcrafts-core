@@ -4,7 +4,7 @@ namespace BitCrafts.Infrastructure.Abstraction.Repositories;
 
 public interface IRepositoryUnitOfWork
 {
-        void SetDbContext(DbContext dbContext);
-        T GetRepository<T>();
-        Task<int> CommitAsync();
+    void SetDbContext(DbContext dbContext);
+    T GetRepository<T>();
+    Task<int> CommitAsync();
 }

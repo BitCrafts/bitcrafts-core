@@ -6,7 +6,6 @@ using BitCrafts.Users.Abstraction.Events;
 using BitCrafts.Users.Abstraction.Presenters;
 using BitCrafts.Users.Abstraction.UseCases;
 using BitCrafts.Users.Abstraction.Views;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace BitCrafts.Users.Presenters;
@@ -51,13 +50,12 @@ public class CreateUserPresenter : BasePresenter<ICreateUserView>, ICreateUserPr
 
     private async void OnSaveClicked(object sender, User e)
     {
-        var userEvent = new UserEventRequest()
+        var userEvent = new CreateUserEventRequest
         {
             User = e,
-            Password = View.GetPassword(),
+            Password = View.GetPassword()
         };
         View.SetBusy("Loading...");
-        await Task.Delay(2000);
         var response = await _createUserUseCase.Execute(userEvent);
         View.UnsetBusy();
         _eventAggregator.Publish(response);

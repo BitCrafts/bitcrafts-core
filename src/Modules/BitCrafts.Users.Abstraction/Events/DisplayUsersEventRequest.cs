@@ -4,5 +4,4 @@ namespace BitCrafts.Users.Abstraction.Events;
 
 public class DisplayUsersEventRequest : BaseEventRequest
 {
-    
 }
