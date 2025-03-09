@@ -11,6 +11,7 @@ public sealed class UsersDbContext : DbContext
         : base(options)
     {
         _configuration = configuration;
+        Database.EnsureCreated();
     }
 
     public DbSet<User> Users { get; set; }

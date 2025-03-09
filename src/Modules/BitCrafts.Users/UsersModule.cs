@@ -21,6 +21,7 @@ public sealed class UsersModule : IUsersModule
     public void RegisterServices(IServiceCollection services)
     {
         services.AddTransient<ICreateUserUseCase, CreateUserUseCase>();
+        services.AddTransient<IDeleteUserUseCase, DeleteUserUseCase>();
         services.AddTransient<IUpdateUserUseCase, UpdateUserUseCase>();
         services.AddTransient<IDisplayUsersUseCase, DisplayUsersUseCase>();
         services.AddTransient<ICreateUserView, CreateUserView>();

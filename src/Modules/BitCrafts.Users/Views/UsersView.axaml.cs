@@ -74,4 +74,12 @@ public partial class UsersView : BaseView, IUsersView
                 _eventAggregator.Publish<UpdateUserEvent>(new UpdateUserEvent(user));
         }
     }
+
+    private void DeleteButton_OnClick(object sender, RoutedEventArgs e)
+    {
+        if (UsersDataGrid.SelectedItem is User user)
+        {
+            _eventAggregator.Publish<DeleteUserEvent>(new DeleteUserEvent(user));
+        }
+    }
 }

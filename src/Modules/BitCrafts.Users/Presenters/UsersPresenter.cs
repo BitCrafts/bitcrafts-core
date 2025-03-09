@@ -13,13 +13,15 @@ public sealed class UsersPresenter : BasePresenter<IUsersView>, IUsersPresenter
 {
     private readonly IDisplayUsersUseCase _displayUsersUseCase;
     private readonly IUpdateUserUseCase _updateUserUseCase;
+    private readonly IDeleteUserUseCase _deleteUserUseCase;
     private readonly IEventAggregator _eventAggregator;
     private readonly IWindowManager _windowManager;
     private readonly IWorkspaceManager _workspaceManager;
 
-    public UsersPresenter(IDisplayUsersUseCase displayUsersUseCase, IUpdateUserUseCase updateUserUseCase,
-        IWindowManager windowManager, IUsersView view
-        , ILogger<UsersPresenter> logger, IWorkspaceManager workspaceManager,
+    public UsersPresenter(IDisplayUsersUseCase displayUsersUseCase,
+        IUpdateUserUseCase updateUserUseCase, IDeleteUserUseCase deleteUserUseCase,
+        IWindowManager windowManager, IUsersView view, ILogger<UsersPresenter> logger,
+        IWorkspaceManager workspaceManager,
         IEventAggregator eventAggregator) : base("Users", view, logger)
     {
         _windowManager = windowManager;
@@ -27,6 +29,7 @@ public sealed class UsersPresenter : BasePresenter<IUsersView>, IUsersPresenter
         _eventAggregator = eventAggregator;
         _displayUsersUseCase = displayUsersUseCase;
         _updateUserUseCase = updateUserUseCase;
+        _deleteUserUseCase = deleteUserUseCase;
     }
 
     public async Task SaveUserAsync()
@@ -56,6 +59,24 @@ public sealed class UsersPresenter : BasePresenter<IUsersView>, IUsersPresenter
             _workspaceManager.ClosePresenter<UsersPresenter>();
         _eventAggregator.Subscribe<CreateUserEventResponse>(OnCreateUser);
         _eventAggregator.Subscribe<UpdateUserEvent>(OnUpdateUser);
+        _eventAggregator.Subscribe<DeleteUserEvent>(OnDeleteUser);
+        //_eventAggregator.Subscribe<UsersRefreshEvent>(OnUsersRefresh);
+    }
+
+   /* private void OnUsersRefresh(UsersRefreshEvent obj)
+    {
+        if (obj != null)
+        {
+            
+        }
+    }*/
+
+    private void OnDeleteUser(DeleteUserEvent obj)
+    {
+        if (obj != null && obj.User != null)
+        {
+            _deleteUserUseCase.Execute(obj);
+        }
     }
 
     private void OnUpdateUser(UpdateUserEvent obj)
@@ -70,6 +91,7 @@ public sealed class UsersPresenter : BasePresenter<IUsersView>, IUsersPresenter
         {
             _eventAggregator.Unsubscribe<CreateUserEventResponse>(OnCreateUser);
             _eventAggregator.Unsubscribe<UpdateUserEvent>(OnUpdateUser);
+            _eventAggregator.Unsubscribe<DeleteUserEvent>(OnDeleteUser);
         }
 
         base.Dispose(disposing);
