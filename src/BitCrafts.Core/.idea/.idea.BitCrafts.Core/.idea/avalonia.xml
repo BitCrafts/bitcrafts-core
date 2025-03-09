@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AvaloniaProject">
+    <option name="projectPerEditor">
+      <map>
+        <entry key="../Infrastructure/BitCrafts.Infrastructure.Application.Avalonia/App.axaml" value="../../samples/gestion-commerciale/BitCrafts.GestionCommerciale.Application/BitCrafts.GestionCommerciale.Application.csproj" />
+        <entry key="../Infrastructure/BitCrafts.Infrastructure.Application.Avalonia/MainNativeWindow.axaml" value="../../samples/gestion-commerciale/BitCrafts.GestionCommerciale.Application/BitCrafts.GestionCommerciale.Application.csproj" />
+        <entry key="../Infrastructure/BitCrafts.Infrastructure.Application.Avalonia/MainWindow.axaml" value="../../samples/gestion-commerciale/BitCrafts.GestionCommerciale.Application/BitCrafts.GestionCommerciale.Application.csproj" />
+        <entry key="../Infrastructure/BitCrafts.Infrastructure.Application.Avalonia/SplashScreen.axaml" value="../../samples/gestion-commerciale/BitCrafts.GestionCommerciale.Application/BitCrafts.GestionCommerciale.Application.csproj" />
+        <entry key="../Infrastructure/BitCrafts.Infrastructure.Application.Avalonia/Views/ErrorView.axaml" value="../../samples/gestion-commerciale/BitCrafts.GestionCommerciale.Application/BitCrafts.GestionCommerciale.Application.csproj" />
+        <entry key="../Infrastructure/BitCrafts.Infrastructure.Application.Avalonia/Views/MainView.axaml" value="../../samples/gestion-commerciale/BitCrafts.GestionCommerciale.Application/BitCrafts.GestionCommerciale.Application.csproj" />
+        <entry key="../Infrastructure/BitCrafts.Infrastructure.Application.Avalonia/Views/StartupView.axaml" value="../../samples/gestion-commerciale/BitCrafts.GestionCommerciale.Application/BitCrafts.GestionCommerciale.Application.csproj" />
+        <entry key="../Infrastructure/BitCrafts.Infrastructure.Application.Avalonia/Windows/MainView.axaml" value="../../samples/gestion-commerciale/BitCrafts.GestionCommerciale.Application/BitCrafts.GestionCommerciale.Application.csproj" />
+        <entry key="../Infrastructure/BitCrafts.Infrastructure.Application.Avalonia/Windows/MainWindow.axaml" value="../../samples/gestion-commerciale/BitCrafts.GestionCommerciale.Application/BitCrafts.GestionCommerciale.Application.csproj" />
+        <entry key="../Infrastructure/BitCrafts.Infrastructure.Application.Avalonia/Windows/StartupView.axaml" value="../../samples/gestion-commerciale/BitCrafts.GestionCommerciale.Application/BitCrafts.GestionCommerciale.Application.csproj" />
+        <entry key="../Infrastructure/BitCrafts.Infrastructure.Application.Avalonia/Windows/StartupWindow.axaml" value="../../samples/gestion-commerciale/BitCrafts.GestionCommerciale.Application/BitCrafts.GestionCommerciale.Application.csproj" />
+        <entry key="../Infrastructure/BitCrafts.Infrastructure.Application.Avalonia/Windows/TestWindow.axaml" value="../../samples/gestion-commerciale/BitCrafts.GestionCommerciale.Application/BitCrafts.GestionCommerciale.Application.csproj" />
+      </map>
+    </option>
+  </component>
+</project>
