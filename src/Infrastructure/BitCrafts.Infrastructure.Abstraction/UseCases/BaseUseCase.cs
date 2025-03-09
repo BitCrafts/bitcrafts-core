@@ -2,14 +2,11 @@
 
 namespace BitCrafts.Infrastructure.Abstraction.UseCases;
 
-public abstract class BaseUseCase<TEventRequest, TEventResponse> : IUseCase<TEventRequest, TEventResponse>
-    where TEventRequest : IEventRequest
-    where TEventResponse : IEventResponse
+public abstract class BaseUseCase<TInput, TOutput> : IUseCase<TInput, TOutput>
 {
-    public async Task<TEventResponse> Execute(TEventRequest eventRequest)
+    public async Task<TOutput> Execute(TInput eventRequest)
     {
         var response = await ExecuteCore(eventRequest);
-        response.Request = eventRequest;
         return response;
     }
 
@@ -19,7 +16,7 @@ public abstract class BaseUseCase<TEventRequest, TEventResponse> : IUseCase<TEve
         GC.SuppressFinalize(this);
     }
 
-    protected abstract Task<TEventResponse> ExecuteCore(TEventRequest eventRequest);
+    protected abstract Task<TOutput> ExecuteCore(TInput eventRequest);
 
     protected virtual void Dispose(bool disposing)
     {

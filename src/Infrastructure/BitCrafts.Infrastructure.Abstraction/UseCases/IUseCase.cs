@@ -2,9 +2,7 @@
 
 namespace BitCrafts.Infrastructure.Abstraction.UseCases;
 
-public interface IUseCase<TEventRequest, TEventResponse> : IDisposable
-    where TEventRequest : IEventRequest
-    where TEventResponse : IEventResponse
+public interface IUseCase<TInput, TOutput> : IDisposable
 {
-    Task<TEventResponse> Execute(TEventRequest eventRequest);
+    Task<TOutput> Execute(TInput eventRequest);
 }

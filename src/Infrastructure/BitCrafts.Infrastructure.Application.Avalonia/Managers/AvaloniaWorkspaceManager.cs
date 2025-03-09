@@ -25,24 +25,31 @@ public sealed class AvaloniaWorkspaceManager : IWorkspaceManager
     }
 
 
-    public void ShowPresenter<TPresenter>() where TPresenter : IPresenter
+    public void ShowPresenter<TPresenter>() where TPresenter : class,IPresenter
     {
         ShowPresenter(typeof(TPresenter));
+    }
+
+    private bool HasExistingPresenter(Type presenterType)
+    {
+        foreach (var presenter in _presenterToTabItemMap.Keys)
+        {
+            if (presenter.GetType() == presenterType)
+                return true;
+        }
+
+        return false;
     }
 
     public void ShowPresenter(Type presenterType)
     {
         if (presenterType == null) return;
-        var presenter = _serviceProvider.GetRequiredService(presenterType) as IPresenter;
-        if (presenter != null && _presenterToTabItemMap.ContainsKey(presenter))
-        {
-            _tabControl.SelectedItem = _presenterToTabItemMap[presenter];
+        if (HasExistingPresenter(presenterType))
             return;
-        }
-
+        var presenter = _serviceProvider.GetRequiredService(presenterType) as IPresenter;
         if (presenter != null)
         {
-            var view = presenter.GetView() as UserControl; // Cast en UserControl
+            var view = presenter.GetView() as UserControl;
             if (view == null)
                 throw new InvalidOperationException("The view associated with the presenter is not a UserControl.");
 
@@ -63,13 +70,11 @@ public sealed class AvaloniaWorkspaceManager : IWorkspaceManager
         {
             _tabControl.Items.Remove(tabItem);
             _presenterToTabItemMap.Remove(presenter);
-
-
             if (presenter is IDisposable disposablePresenter) disposablePresenter.Dispose();
         }
     }
 
-    public void ClosePresenter<TPresenter>() where TPresenter : IPresenter
+    public void ClosePresenter<TPresenter>() where TPresenter : class,IPresenter
     {
         ClosePresenter(typeof(TPresenter));
     }
@@ -92,9 +97,15 @@ public sealed class AvaloniaWorkspaceManager : IWorkspaceManager
 
     private IPresenter GetPresenterFromAnyScope(Type presenterType)
     {
-        var presenter = _serviceProvider.GetService(presenterType) as IPresenter;
+        foreach (var (presenter, _) in _presenterToTabItemMap)
+        {
+            if (presenter.GetType() == presenterType)
+            {
+                return presenter;
+            }
+        }
 
-        return presenter;
+        return null;
     }
 
     private void ClosePresenterByInstance(IPresenter presenter)
@@ -103,7 +114,6 @@ public sealed class AvaloniaWorkspaceManager : IWorkspaceManager
         {
             _tabControl.Items.Remove(tabItem);
             _presenterToTabItemMap.Remove(presenter);
-
             if (presenter is IDisposable disposablePresenter) disposablePresenter.Dispose();
         }
     }

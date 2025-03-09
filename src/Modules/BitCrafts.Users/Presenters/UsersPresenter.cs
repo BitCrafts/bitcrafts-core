@@ -12,11 +12,13 @@ namespace BitCrafts.Users.Presenters;
 public sealed class UsersPresenter : BasePresenter<IUsersView>, IUsersPresenter
 {
     private readonly IDisplayUsersUseCase _displayUsersUseCase;
+    private readonly IUpdateUserUseCase _updateUserUseCase;
     private readonly IEventAggregator _eventAggregator;
     private readonly IWindowManager _windowManager;
     private readonly IWorkspaceManager _workspaceManager;
 
-    public UsersPresenter(IDisplayUsersUseCase displayUsersUseCase, IWindowManager windowManager, IUsersView view
+    public UsersPresenter(IDisplayUsersUseCase displayUsersUseCase, IUpdateUserUseCase updateUserUseCase,
+        IWindowManager windowManager, IUsersView view
         , ILogger<UsersPresenter> logger, IWorkspaceManager workspaceManager,
         IEventAggregator eventAggregator) : base("Users", view, logger)
     {
@@ -24,6 +26,7 @@ public sealed class UsersPresenter : BasePresenter<IUsersView>, IUsersPresenter
         _workspaceManager = workspaceManager;
         _eventAggregator = eventAggregator;
         _displayUsersUseCase = displayUsersUseCase;
+        _updateUserUseCase = updateUserUseCase;
     }
 
     public async Task SaveUserAsync()
@@ -50,13 +53,24 @@ public sealed class UsersPresenter : BasePresenter<IUsersView>, IUsersPresenter
     {
         View.SaveClicked += async (_, _) => await SaveUserAsync();
         View.CloseClicked += (_, _) =>
-            _workspaceManager.ClosePresenter<IUsersPresenter>();
+            _workspaceManager.ClosePresenter<UsersPresenter>();
         _eventAggregator.Subscribe<CreateUserEventResponse>(OnCreateUser);
+        _eventAggregator.Subscribe<UpdateUserEvent>(OnUpdateUser);
+    }
+
+    private void OnUpdateUser(UpdateUserEvent obj)
+    {
+        if (obj != null && obj.User != null)
+            _updateUserUseCase.Execute(obj);
     }
 
     protected override void Dispose(bool disposing)
     {
-        if (disposing) _eventAggregator.Unsubscribe<CreateUserEventResponse>(OnCreateUser);
+        if (disposing)
+        {
+            _eventAggregator.Unsubscribe<CreateUserEventResponse>(OnCreateUser);
+            _eventAggregator.Unsubscribe<UpdateUserEvent>(OnUpdateUser);
+        }
 
         base.Dispose(disposing);
     }

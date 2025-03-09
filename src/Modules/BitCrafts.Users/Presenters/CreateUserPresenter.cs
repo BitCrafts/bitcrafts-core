@@ -45,7 +45,7 @@ public class CreateUserPresenter : BasePresenter<ICreateUserView>, ICreateUserPr
 
     private void OnCloseClicked(object sender, EventArgs e)
     {
-        _windowManager.CloseWindow<ICreateUserPresenter>();
+        _windowManager.CloseWindow<CreateUserPresenter>();
     }
 
     private async void OnSaveClicked(object sender, User e)

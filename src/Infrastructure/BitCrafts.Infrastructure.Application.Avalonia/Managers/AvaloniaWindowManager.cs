@@ -24,9 +24,11 @@ public sealed class AvaloniaWindowManager : IWindowManager
         _serviceProvider = serviceProvider;
     }
 
-    public void ShowWindow<TPresenter>() where TPresenter : IPresenter
+    public void ShowWindow<TPresenter>() where TPresenter : class,IPresenter
     {
         var presenterType = typeof(TPresenter);
+        if (HasExistingPresenter(presenterType))
+            return;
         var presenter = _serviceProvider.GetRequiredService(presenterType) as IPresenter;
         if (presenter != null && _presenterToWindowMap.ContainsKey(presenter))
         {
@@ -47,9 +49,11 @@ public sealed class AvaloniaWindowManager : IWindowManager
         }
     }
 
-    public async Task ShowDialogWindowAsync<TPresenter>() where TPresenter : IPresenter
+    public async Task ShowDialogWindowAsync<TPresenter>() where TPresenter : class,IPresenter
     {
         var presenterType = typeof(TPresenter);
+        if (HasExistingPresenter(presenterType))
+            return;
         var presenter = _serviceProvider.GetRequiredService(presenterType) as IPresenter;
 
         if (presenter != null)
@@ -70,13 +74,13 @@ public sealed class AvaloniaWindowManager : IWindowManager
         }
     }
 
-    public void CloseWindow<TPresenter>() where TPresenter : IPresenter
+    public void CloseWindow<TPresenter>() where TPresenter : class,IPresenter
     {
         var presenter = GetPresenterFromAnyScope<TPresenter>();
         if (presenter != null && _presenterToWindowMap.TryGetValue(presenter, out var window)) window.Close();
     }
 
-    public void HideWindow<TPresenter>() where TPresenter : IPresenter
+    public void HideWindow<TPresenter>() where TPresenter : class,IPresenter
     {
         var presenter = GetPresenterFromAnyScope<TPresenter>();
         if (presenter != null && _presenterToWindowMap.TryGetValue(presenter, out var window)) window.Hide();
@@ -91,10 +95,24 @@ public sealed class AvaloniaWindowManager : IWindowManager
 
     private TPresenter GetPresenterFromAnyScope<TPresenter>() where TPresenter : IPresenter
     {
-        var presenter =
-            _serviceProvider.GetService<TPresenter>();
+        foreach (var presenter in _presenterToWindowMap.Keys)
+        {
+            if (presenter is TPresenter presenterToWindow)
+                return presenterToWindow;
+        }
 
-        return presenter;
+        return default;
+    }
+
+    private bool HasExistingPresenter(Type presenterType)
+    {
+        foreach (var presenter in _presenterToWindowMap.Keys)
+        {
+            if (presenter.GetType() == presenterType)
+                return true;
+        }
+
+        return false;
     }
 
     private void AddWindowToCollections(IPresenter presenter, Window window)
@@ -129,9 +147,8 @@ public sealed class AvaloniaWindowManager : IWindowManager
             WindowStartupLocation = WindowStartupLocation.CenterScreen,
             BorderThickness = new Thickness(5),
             BorderBrush = new SolidColorBrush(Colors.Black),
-            Width = 1024,
-            Height = 768,
-            WindowState = WindowState.Maximized,
+            Width = control.Width,
+            Height = control.Height,
             Content = new Grid
             {
                 VerticalAlignment = VerticalAlignment.Stretch,

@@ -1,17 +1,22 @@
 using System.Collections.ObjectModel;
+using Avalonia.Controls;
 using Avalonia.Interactivity;
 using BitCrafts.Infrastructure.Abstraction.Avalonia.Views;
+using BitCrafts.Infrastructure.Abstraction.Events;
 using BitCrafts.Users.Abstraction.Entities;
+using BitCrafts.Users.Abstraction.Events;
 using BitCrafts.Users.Abstraction.Views;
 
 namespace BitCrafts.Users.Views;
 
 public partial class UsersView : BaseView, IUsersView
 {
+    private readonly IEventAggregator _eventAggregator;
     private readonly ObservableCollection<User> _users;
 
-    public UsersView()
+    public UsersView(IEventAggregator eventAggregator)
     {
+        _eventAggregator = eventAggregator;
         _users = new ObservableCollection<User>();
         InitializeComponent();
         UsersDataGrid.ItemsSource = _users;
@@ -54,5 +59,15 @@ public partial class UsersView : BaseView, IUsersView
     private void Closebutton_OnClick(object sender, RoutedEventArgs e)
     {
         CloseClicked?.Invoke(this, EventArgs.Empty);
+    }
+
+    private void UsersDataGrid_OnRowEditEnded(object sender, DataGridRowEditEndedEventArgs e)
+    {
+        if (e.EditAction == DataGridEditAction.Commit)
+        {
+            var user = e.Row.DataContext as User;
+            if (user != null)
+                _eventAggregator.Publish<UpdateUserEvent>(new UpdateUserEvent(user));
+        }
     }
 }

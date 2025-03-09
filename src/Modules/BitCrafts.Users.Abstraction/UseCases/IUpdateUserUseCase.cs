@@ -3,6 +3,6 @@ using BitCrafts.Users.Abstraction.Events;
 
 namespace BitCrafts.Users.Abstraction.UseCases;
 
-public interface IUpdateUserUseCase : IUseCase<CreateUserEventRequest, CreateUserEventResponse>
+public interface IUpdateUserUseCase : IUseCase<UpdateUserEvent, bool>
 {
 }
