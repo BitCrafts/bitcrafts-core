@@ -22,11 +22,10 @@ public class UsersModule : IUsersModule
         services.AddTransient<ICreateUserUseCase, CreateUserUseCase>();
         services.AddTransient<IDisplayUsersUseCase, DisplayUsersUseCase>();
         services.AddTransient<ICreateUserView, CreateUserView>();
-        services.AddScoped<ICreateUserPresenter, CreateUserPresenter>();
+        services.AddTransient<ICreateUserPresenter, CreateUserPresenter>();
         services.AddTransient<IUsersView, UsersView>();
-        services.AddScoped<IUsersPresenter, UsersPresenter>();
-
-        services.AddScoped<IUsersRepository, UsersRepository>();
+        services.AddTransient<IUsersPresenter, UsersPresenter>(); 
+        services.AddTransient<IUsersRepository, UsersRepository>();
         services.AddDbContext<UsersDbContext>();
     }
 
