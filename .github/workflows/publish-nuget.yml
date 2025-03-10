@@ -18,20 +18,17 @@ jobs:
         with:
           dotnet-version: '9.0.x' # Modifier selon votre version du SDK
 
-      - name:
-        run: cd src/
-
       - name: Restore dependencies
-        run: dotnet restore
+        run: dotnet restore src/BitCrafts.Core/BitCrafts.Core.sln
 
       - name: Build project
-        run: dotnet build --configuration Release --no-restore
+        run: dotnet build src/BitCrafts.Core/BitCrafts.Core.sln --configuration Release --no-restore
 
       - name: Run tests
-        run: dotnet test --no-restore --verbosity normal
+        run: dotnet test src/BitCrafts.Core/BitCrafts.Core.sln --no-restore --verbosity normal
 
       - name: Pack NuGet package
-        run: dotnet pack --configuration Release --no-restore --output .
+        run: dotnet pack src/BitCrafts.Core/BitCrafts.Core.sln --configuration Release --no-restore --output .
 
       - name: Publish NuGet package to GitHub Packages
         run: dotnet nuget push *.nupkg --source "github" --api-key ${{ secrets.GITHUB_TOKEN }}
