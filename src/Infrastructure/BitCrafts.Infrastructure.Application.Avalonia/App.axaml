@@ -2,7 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="BitCrafts.Infrastructure.Application.Avalonia.App"
              xmlns:actipro="http://schemas.actiprosoftware.com/avaloniaui"
-             RequestedThemeVariant="Default">
+             RequestedThemeVariant="Dark">
 
     <Application.Styles>
         <FluentTheme />

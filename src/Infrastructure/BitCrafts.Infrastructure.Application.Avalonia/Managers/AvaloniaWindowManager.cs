@@ -24,7 +24,7 @@ public sealed class AvaloniaWindowManager : IWindowManager
         _serviceProvider = serviceProvider;
     }
 
-    public void ShowWindow<TPresenter>() where TPresenter : class,IPresenter
+    public void ShowWindow<TPresenter>() where TPresenter : class, IPresenter
     {
         var presenterType = typeof(TPresenter);
         if (HasExistingPresenter(presenterType))
@@ -49,7 +49,7 @@ public sealed class AvaloniaWindowManager : IWindowManager
         }
     }
 
-    public async Task ShowDialogWindowAsync<TPresenter>() where TPresenter : class,IPresenter
+    public async Task ShowDialogWindowAsync<TPresenter>() where TPresenter : class, IPresenter
     {
         var presenterType = typeof(TPresenter);
         if (HasExistingPresenter(presenterType))
@@ -74,13 +74,13 @@ public sealed class AvaloniaWindowManager : IWindowManager
         }
     }
 
-    public void CloseWindow<TPresenter>() where TPresenter : class,IPresenter
+    public void CloseWindow<TPresenter>() where TPresenter : class, IPresenter
     {
         var presenter = GetPresenterFromAnyScope<TPresenter>();
         if (presenter != null && _presenterToWindowMap.TryGetValue(presenter, out var window)) window.Close();
     }
 
-    public void HideWindow<TPresenter>() where TPresenter : class,IPresenter
+    public void HideWindow<TPresenter>() where TPresenter : class, IPresenter
     {
         var presenter = GetPresenterFromAnyScope<TPresenter>();
         if (presenter != null && _presenterToWindowMap.TryGetValue(presenter, out var window)) window.Hide();
@@ -96,10 +96,8 @@ public sealed class AvaloniaWindowManager : IWindowManager
     private TPresenter GetPresenterFromAnyScope<TPresenter>() where TPresenter : IPresenter
     {
         foreach (var presenter in _presenterToWindowMap.Keys)
-        {
             if (presenter is TPresenter presenterToWindow)
                 return presenterToWindow;
-        }
 
         return default;
     }
@@ -107,10 +105,8 @@ public sealed class AvaloniaWindowManager : IWindowManager
     private bool HasExistingPresenter(Type presenterType)
     {
         foreach (var presenter in _presenterToWindowMap.Keys)
-        {
             if (presenter.GetType() == presenterType)
                 return true;
-        }
 
         return false;
     }
@@ -139,14 +135,12 @@ public sealed class AvaloniaWindowManager : IWindowManager
 
     private Window CreateWindow(UserControl control, string title)
     {
+        var view = control as IView;
         var window = new Window
         {
             Title = title,
-            MinWidth = 800,
-            MinHeight = 600,
-            WindowStartupLocation = WindowStartupLocation.CenterScreen,
-            BorderThickness = new Thickness(5),
-            BorderBrush = new SolidColorBrush(Colors.Black),
+            WindowStartupLocation =
+                view.IsModal ? WindowStartupLocation.CenterOwner : WindowStartupLocation.CenterScreen,
             Width = control.Width,
             Height = control.Height,
             Content = new Grid
@@ -155,9 +149,16 @@ public sealed class AvaloniaWindowManager : IWindowManager
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 Children = { control }
             },
-            SystemDecorations = SystemDecorations.Full,
+            SystemDecorations = view.IsModal ? SystemDecorations.None : SystemDecorations.Full,
             ShowInTaskbar = true
         };
+        if (view.IsModal)
+        {
+            window.CornerRadius = new CornerRadius(10);
+            window.BorderThickness = new Thickness(5);
+            window.BorderBrush = new SolidColorBrush(Colors.Black);
+        }
+
         return window;
     }
 }

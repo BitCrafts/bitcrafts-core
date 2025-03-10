@@ -1,25 +1,25 @@
 using Avalonia.Interactivity;
 using BitCrafts.Infrastructure.Abstraction.Avalonia.Views;
+using BitCrafts.Infrastructure.Abstraction.Events;
 using BitCrafts.Users.Abstraction.Entities;
+using BitCrafts.Users.Abstraction.Events;
 using BitCrafts.Users.Abstraction.Views;
 
 namespace BitCrafts.Users.Views;
 
 public partial class CreateUserView : BaseView, ICreateUserView
 {
+    private readonly IEventAggregator _eventAggregator;
+
     public CreateUserView()
     {
         InitializeComponent();
-        AddButton.Click += AddButtonOnClick;
-        CloseButton.Click += CloseButtonOnClick;
     }
 
-    public event EventHandler<User> SaveClicked;
-    public event EventHandler CloseClicked;
-
-    public string GetPassword()
+    public CreateUserView(IEventAggregator eventAggregator) : this()
     {
-        return PasswordTextBox.Text != null ? PasswordTextBox.Text.Trim() : string.Empty;
+        _eventAggregator = eventAggregator;
+        IsModal = true;
     }
 
     public override void UnsetBusy()
@@ -34,14 +34,19 @@ public partial class CreateUserView : BaseView, ICreateUserView
         base.SetBusy(message);
     }
 
+    public string GetPassword()
+    {
+        return PasswordTextBox.Text != null ? PasswordTextBox.Text.Trim() : string.Empty;
+    }
+
     private void CloseButtonOnClick(object sender, RoutedEventArgs e)
     {
-        CloseClicked?.Invoke(this, EventArgs.Empty);
+        _eventAggregator.Publish(new CreateUserPresenterCloseEvent());
     }
 
     private void AddButtonOnClick(object sender, RoutedEventArgs e)
     {
-        SaveClicked?.Invoke(this, GetUser());
+        _eventAggregator.Publish(new CreateUserClickEvent(GetUser(), GetPassword()));
     }
 
     private User GetUser()
@@ -58,16 +63,5 @@ public partial class CreateUserView : BaseView, ICreateUserView
             UserAccount = new UserAccount()
         };
         return user;
-    }
-
-    protected override void Dispose(bool disposing)
-    {
-        if (disposing)
-        {
-            AddButton.Click -= AddButtonOnClick;
-            CloseButton.Click -= CloseButtonOnClick;
-        }
-
-        base.Dispose(disposing);
     }
 }

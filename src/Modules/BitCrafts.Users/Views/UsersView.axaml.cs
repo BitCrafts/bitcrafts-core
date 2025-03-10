@@ -14,28 +14,24 @@ public partial class UsersView : BaseView, IUsersView
     private readonly IEventAggregator _eventAggregator;
     private readonly ObservableCollection<User> _users;
 
-    public UsersView(IEventAggregator eventAggregator)
+
+    public UsersView()
+    {
+        InitializeComponent();
+    }
+
+    public UsersView(IEventAggregator eventAggregator) : this()
     {
         _eventAggregator = eventAggregator;
         _users = new ObservableCollection<User>();
-        InitializeComponent();
         UsersDataGrid.ItemsSource = _users;
     }
-
-    public event EventHandler SaveClicked;
-    public event EventHandler CloseClicked;
 
     public void RefreshUsers(IEnumerable<User> users)
     {
         _users.Clear();
         foreach (var user in users) _users.Add(user);
 
-        UsersDataGrid.ItemsSource = _users;
-    }
-
-    public void AppendUser(User user)
-    {
-        _users.Add(user);
         UsersDataGrid.ItemsSource = _users;
     }
 
@@ -51,14 +47,52 @@ public partial class UsersView : BaseView, IUsersView
         base.UnsetBusy();
     }
 
+    protected override void OnLoaded(object sender, RoutedEventArgs e)
+    {
+        _eventAggregator.Subscribe<CreateUserEvent>(OnCreateUser);
+        _eventAggregator.Subscribe<DeleteUserEvent>(OnDeleteUser);
+        _eventAggregator.Subscribe<DisplayUsersEvent>(OnDisplayUsers);
+        base.OnLoaded(sender, e);
+    }
+
+    private void OnDisplayUsers(DisplayUsersEvent obj)
+    {
+        RefreshUsers(obj.Users);
+    }
+
+    private void OnDeleteUser(DeleteUserEvent obj)
+    {
+        var user = _users.FirstOrDefault(u => u.Id == obj.UserId);
+        if (user != null) _users.Remove(user);
+    }
+
+    protected override void OnUnloaded(object sender, RoutedEventArgs e)
+    {
+        base.OnUnloaded(sender, e);
+        _eventAggregator.Unsubscribe<CreateUserEvent>(OnCreateUser);
+        _eventAggregator.Unsubscribe<DeleteUserEvent>(OnDeleteUser);
+        _eventAggregator.Unsubscribe<DisplayUsersEvent>(OnDisplayUsers);
+    }
+
+    private void OnCreateUser(CreateUserEvent obj)
+    {
+        AppendUser(obj.User);
+    }
+
+    public void AppendUser(User user)
+    {
+        _users.Add(user);
+        UsersDataGrid.ItemsSource = _users;
+    }
+
     private void SaveButton_OnClick(object sender, RoutedEventArgs e)
     {
-        SaveClicked?.Invoke(this, EventArgs.Empty);
+        _eventAggregator.Publish(new AddUserClickEvent());
     }
 
     private void Closebutton_OnClick(object sender, RoutedEventArgs e)
     {
-        CloseClicked?.Invoke(this, EventArgs.Empty);
+        _eventAggregator.Publish(new UsersPresenterCloseEvent());
     }
 
     private void UsersDataGrid_OnRowEditEnded(object sender, DataGridRowEditEndedEventArgs e)
@@ -66,8 +100,12 @@ public partial class UsersView : BaseView, IUsersView
         if (e.EditAction == DataGridEditAction.Commit)
         {
             var user = e.Row.DataContext as User;
-            if (user != null)
-                _eventAggregator.Publish<UpdateUserEvent>(new UpdateUserEvent(user));
+            if (user != null) _eventAggregator.Publish(new UpdateUserClickEvent(user));
         }
+    }
+
+    private void DeleteButton_OnClick(object sender, RoutedEventArgs e)
+    {
+        if (UsersDataGrid.SelectedItem is User user) _eventAggregator.Publish(new DeleteUserClickEvent(user));
     }
 }

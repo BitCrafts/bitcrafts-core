@@ -8,6 +8,7 @@ public abstract class BaseView : UserControl, IView
 {
     private string _title;
 
+
     protected BaseView()
     {
         Loaded += OnLoaded;
@@ -23,6 +24,8 @@ public abstract class BaseView : UserControl, IView
     {
         _title = title;
     }
+
+    public bool IsModal { get; protected set; }
 
     public virtual void SetBusy(string message)
     {
@@ -47,12 +50,12 @@ public abstract class BaseView : UserControl, IView
         GC.SuppressFinalize(this);
     }
 
-    private void OnUnloaded(object sender, RoutedEventArgs e)
+    protected virtual void OnUnloaded(object sender, RoutedEventArgs e)
     {
         ViewClosedEvent?.Invoke(this, EventArgs.Empty);
     }
 
-    private void OnLoaded(object sender, RoutedEventArgs e)
+    protected virtual void OnLoaded(object sender, RoutedEventArgs e)
     {
         ViewLoadedEvent?.Invoke(this, EventArgs.Empty);
     }

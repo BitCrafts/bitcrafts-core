@@ -1,11 +1,5 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{7460943E-592A-4FFD-86C2-BE9609D97B62}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitCrafts.GestionCommerciale.Application", "..\..\samples\gestion-commerciale\BitCrafts.GestionCommerciale.Application\BitCrafts.GestionCommerciale.Application.csproj", "{FB8E8E0C-4B7B-4307-AAC9-F1FA79801853}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Modules", "Modules", "{FB3B7478-EF84-4969-96A9-9CF5D86F65CA}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{5AD06EF2-71B9-46D9-9ABB-CE544A8DD858}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitCrafts.Infrastructure", "..\Infrastructure\BitCrafts.Infrastructure\BitCrafts.Infrastructure.csproj", "{7F481705-0E99-4292-99BC-6EFD24897C21}"
@@ -13,12 +7,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitCrafts.Infrastructure.Abstraction", "..\Infrastructure\BitCrafts.Infrastructure.Abstraction\BitCrafts.Infrastructure.Abstraction.csproj", "{C24FA856-8368-476D-A27D-1C970F97136B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitCrafts.Infrastructure.Application.Avalonia", "..\Infrastructure\BitCrafts.Infrastructure.Application.Avalonia\BitCrafts.Infrastructure.Application.Avalonia.csproj", "{1FE4620C-80F7-4A39-AC8B-C25055D736BA}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Users", "Users", "{34951A38-781D-43EE-8AEE-A13B30A32372}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitCrafts.Users.Abstraction", "..\Modules\BitCrafts.Users.Abstraction\BitCrafts.Users.Abstraction.csproj", "{4C7A595C-4A2C-428C-A457-898246DA06D1}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitCrafts.Users", "..\Modules\BitCrafts.Users\BitCrafts.Users.csproj", "{268E06D5-20F8-42C8-8D31-C6199AAB7A40}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitCrafts.Infrastructure.Abstraction.Avalonia", "..\Infrastructure\BitCrafts.Infrastructure.Abstraction.Avalonia\BitCrafts.Infrastructure.Abstraction.Avalonia.csproj", "{466EBA8D-5FF2-4786-A331-E13CC37643DC}"
 EndProject
@@ -28,10 +16,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{FB8E8E0C-4B7B-4307-AAC9-F1FA79801853}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FB8E8E0C-4B7B-4307-AAC9-F1FA79801853}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FB8E8E0C-4B7B-4307-AAC9-F1FA79801853}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FB8E8E0C-4B7B-4307-AAC9-F1FA79801853}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7F481705-0E99-4292-99BC-6EFD24897C21}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7F481705-0E99-4292-99BC-6EFD24897C21}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7F481705-0E99-4292-99BC-6EFD24897C21}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -44,27 +28,15 @@ Global
 		{1FE4620C-80F7-4A39-AC8B-C25055D736BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1FE4620C-80F7-4A39-AC8B-C25055D736BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1FE4620C-80F7-4A39-AC8B-C25055D736BA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4C7A595C-4A2C-428C-A457-898246DA06D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4C7A595C-4A2C-428C-A457-898246DA06D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4C7A595C-4A2C-428C-A457-898246DA06D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4C7A595C-4A2C-428C-A457-898246DA06D1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{268E06D5-20F8-42C8-8D31-C6199AAB7A40}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{268E06D5-20F8-42C8-8D31-C6199AAB7A40}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{268E06D5-20F8-42C8-8D31-C6199AAB7A40}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{268E06D5-20F8-42C8-8D31-C6199AAB7A40}.Release|Any CPU.Build.0 = Release|Any CPU
 		{466EBA8D-5FF2-4786-A331-E13CC37643DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{466EBA8D-5FF2-4786-A331-E13CC37643DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{466EBA8D-5FF2-4786-A331-E13CC37643DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{466EBA8D-5FF2-4786-A331-E13CC37643DC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{5AD06EF2-71B9-46D9-9ABB-CE544A8DD858} = {7460943E-592A-4FFD-86C2-BE9609D97B62}
 		{7F481705-0E99-4292-99BC-6EFD24897C21} = {5AD06EF2-71B9-46D9-9ABB-CE544A8DD858}
 		{C24FA856-8368-476D-A27D-1C970F97136B} = {5AD06EF2-71B9-46D9-9ABB-CE544A8DD858}
 		{1FE4620C-80F7-4A39-AC8B-C25055D736BA} = {5AD06EF2-71B9-46D9-9ABB-CE544A8DD858}
-		{34951A38-781D-43EE-8AEE-A13B30A32372} = {FB3B7478-EF84-4969-96A9-9CF5D86F65CA}
-		{4C7A595C-4A2C-428C-A457-898246DA06D1} = {34951A38-781D-43EE-8AEE-A13B30A32372}
-		{268E06D5-20F8-42C8-8D31-C6199AAB7A40} = {34951A38-781D-43EE-8AEE-A13B30A32372}
 		{466EBA8D-5FF2-4786-A331-E13CC37643DC} = {5AD06EF2-71B9-46D9-9ABB-CE544A8DD858}
 	EndGlobalSection
 EndGlobal

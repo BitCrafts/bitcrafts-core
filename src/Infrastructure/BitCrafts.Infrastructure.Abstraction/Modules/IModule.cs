@@ -8,4 +8,6 @@ public interface IModule
     void RegisterServices(IServiceCollection services);
     Type GetViewType();
     Type GetPresenterType();
+    Type GetViewImplementationType();
+    Type GetPresenterImplementationType();
 }
