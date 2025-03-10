@@ -5,8 +5,7 @@
         <LangVersion>latestmajor</LangVersion>
         <Title>BitCrafts Infrastructure Abstraction</Title>
         <Authors>Younes BENMOUSSA</Authors>
-        <PackageProjectUrl>https://github.com/BitCrafts/bitcrafts-core</PackageProjectUrl>
-        <PackageLicenseUrl>https://github.com/BitCrafts/bitcrafts-core/blob/main/LICENSE</PackageLicenseUrl>
+        <PackageProjectUrl>https://github.com/BitCrafts/bitcrafts-core</PackageProjectUrl> 
         <RepositoryUrl>https://github.com/BitCrafts/bitcrafts-core</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <TargetFramework>net9.0</TargetFramework>
