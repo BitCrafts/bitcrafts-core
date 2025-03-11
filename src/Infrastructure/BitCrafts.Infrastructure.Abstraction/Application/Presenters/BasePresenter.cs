@@ -6,12 +6,10 @@ namespace BitCrafts.Infrastructure.Abstraction.Application.Presenters;
 public abstract class BasePresenter<TView> : IPresenter
     where TView : IView
 {
-    public BasePresenter(string title, TView view, ILogger<BasePresenter<TView>> logger)
+    public BasePresenter(TView view, ILogger<BasePresenter<TView>> logger)
     {
         Logger = logger;
-        Title = title;
         View = view;
-        View.SetTitle(Title);
         View.ViewLoadedEvent += OnViewLoaded;
         View.ViewClosedEvent += OnViewClosed;
         Logger.LogInformation($"Initializing {GetType().Name}");

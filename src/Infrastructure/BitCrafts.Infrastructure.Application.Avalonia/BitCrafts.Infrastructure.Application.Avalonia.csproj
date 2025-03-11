@@ -4,8 +4,14 @@
         <Nullable>disable</Nullable>
         <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
         <ApplicationManifest>app.manifest</ApplicationManifest>
-        <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
-        <Version>1.0.1</Version>
+        <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault> 
+        <LangVersion>latestmajor</LangVersion>
+        <Title>BitCrafts Infrastructure Application Avalonia</Title>
+        <Authors>Younes BENMOUSSA</Authors>
+        <PackageProjectUrl>https://github.com/BitCrafts/bitcrafts-core</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/BitCrafts/bitcrafts-core</RepositoryUrl>
+        <RepositoryType>git</RepositoryType> 
+        <Version>1.0.2</Version>
     </PropertyGroup>
 
     <ItemGroup>

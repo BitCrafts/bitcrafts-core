@@ -12,7 +12,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{D2998A37
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitCrafts.InfrastructureTests", "tests\BitCrafts.InfrastructureTests\BitCrafts.InfrastructureTests.csproj", "{5427FFBB-5086-4C18-ACE2-E79D67224F7F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitCrafts.Module.TestModule", "BitCrafts.Module.TestModule\BitCrafts.Module.TestModule.csproj", "{422AA70A-D0EC-481E-9BEF-5D0E8E589A14}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitCrafts.Module.TestModule", "tests\BitCrafts.Module.TestModule\BitCrafts.Module.TestModule.csproj", "{422AA70A-D0EC-481E-9BEF-5D0E8E589A14}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

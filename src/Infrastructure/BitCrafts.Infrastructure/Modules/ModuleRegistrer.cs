@@ -73,7 +73,6 @@ public sealed class ModuleRegistrer : IModuleRegistrer
                 if (Activator.CreateInstance(type) is IModule moduleInstance)
                 {
                     moduleInstance.RegisterServices(services);
-                    //services.AddSingleton(moduleInstance);
                 }
         }
         catch (Exception ex)

@@ -4,6 +4,7 @@ using BitCrafts.Infrastructure.Abstraction.Application.Presenters;
 using BitCrafts.Infrastructure.Abstraction.Modules;
 using BitCrafts.Infrastructure.Application.Avalonia.Managers;
 using BitCrafts.Infrastructure.Application.Avalonia.Views;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -18,7 +19,7 @@ public sealed class MainPresenter : BasePresenter<IMainView>, IMainPresenter
     public MainPresenter(IServiceProvider serviceProvider, IMainView view, IUiManager uiManager,
         IWorkspaceManager workspaceManager,
         ILogger<MainPresenter> logger)
-        : base("Home Manager", view, logger)
+        : base(view, logger)
     {
         _serviceProvider = serviceProvider;
         _uiManager = uiManager;
@@ -45,6 +46,8 @@ public sealed class MainPresenter : BasePresenter<IMainView>, IMainPresenter
     protected override void OnViewLoaded(object sender, EventArgs e)
     {
         base.OnViewLoaded(sender, e);
+        var windowTitle = _serviceProvider.GetService<IConfiguration>()["ApplicationSettings:Name"] ?? "No Name Application";
+        View.SetTitle(windowTitle);
         View.InitializeModulesMenu(_serviceProvider.GetServices<IModule>());
 
         if (View is not MainView mainView) return;
