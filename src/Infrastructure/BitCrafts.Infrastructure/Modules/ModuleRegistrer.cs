@@ -19,25 +19,12 @@ public sealed class ModuleRegistrer : IModuleRegistrer
 
     public void RegisterModules(IServiceCollection services)
     {
-        var modulesPath = GetModulesPath();
-        if (string.IsNullOrEmpty(modulesPath)) return;
-        var allFiles = Directory.GetFiles(modulesPath, "*.dll");
+        var currentPath = Directory.GetCurrentDirectory();
+        var tempPath = Path.Combine(currentPath, "Modules");
+        var modulesPath = Path.IsPathRooted(tempPath) ? tempPath : Path.GetFullPath(tempPath);
 
-        foreach (var dll in allFiles.Where(x => x.Contains("Abstraction")))
-        {
-            var dllName = Path.GetFileName(dll);
-            _logger.Information($"Loading assembly {dllName}...");
-            LoadAssembly(dll, services);
-            _logger.Information($"Loaded assembly {dllName} OK.");
-        }
-
-        foreach (var dll in allFiles.Where(x => !x.Contains("Abstraction")))
-        {
-            var dllName = Path.GetFileName(dll);
-            _logger.Information($"Loading assembly {dllName}...");
-            LoadAssembly(dll, services, true);
-            _logger.Information($"Loaded assembly {dllName} OK.");
-        }
+        LoadModulesFromPath(modulesPath, services);
+        LoadModulesFromPath(currentPath, services);
     }
 
     public void Dispose()
@@ -46,12 +33,28 @@ public sealed class ModuleRegistrer : IModuleRegistrer
         _loadedAssemblies = null;
     }
 
-    private string GetModulesPath()
+    private void LoadModulesFromPath(string path, IServiceCollection services)
     {
-        var modulesPath = Path.Combine(Directory.GetCurrentDirectory(), "Modules");
-        if (string.IsNullOrEmpty(modulesPath)) return null;
+        if (!string.IsNullOrEmpty(path))
+        {
+            string[] allFiles;
+            allFiles = Directory.GetFiles(path, "BitCrafts.Module.*.dll");
+            //loading the modules contracts dll;
+            foreach (var dll in allFiles.Where(x => x.Contains("Abstraction")))
+            {
+                var dllName = Path.GetFileName(dll);
+                LoadAssembly(dll, services);
+                _logger.Information($"Loaded assembly {dllName} OK.");
+            }
 
-        return Path.IsPathRooted(modulesPath) ? modulesPath : Path.GetFullPath(modulesPath);
+            //loading the modules implementation dll;
+            foreach (var dll in allFiles.Where(x => !x.Contains("Abstraction")))
+            {
+                var dllName = Path.GetFileName(dll);
+                LoadAssembly(dll, services, true);
+                _logger.Information($"Loaded assembly {dllName} OK.");
+            }
+        }
     }
 
     private void LoadAssembly(string dll, IServiceCollection services, bool registerAsModule = false)
@@ -70,7 +73,7 @@ public sealed class ModuleRegistrer : IModuleRegistrer
                 if (Activator.CreateInstance(type) is IModule moduleInstance)
                 {
                     moduleInstance.RegisterServices(services);
-                    services.AddSingleton(moduleInstance);
+                    //services.AddSingleton(moduleInstance);
                 }
         }
         catch (Exception ex)

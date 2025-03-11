@@ -2,10 +2,10 @@
 /shelf/
 /workspace.xml
 # Rider ignored files
-/projectSettingsUpdater.xml
-/.idea.BitCrafts.Core.iml
 /modules.xml
 /contentModel.xml
+/projectSettingsUpdater.xml
+/.idea.BitCrafts.Core.iml
 # Editor-based HTTP Client requests
 /httpRequests/
 # Datasource local storage ignored files

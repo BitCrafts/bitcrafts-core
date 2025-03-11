@@ -6,7 +6,6 @@ using BitCrafts.Infrastructure.Application.Avalonia.Managers;
 using BitCrafts.Infrastructure.Application.Avalonia.Views;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using MainView = BitCrafts.Infrastructure.Application.Avalonia.Views.MainView;
 
 namespace BitCrafts.Infrastructure.Application.Avalonia.Presenters;
 
