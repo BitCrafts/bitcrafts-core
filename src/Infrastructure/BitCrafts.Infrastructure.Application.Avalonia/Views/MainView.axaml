@@ -21,16 +21,9 @@
     </UserControl.Resources>
     <DockPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
         <Menu DockPanel.Dock="Top">
-            <MenuItem Header="Fichier">
-                <MenuItem Header="Nouveau" />
-                <MenuItem Header="Ouvrir" />
-                <MenuItem Header="Enregistrer" />
-                <MenuItem Header="Quitter" />
-            </MenuItem>
             <MenuItem x:Name="ModulesMenuItem" Header="Modules" />
-            <MenuItem Header="Edition" />
-            <MenuItem Header="Affichage" />
         </Menu>
-        <TabControl x:Name="MainTabControl" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
+        <TabControl x:Name="MainTabControl" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+        </TabControl>
     </DockPanel>
 </UserControl>

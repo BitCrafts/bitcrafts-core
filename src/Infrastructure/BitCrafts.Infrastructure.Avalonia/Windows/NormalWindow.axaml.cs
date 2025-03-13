@@ -17,6 +17,12 @@ public partial class NormalWindow : Window
         WindowContent.Content = control;
     }
 
+    public void SetTitle(string title)
+    {
+        Title = title;
+        WindowTitle.Text = title;
+    }
+
     private void CloseButton_OnClick(object sender, RoutedEventArgs e)
     {
         Close();

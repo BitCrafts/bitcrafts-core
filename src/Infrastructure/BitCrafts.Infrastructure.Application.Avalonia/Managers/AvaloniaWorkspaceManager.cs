@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Layout;
 using BitCrafts.Infrastructure.Abstraction.Application.Managers;
 using BitCrafts.Infrastructure.Abstraction.Application.Presenters;
 using BitCrafts.Infrastructure.Abstraction.Application.Views;
@@ -48,8 +50,34 @@ public sealed class AvaloniaWorkspaceManager : IWorkspaceManager
             var view = presenter.GetView() as UserControl;
             if (view == null)
                 throw new InvalidOperationException("The view associated with the presenter is not a UserControl.");
-
-            var tabItem = new TabItem { Header = ((IView)view).GetTitle(), Content = view };
+            var closePresenterButton = new Button()
+            {
+                Content = "X", BorderThickness = new Thickness(0), CornerRadius = new CornerRadius(0),
+                HorizontalAlignment = HorizontalAlignment.Right
+            };
+            var titleHeader = new TextBlock()
+            {
+                Text = ((IView)view).GetTitle(),
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            closePresenterButton.Click += (_, _) => ClosePresenterByInstance(presenter);
+            Grid.SetColumn(titleHeader, 0);
+            Grid.SetColumn(closePresenterButton, 1);
+            var gridHeader = new Grid()
+            {
+                MinWidth = 150,
+                ColumnDefinitions = new ColumnDefinitions()
+                {
+                    new ColumnDefinition(GridLength.Star),
+                    new ColumnDefinition(GridLength.Auto)
+                },
+                Children =
+                {
+                    titleHeader,
+                    closePresenterButton
+                }
+            };
+            var tabItem = new TabItem { Header = gridHeader, Content = view };
 
             _presenterToTabItemMap[presenter] = tabItem;
             _tabControl.Items.Add(tabItem);

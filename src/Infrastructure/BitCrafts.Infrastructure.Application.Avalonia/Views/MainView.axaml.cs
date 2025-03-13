@@ -9,13 +9,12 @@ namespace BitCrafts.Infrastructure.Application.Avalonia.Views;
 
 public partial class MainView : BaseView, IMainView
 {
+    public event EventHandler<string> MenuItemClicked;
+
     public MainView()
     {
         InitializeComponent();
-        
-    } 
-
-    public event EventHandler<string> MenuItemClicked;
+    }
 
     public void InitializeModulesMenu(IEnumerable<IModule> modules)
     {
@@ -45,5 +44,11 @@ public partial class MainView : BaseView, IMainView
         e.Handled = true;
         var menuItem = (MenuItem)sender;
         MenuItemClicked?.Invoke(this, menuItem.Header?.ToString());
+    }
+
+    public override void SetTitle(string title)
+    {
+        base.SetTitle(title);
+        
     }
 }

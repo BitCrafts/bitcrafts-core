@@ -137,29 +137,6 @@ public sealed class AvaloniaWindowManager : IWindowManager
 
     private Window CreateDialog(UserControl control, string title)
     {
-        /*var window = new Window
-        {
-            Title = title,
-            WindowStartupLocation =
-                view.IsModal ? WindowStartupLocation.CenterOwner : WindowStartupLocation.CenterScreen,
-            Width = control.Width,
-            Height = control.Height,
-            Content = new Grid
-            {
-                VerticalAlignment = VerticalAlignment.Stretch,
-                HorizontalAlignment = HorizontalAlignment.Stretch,
-                Children = { control }
-            },
-            SystemDecorations = view.IsModal ? SystemDecorations.None : SystemDecorations.Full,
-            ShowInTaskbar = true
-        };
-        if (view.IsModal)
-        {
-            window.CornerRadius = new CornerRadius(10);
-            window.BorderThickness = new Thickness(5);
-            window.BorderBrush = new SolidColorBrush(Colors.Black);
-        }*/
-
         var window = new DialogWindow();
         window.Title = title;
         window.SetContent(control);
@@ -169,7 +146,7 @@ public sealed class AvaloniaWindowManager : IWindowManager
     private Window CreateWindow(UserControl control, string title)
     {
         var window = new NormalWindow();
-        window.Title = title;
+        window.SetTitle(title);
         window.SetContent(control);
         return window;
     }

@@ -14,7 +14,7 @@
               RowDefinitions="Auto,*"
               VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
             <Grid ColumnDefinitions="*,Auto" Margin="0">
-                <TextBlock Grid.Column="0" x:Name="WindowTitle" Text="Window Title" Margin="5" />
+                <TextBlock Grid.Column="0" x:Name="WindowTitle" Margin="5" />
                 <Border Margin="8" Grid.Column="1" BorderBrush="Green" BorderThickness="1"
                         CornerRadius="0">
                     <Button x:Name="CloseButton" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
