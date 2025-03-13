@@ -13,7 +13,7 @@ public abstract class BaseUseCase<TInput> : IUseCase<TInput>
         GC.SuppressFinalize(this);
     }
 
-    protected abstract Task ExecuteCore(TInput eventRequest);
+    protected abstract Task ExecuteCore(TInput input);
 
     protected virtual void Dispose(bool disposing)
     {

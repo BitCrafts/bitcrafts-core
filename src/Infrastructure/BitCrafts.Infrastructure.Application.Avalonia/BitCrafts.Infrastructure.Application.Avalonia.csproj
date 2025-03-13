@@ -33,7 +33,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\BitCrafts.Infrastructure.Abstraction.Avalonia\BitCrafts.Infrastructure.Abstraction.Avalonia.csproj"/>
+        <ProjectReference Include="..\BitCrafts.Infrastructure.Avalonia\BitCrafts.Infrastructure.Avalonia.csproj" />
         <ProjectReference Include="..\BitCrafts.Infrastructure.Abstraction\BitCrafts.Infrastructure.Abstraction.csproj"/>
     </ItemGroup>
 

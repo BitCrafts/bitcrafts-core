@@ -1,0 +1,26 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="450" d:DesignHeight="250"
+        x:Class="BitCrafts.Infrastructure.Avalonia.Dialogs.DialogWindow"
+        WindowStartupLocation="CenterScreen"
+        CanResize="False"
+        ShowInTaskbar="False" 
+        SystemDecorations="None">
+    <Border BorderThickness="1" BorderBrush="Green">
+        <Grid RowDefinitions="Auto,*,Auto">
+            <Grid ColumnDefinitions="*,Auto" Margin="0">
+                <TextBlock Grid.Column="0" x:Name="WindowTitle" Text="Dialog Title" Margin="5" />
+                <Button Grid.Column="1" x:Name="CloseButton"
+                        BorderBrush="Green"
+                        BorderThickness="0"
+                        HorizontalAlignment="Right"
+                        Padding="5"
+                        VerticalAlignment="Top" Click="CloseButton_OnClick"
+                        CornerRadius="0" Content="X" Width="32" Height="32" />
+            </Grid>
+            <ScrollContentPresenter Grid.Row="1" x:Name="DialogContent"></ScrollContentPresenter>
+        </Grid>
+    </Border>
+</Window>

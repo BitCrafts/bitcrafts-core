@@ -2,7 +2,7 @@
 
 public interface IUseCase<TInput> : IDisposable
 {
-    Task Execute(TInput eventRequest);
+    Task Execute(TInput input);
 }
 
 public interface IUseCase : IDisposable

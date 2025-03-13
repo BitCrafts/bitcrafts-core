@@ -4,15 +4,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitCrafts.Infrastructure", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitCrafts.Infrastructure.Abstraction", "src\Infrastructure\BitCrafts.Infrastructure.Abstraction\BitCrafts.Infrastructure.Abstraction.csproj", "{9FD18F69-4726-4236-8356-F8E4A99BF21F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitCrafts.Infrastructure.Abstraction.Avalonia", "src\Infrastructure\BitCrafts.Infrastructure.Abstraction.Avalonia\BitCrafts.Infrastructure.Abstraction.Avalonia.csproj", "{1403069C-00F7-46A3-B566-C6EFECCCE229}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitCrafts.Infrastructure.Avalonia", "src\Infrastructure\BitCrafts.Infrastructure.Avalonia\BitCrafts.Infrastructure.Avalonia.csproj", "{1403069C-00F7-46A3-B566-C6EFECCCE229}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitCrafts.Infrastructure.Application.Avalonia", "src\Infrastructure\BitCrafts.Infrastructure.Application.Avalonia\BitCrafts.Infrastructure.Application.Avalonia.csproj", "{356908C0-DABA-4D94-BF8F-B79919C7BBAB}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{D2998A37-6CC5-4AD6-A1A7-ABEC3CBBD62F}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "StartupDemo", "StartupDemo", "{8DA37279-7DF9-49F7-895F-D159AFC12B96}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitCrafts.InfrastructureTests", "tests\BitCrafts.InfrastructureTests\BitCrafts.InfrastructureTests.csproj", "{5427FFBB-5086-4C18-ACE2-E79D67224F7F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitCrafts.Module.TestModule", "tests\BitCrafts.Module.TestModule\BitCrafts.Module.TestModule.csproj", "{422AA70A-D0EC-481E-9BEF-5D0E8E589A14}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitCrafts.StartupDemo", "src\startup-demo\BitCrafts.StartupDemo\BitCrafts.StartupDemo.csproj", "{BF2A4646-103D-4015-AEE5-F365F2EB2C4C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,17 +34,12 @@ Global
 		{356908C0-DABA-4D94-BF8F-B79919C7BBAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{356908C0-DABA-4D94-BF8F-B79919C7BBAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{356908C0-DABA-4D94-BF8F-B79919C7BBAB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5427FFBB-5086-4C18-ACE2-E79D67224F7F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5427FFBB-5086-4C18-ACE2-E79D67224F7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5427FFBB-5086-4C18-ACE2-E79D67224F7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5427FFBB-5086-4C18-ACE2-E79D67224F7F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{422AA70A-D0EC-481E-9BEF-5D0E8E589A14}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{422AA70A-D0EC-481E-9BEF-5D0E8E589A14}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{422AA70A-D0EC-481E-9BEF-5D0E8E589A14}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{422AA70A-D0EC-481E-9BEF-5D0E8E589A14}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BF2A4646-103D-4015-AEE5-F365F2EB2C4C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BF2A4646-103D-4015-AEE5-F365F2EB2C4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BF2A4646-103D-4015-AEE5-F365F2EB2C4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BF2A4646-103D-4015-AEE5-F365F2EB2C4C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{5427FFBB-5086-4C18-ACE2-E79D67224F7F} = {D2998A37-6CC5-4AD6-A1A7-ABEC3CBBD62F}
-		{422AA70A-D0EC-481E-9BEF-5D0E8E589A14} = {D2998A37-6CC5-4AD6-A1A7-ABEC3CBBD62F}
+		{BF2A4646-103D-4015-AEE5-F365F2EB2C4C} = {8DA37279-7DF9-49F7-895F-D159AFC12B96}
 	EndGlobalSection
 EndGlobal

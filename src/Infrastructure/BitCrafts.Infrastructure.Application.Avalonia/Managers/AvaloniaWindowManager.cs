@@ -8,6 +8,8 @@ using Avalonia.Media;
 using BitCrafts.Infrastructure.Abstraction.Application.Managers;
 using BitCrafts.Infrastructure.Abstraction.Application.Presenters;
 using BitCrafts.Infrastructure.Abstraction.Application.Views;
+using BitCrafts.Infrastructure.Avalonia.Dialogs;
+using BitCrafts.Infrastructure.Avalonia.Windows;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace BitCrafts.Infrastructure.Application.Avalonia.Managers;
@@ -63,7 +65,7 @@ public sealed class AvaloniaWindowManager : IWindowManager
                 throw new InvalidOperationException(
                     "The view associated with the presenter is not a UserControl or is null.");
 
-            var window = CreateWindow(view, ((IView)view).GetTitle());
+            var window = CreateDialog(view, ((IView)view).GetTitle());
 
             AddWindowToCollections(presenter, window);
 
@@ -133,10 +135,9 @@ public sealed class AvaloniaWindowManager : IWindowManager
             window.Show();
     }
 
-    private Window CreateWindow(UserControl control, string title)
+    private Window CreateDialog(UserControl control, string title)
     {
-        var view = control as IView;
-        var window = new Window
+        /*var window = new Window
         {
             Title = title,
             WindowStartupLocation =
@@ -157,8 +158,19 @@ public sealed class AvaloniaWindowManager : IWindowManager
             window.CornerRadius = new CornerRadius(10);
             window.BorderThickness = new Thickness(5);
             window.BorderBrush = new SolidColorBrush(Colors.Black);
-        }
+        }*/
 
+        var window = new DialogWindow();
+        window.Title = title;
+        window.SetContent(control);
+        return window;
+    }
+
+    private Window CreateWindow(UserControl control, string title)
+    {
+        var window = new NormalWindow();
+        window.Title = title;
+        window.SetContent(control);
         return window;
     }
 }

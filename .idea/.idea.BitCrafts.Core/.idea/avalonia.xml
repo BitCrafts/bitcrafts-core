@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AvaloniaProject">
+    <option name="projectPerEditor">
+      <map>
+        <entry key="src/Infrastructure/BitCrafts.Infrastructure.Application.Avalonia/App.axaml" value="src/startup-demo/BitCrafts.StartupDemo/BitCrafts.StartupDemo.csproj" />
+        <entry key="src/Infrastructure/BitCrafts.Infrastructure.Application.Avalonia/Views/MainView.axaml" value="src/startup-demo/BitCrafts.StartupDemo/BitCrafts.StartupDemo.csproj" />
+        <entry key="src/Infrastructure/BitCrafts.Infrastructure.Avalonia/Dialogs/DialogWindow.axaml" value="src/startup-demo/BitCrafts.StartupDemo/BitCrafts.StartupDemo.csproj" />
+        <entry key="src/Infrastructure/BitCrafts.Infrastructure.Avalonia/Windows/NormalWindow.axaml" value="src/startup-demo/BitCrafts.StartupDemo/BitCrafts.StartupDemo.csproj" />
+        <entry key="src/startup-demo/BitCrafts.StartupDemo/App.axaml" value="src/startup-demo/BitCrafts.StartupDemo/BitCrafts.StartupDemo.csproj" />
+      </map>
+    </option>
+  </component>
+</project>

@@ -26,4 +26,8 @@
         <ProjectReference Include="..\BitCrafts.Infrastructure.Abstraction\BitCrafts.Infrastructure.Abstraction.csproj"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Controls\" />
+    </ItemGroup>
+
 </Project>

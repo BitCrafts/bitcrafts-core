@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using BitCrafts.Infrastructure.Abstraction.Avalonia.Views;
+using BitCrafts.Infrastructure.Avalonia.Views;
 using BitCrafts.Infrastructure.Abstraction.Modules;
 
 namespace BitCrafts.Infrastructure.Application.Avalonia.Views;
@@ -12,7 +12,8 @@ public partial class MainView : BaseView, IMainView
     public MainView()
     {
         InitializeComponent();
-    }
+        
+    } 
 
     public event EventHandler<string> MenuItemClicked;
 

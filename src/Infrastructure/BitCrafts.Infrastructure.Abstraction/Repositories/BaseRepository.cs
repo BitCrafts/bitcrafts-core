@@ -44,9 +44,9 @@ public abstract class Repository<TContext, TEntity> : IRepository<TEntity> where
         await DbSet.AddRangeAsync(entities).ConfigureAwait(false);
     }
 
-    public void Update(TEntity entity)
+    public async Task UpdateAsync(TEntity entity)
     {
-        var existingEntity = DbSet.Find(entity.Id);
+        var existingEntity = await DbSet.FindAsync(entity.Id).ConfigureAwait(false);
 
         if (existingEntity != null)
         {

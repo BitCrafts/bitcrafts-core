@@ -1,0 +1,29 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        WindowStartupLocation="CenterOwner"
+        SystemDecorations="None"
+        ShowInTaskbar="True"
+        CanResize="False"
+        WindowState="Maximized"
+        x:Class="BitCrafts.Infrastructure.Avalonia.Windows.NormalWindow">
+    <Border BorderThickness="1" BorderBrush="Green">
+        <Grid x:Name="RootGrid"
+              RowDefinitions="Auto,*"
+              VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+            <Grid ColumnDefinitions="*,Auto" Margin="0">
+                <TextBlock Grid.Column="0" x:Name="WindowTitle" Text="Window Title" Margin="5" />
+                <Border Margin="8" Grid.Column="1" BorderBrush="Green" BorderThickness="1"
+                        CornerRadius="0">
+                    <Button x:Name="CloseButton" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
+                            BorderBrush="Green" 
+                            BorderThickness="0"  Content="X"
+                            VerticalAlignment="Top" Click="CloseButton_OnClick" />
+                </Border>
+            </Grid>
+            <ScrollContentPresenter Grid.Row="1" x:Name="WindowContent"></ScrollContentPresenter>
+        </Grid>
+    </Border>
+</Window>

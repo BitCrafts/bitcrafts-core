@@ -2,12 +2,15 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using BitCrafts.Infrastructure.Abstraction.Application.Views;
 
-namespace BitCrafts.Infrastructure.Abstraction.Avalonia.Views;
+namespace BitCrafts.Infrastructure.Avalonia.Views;
 
 public abstract class BaseView : UserControl, IView
 {
     private string _title;
-
+    public bool IsBusy { get; private set; }
+    public string BusyMessage { get; private set; }
+    public event EventHandler ViewLoadedEvent;
+    public event EventHandler ViewClosedEvent;
 
     protected BaseView()
     {
@@ -15,17 +18,10 @@ public abstract class BaseView : UserControl, IView
         Unloaded += OnUnloaded;
     }
 
-    public bool IsBusy { get; private set; }
-    public string BusyMessage { get; private set; }
-    public event EventHandler ViewLoadedEvent;
-    public event EventHandler ViewClosedEvent;
-
-    public void SetTitle(string title)
+    public virtual void SetTitle(string title)
     {
         _title = title;
     }
-
-    public bool IsModal { get; protected set; }
 
     public virtual void SetBusy(string message)
     {
@@ -39,7 +35,7 @@ public abstract class BaseView : UserControl, IView
         BusyMessage = null;
     }
 
-    public string GetTitle()
+    public virtual string GetTitle()
     {
         return _title;
     }

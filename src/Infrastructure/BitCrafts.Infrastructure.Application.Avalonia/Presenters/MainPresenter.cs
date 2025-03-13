@@ -24,6 +24,8 @@ public sealed class MainPresenter : BasePresenter<IMainView>, IMainPresenter
         _serviceProvider = serviceProvider;
         _uiManager = uiManager;
         _workspaceManager = workspaceManager;
+        var windowTitle = _serviceProvider.GetService<IConfiguration>()["ApplicationSettings:Name"] ?? "No Name Application";
+        View.SetTitle(windowTitle);
     }
 
     private void ViewOnMenuItemClicked(object sender, string e)
@@ -46,8 +48,6 @@ public sealed class MainPresenter : BasePresenter<IMainView>, IMainPresenter
     protected override void OnViewLoaded(object sender, EventArgs e)
     {
         base.OnViewLoaded(sender, e);
-        var windowTitle = _serviceProvider.GetService<IConfiguration>()["ApplicationSettings:Name"] ?? "No Name Application";
-        View.SetTitle(windowTitle);
         View.InitializeModulesMenu(_serviceProvider.GetServices<IModule>());
 
         if (View is not MainView mainView) return;
