@@ -11,10 +11,24 @@ public partial class DialogWindow : Window
     {
         InitializeComponent();
     }
+
     public void SetContent(UserControl control)
     {
         DialogContent.Content = control;
     }
+
+    public void SetTitle(string title)
+    {
+        Title = title;
+        WindowTitle.Text = title;
+    }
+
+    public void SetSize(double width, double height)
+    {
+        Width = width;
+        Height = height;
+    }
+
     private void CloseButton_OnClick(object sender, RoutedEventArgs e)
     {
         Close();

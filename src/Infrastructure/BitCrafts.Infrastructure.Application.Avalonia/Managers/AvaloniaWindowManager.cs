@@ -140,6 +140,7 @@ public sealed class AvaloniaWindowManager : IWindowManager
         var window = new DialogWindow();
         window.Title = title;
         window.SetContent(control);
+        window.SetSize(control.Width, control.Height);
         return window;
     }
 
