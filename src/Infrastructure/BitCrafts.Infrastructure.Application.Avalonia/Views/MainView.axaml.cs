@@ -1,21 +1,42 @@
 using System;
 using System.Collections.Generic;
-using Avalonia.Controls;
 using Avalonia.Interactivity;
 using BitCrafts.Infrastructure.Avalonia.Views;
 using BitCrafts.Infrastructure.Abstraction.Modules;
 
 namespace BitCrafts.Infrastructure.Application.Avalonia.Views;
 
-public partial class MainView : BaseView, IMainView
+public partial class MainView : BaseWindow, IMainView
 {
     public event EventHandler<string> MenuItemClicked;
+
+    public void InitializeModulesMenu(IEnumerable<IModule> modules)
+    {
+        throw new NotImplementedException();
+    }
 
     public MainView()
     {
         InitializeComponent();
     }
 
+    protected override void OnAppearing()
+    {
+    }
+
+    protected override void OnAppeared()
+    {
+    }
+
+    protected override void OnDisappearing()
+    {
+    }
+
+    private void ToggleButton_OnClick(object sender, RoutedEventArgs e)
+    {
+        
+    }
+/*
     public void InitializeModulesMenu(IEnumerable<IModule> modules)
     {
         if (modules == null) throw new ArgumentNullException(nameof(modules));
@@ -49,6 +70,13 @@ public partial class MainView : BaseView, IMainView
     public override void SetTitle(string title)
     {
         base.SetTitle(title);
-        
+
     }
+
+    private void ToggleButton_OnClick(object sender, RoutedEventArgs e)
+    {
+        throw new NotImplementedException();
+    }
+    */
+
 }

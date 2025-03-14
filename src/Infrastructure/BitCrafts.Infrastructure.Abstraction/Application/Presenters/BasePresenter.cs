@@ -10,8 +10,6 @@ public abstract class BasePresenter<TView> : IPresenter
     {
         Logger = logger;
         View = view;
-        View.ViewLoadedEvent += OnViewLoaded;
-        View.ViewClosedEvent += OnViewClosed;
         Logger.LogInformation($"Initializing {GetType().Name}");
     }
 
@@ -47,8 +45,6 @@ public abstract class BasePresenter<TView> : IPresenter
     {
         if (disposing)
         {
-            View.ViewLoadedEvent -= OnViewLoaded;
-            View.ViewClosedEvent -= OnViewClosed;
             View.Dispose();
             Logger.LogInformation($"Disposed {GetType().Name}");
         }

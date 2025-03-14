@@ -23,7 +23,7 @@ public sealed class AvaloniaUiManager : IUiManager
     public AvaloniaUiManager(ILogger<AvaloniaUiManager> logger,
         IWorkspaceManager workspaceManager,
         IBackgroundThreadDispatcher backgroundThreadDispatcher,
-        IExceptionManager exceptionManager,IEventAggregator eventAggregator,
+        IExceptionManager exceptionManager, IEventAggregator eventAggregator,
         IWindowManager windowManager)
     {
         _logger = logger;
@@ -32,7 +32,6 @@ public sealed class AvaloniaUiManager : IUiManager
         _exceptionManager = exceptionManager;
         _eventAggregator = eventAggregator;
         _windowManager = windowManager;
-        
     }
 
     public Task ShutdownAsync()
@@ -58,11 +57,11 @@ public sealed class AvaloniaUiManager : IUiManager
         _applicationLifetime.Startup += ApplicationLifetimeOnStartup;
     }
 
-    private void ApplicationLifetimeOnStartup(object sender, ControlledApplicationLifetimeStartupEventArgs e)
+    private async void ApplicationLifetimeOnStartup(object sender, ControlledApplicationLifetimeStartupEventArgs e)
     {
         _logger.LogInformation("ApplicationLifetime Startup");
         _backgroundThreadDispatcher.Start();
-        _windowManager.ShowWindow<IMainPresenter>();
+        await _windowManager.ShowPresenterAsync<IMainPresenter>();
     }
 
     private void ApplicationLifetimeOnExit(object sender, ControlledApplicationLifetimeExitEventArgs e)

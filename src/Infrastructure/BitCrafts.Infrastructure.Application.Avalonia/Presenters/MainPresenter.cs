@@ -24,8 +24,8 @@ public sealed class MainPresenter : BasePresenter<IMainView>, IMainPresenter
         _serviceProvider = serviceProvider;
         _uiManager = uiManager;
         _workspaceManager = workspaceManager;
-        var windowTitle = _serviceProvider.GetService<IConfiguration>()["ApplicationSettings:Name"] ?? "No Name Application";
-        View.SetTitle(windowTitle);
+        var windowTitle = _serviceProvider.GetService<IConfiguration>()["ApplicationSettings:Name"] ??
+                          "No Name Application";
     }
 
     private void ViewOnMenuItemClicked(object sender, string e)

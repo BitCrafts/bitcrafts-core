@@ -57,7 +57,7 @@ public sealed class AvaloniaWorkspaceManager : IWorkspaceManager
             };
             var titleHeader = new TextBlock()
             {
-                Text = ((IView)view).GetTitle(),
+                Text = ((IView)view).Title,
                 VerticalAlignment = VerticalAlignment.Center
             };
             closePresenterButton.Click += (_, _) => ClosePresenterByInstance(presenter);

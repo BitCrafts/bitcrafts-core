@@ -19,11 +19,18 @@
             </Grid>
         </ControlTemplate>
     </UserControl.Resources>
-    <DockPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-        <Menu DockPanel.Dock="Top">
-            <MenuItem x:Name="ModulesMenuItem" Header="Modules" />
-        </Menu>
-        <TabControl x:Name="MainTabControl" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+    <Grid ColumnDefinitions="Auto,*" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+        <StackPanel Grid.Column="0" x:Name="SideMenu" Width="200">
+            <Button x:Name="ToggleButton" Content="☰" Click="ToggleButton_OnClick" HorizontalAlignment="Left"
+                    Margin="5" />
+            <ListBox x:Name="MenuItems">
+                <ListBoxItem>Menu Item 1</ListBoxItem>
+                <ListBoxItem>Menu Item 2</ListBoxItem>
+                <ListBoxItem>Menu Item 3</ListBoxItem>
+            </ListBox>
+        </StackPanel>
+        <TabControl Grid.Column="1" x:Name="MainTabControl" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
         </TabControl>
-    </DockPanel>
+
+    </Grid>
 </UserControl>
